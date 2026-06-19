@@ -1,0 +1,34 @@
+:root {
+  color-scheme: dark;
+  --bg: #0b1020;
+  --bg-elev: #141a2e;
+  --fg: #e7ecf5;
+  --muted: #9aa6c0;
+  --go: #38d39f;
+  --maybe: #f5c451;
+  --no: #ef5f6b;
+  --accent: #6ea8fe;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: radial-gradient(1200px 800px at 50% -10%, #16203c 0%, var(--bg) 60%);
+  color: var(--fg);
+}
+
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 4rem;
+}
