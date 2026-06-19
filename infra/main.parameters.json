@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "norwayeast"
+    },
+    "namePrefix": {
+      "value": "nordlys"
+    },
+    "containerImage": {
+      "value": "nordlysacr.azurecr.io/nordlys:latest"
+    },
+    "minReplicas": {
+      "value": 0
+    },
+    "maxReplicas": {
+      "value": 3
+    },
+    "cpu": {
+      "value": "0.5"
+    },
+    "memory": {
+      "value": "1.0Gi"
+    },
+    "cronExpression": {
+      "value": "*/20 * * * *"
+    },
+    "metUserAgent": {
+      "value": "NordlysINatt/1.0 (contact@example.com)"
+    },
+    "vapidPublicKey": {
+      "value": "<your-vapid-public-key>"
+    },
+    "vapidPrivateKey": {
+      "value": "<your-vapid-private-key>"
+    },
+    "vapidSubject": {
+      "value": "mailto:contact@example.com"
+    }
+  }
+}

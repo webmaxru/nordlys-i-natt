@@ -6,8 +6,10 @@ export const config = {
   host: process.env.HOST ?? '0.0.0.0',
 
   met: {
-    /** REQUIRED identifying User-Agent for api.met.no (MET Terms of Service). */
-    userAgent: process.env.MET_USER_AGENT ?? 'NordlysINatt/1.0 (contact@example.com)',
+    /** REQUIRED identifying User-Agent for api.met.no (MET Terms of Service).
+     *  MET 403s obvious placeholders (e.g. "example.com"). In production set a
+     *  real contact via MET_USER_AGENT. */
+    userAgent: process.env.MET_USER_AGENT ?? 'nordlys-i-natt/1.0 github.com/nordlys-i-natt',
     cacheTtlSeconds: Number(process.env.MET_CACHE_TTL_SECONDS ?? 900),
   },
 
