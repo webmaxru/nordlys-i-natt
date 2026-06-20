@@ -35,3 +35,5 @@ coverage/
 
 # PWA
 apps/web/dev-dist/
+# Deploy temp artifacts
+.deploy-*
