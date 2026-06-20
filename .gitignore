@@ -17,7 +17,7 @@ build/
 # Local data
 *.sqlite
 *.sqlite3
-data/
+apps/api/data/
 
 # Logs
 *.log

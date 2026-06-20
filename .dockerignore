@@ -13,8 +13,7 @@ dev-dist
 coverage
 **/coverage
 
-data
-**/data
+apps/api/data
 **/*.sqlite
 **/*.sqlite3
 
