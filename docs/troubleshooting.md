@@ -76,25 +76,16 @@ consume `monitoring.outputs.workspaceSharedKey`. The output reference creates a 
 
 ---
 
-## 5. `az acr build` crashes on Windows + Docker context long paths
+## 5. Windows image builds — use local Docker
 
-**Symptom A:** `az acr build .` aborted while "Packing source code into tar" with a Windows
-`MAX_PATH` error deep inside `node_modules/.pnpm/...`.
-**Symptom B:** when it did upload, the az CLI crashed mid-build with
-`UnicodeEncodeError: 'charmap' codec can't encode...` while streaming pnpm's log output, which
-**cancelled the cloud run** (it showed `Failed` after ~35s).
+**Symptom:** image builds can fail on Windows with a `MAX_PATH` error deep inside
+`node_modules/.pnpm/...`, or the `az` CLI crashing with `UnicodeEncodeError: 'charmap' codec can't
+encode...` while streaming pnpm's non-ASCII log output (cp1252 vs UTF-8).
 
-**Cause:** (A) the az packer traverses the directory (incl. local `node_modules`) before applying
-`.dockerignore` and hits Windows path limits; (B) the bundled az CLI's colorama writes build logs
-in cp1252, which can't encode pnpm's non‑ASCII progress output.
-
-**Fix used:** build with **local Docker** instead (`docker build` + `docker push`). BuildKit
-respects `.dockerignore` (skips `node_modules`) and handles long paths/UTF‑8. Docker Desktop's
-Linux engine simply needed starting. *(CI runs `az acr build` on Ubuntu, where neither issue exists.)*
-
-**Guardrail:** on Windows, prefer local Docker or CI for image builds. If you must use
-`az acr build`, point it at a **clean directory** (e.g. extracted `git archive`) and set
-`PYTHONUTF8=1`.
+**Fix:** build with **local Docker** (`docker build` + `docker push` to GHCR). BuildKit respects
+`.dockerignore` (skips `node_modules`) and handles long paths/UTF-8. Make sure **Docker Desktop's
+Linux engine is running** first. For any `az` commands that stream non-ASCII output, set
+`PYTHONUTF8=1`. *(CI builds on Ubuntu, where neither issue exists.)*
 
 ---
 

@@ -1,7 +1,7 @@
 # Deployment
 
 The app deploys as **one Azure Container App** (serves web + API) plus a **Container Apps
-cron Job** (notifications), with ACR, Azure Table Storage, Log Analytics, and Application
+cron Job** (notifications), with a private **GHCR** image, Azure Table Storage, Log Analytics, and Application
 Insights. Region: `norwayeast`. IaC is **Bicep** (`infra/`). Two paths: CI/CD (GitHub Actions)
 or a manual `az` runbook.
 
@@ -11,12 +11,11 @@ or a manual `az` runbook.
 |---|---|
 | `monitoring.bicep` | Log Analytics workspace + workspace-based Application Insights (outputs customerId, **shared key**, connection string) |
 | `storage.bicep` | Storage account + Table `subscriptions` (push store) |
-| `registry.bicep` | Azure Container Registry (Basic) |
 | `containerapp.bicep` | Managed environment + Container App (external ingress :8080, `minReplicas`/`maxReplicas`, HTTP scale rule, env + secrets) |
 | `job.bicep` | Container Apps Job (Schedule, `cronExpression`, same image, `job` command) |
 
 Names are derived deterministically from `namePrefix` + `uniqueString(resourceGroup().id)`
-(e.g. ACR = `take('${safePrefix}acr${suffix}', 50)`). Key params: `containerImage`, `minReplicas`
+(e.g. app = `'${namePrefix}-app-${suffix}'`). Key params: `containerImage`, `minReplicas`
 (0 = scale-to-zero), `maxReplicas`, `cpu`, `memory`, `cronExpression`, and `@secure()`
 `metUserAgent`, `vapidPublicKey/PrivateKey/Subject`.
 
@@ -29,58 +28,51 @@ Names are derived deterministically from `namePrefix` + `uniqueString(resourceGr
 ## Cost & scaling
 
 - `minReplicas=0` → ≈ **€0 when idle** (cold start on first request after idle). Standing cost:
-  ACR Basic + a little Table Storage + Application Insights free tier.
+  ≈ **0** — the **GHCR** registry is free; just a little Table Storage + Application Insights free tier.
 - For aurora season, set `minReplicas=1` (warm, no cold starts).
 - The Job is billed only per run (seconds, every ~20 min).
 
 ## Manual deploy runbook (`az` + Docker)
 
-This is the flow that was used to ship the first deployment (works without CI secrets).
+This is the manual flow (works without CI). The image lives in **private GHCR**
+(`ghcr.io/webmaxru/nordlys-i-natt`); see [registry-ghcr.md](./registry-ghcr.md) for pull-secret details.
 
-```bash
-RG=rg-nordlys; LOC=norwayeast; PREFIX=nordlys
-az group create -n $RG -l $LOC
+```powershell
+$RG = "rg-nordlys"; $PREFIX = "nordlys"
+$Image = "ghcr.io/webmaxru/nordlys-i-natt"; $SHA = git rev-parse --short HEAD
 
-# 1) Resolve the Bicep-derived ACR + app names (deploy a tiny names-only template, or read main.bicep)
-#    ACR  = take('${tolower(prefix)}acr${uniqueString(rg.id)}', 50)
-#    APP  = '${prefix}-app-${uniqueString(rg.id)}'
+# 1) Build & push with LOCAL Docker (BuildKit respects .dockerignore + Windows long paths/UTF-8).
+#    $Pat = a classic GitHub PAT with write:packages.
+$Pat | docker login ghcr.io -u webmaxru --password-stdin
+docker build -t "${Image}:$SHA" -t "${Image}:latest" .
+docker push "${Image}:$SHA"; docker push "${Image}:latest"
 
-# 2) Build & push the image. Prefer LOCAL Docker (BuildKit respects .dockerignore, handles
-#    Windows long paths, and avoids the `az acr build` Windows Unicode-streaming crash):
-az acr create -n $ACR -g $RG --sku Basic --admin-enabled true
-CREDS=$(az acr credential show -n $ACR)            # username + password
-docker login $ACR.azurecr.io -u <user> -p <pwd>
-SHA=$(git rev-parse --short HEAD)
-docker build -t $ACR.azurecr.io/nordlys/app:$SHA -t $ACR.azurecr.io/nordlys/app:latest .
-docker push $ACR.azurecr.io/nordlys/app:$SHA
-
-# 3) Deploy the infrastructure with the image + secrets
-az deployment group create -g $RG -f infra/main.bicep -p @infra/main.parameters.json \
-  location=$LOC namePrefix=$PREFIX \
-  containerImage=$ACR.azurecr.io/nordlys/app:$SHA \
-  metUserAgent="nordlys-i-natt/1.0 you@your-domain" \
+# 2) First deploy via Bicep (registryPassword = a PAT with read:packages for the pull secret).
+az deployment group create -g $RG -f infra/main.bicep -p "@infra/main.parameters.json" `
+  namePrefix=$PREFIX containerImage="${Image}:$SHA" `
+  registryServer=ghcr.io registryUsername=webmaxru registryPassword=<read-packages-pat> `
+  metUserAgent="nordlys-i-natt/1.0 you@your-domain" `
   vapidPublicKey="..." vapidPrivateKey="..." vapidSubject="mailto:you@your-domain"
 
-# 4) Subsequent code updates: rebuild/push, then roll a new revision (no full redeploy):
-az containerapp update     -n $APP -g $RG --image $ACR.azurecr.io/nordlys/app:$SHA
-az containerapp job update -n ${PREFIX}-job-... -g $RG --image $ACR.azurecr.io/nordlys/app:$SHA
+# 3) Subsequent code updates: rebuild/push, then roll a new revision (no full redeploy):
+az containerapp update     -n nordlys-app-eeyobitljk4fq -g $RG --image "${Image}:$SHA"
+az containerapp job update  -n nordlys-job-eeyobitljk4fq -g $RG --image "${Image}:$SHA"
 ```
 
-> **`az acr build` note:** on Windows the az CLI can crash mid-build with a `UnicodeEncodeError`
-> while streaming pnpm's log output (cp1252 vs UTF-8), which cancels the run. The local
-> Docker build above avoids it. If you must use `az acr build`, build from a clean **directory**
-> (e.g. extracted `git archive`) so its tar packer doesn't traverse `node_modules` and hit
-> Windows `MAX_PATH`.
+> **Windows build note:** on Windows the az CLI can crash mid-build with a `UnicodeEncodeError`
+> while streaming pnpm's non-ASCII log output (cp1252 vs UTF-8). Build with **local Docker** (as
+> above) and make sure Docker Desktop's Linux engine is running; set `PYTHONUTF8=1` for `az`.
 
 ## CI/CD (`.github/workflows`)
 
 - `ci.yml` (PRs): pnpm install → build shared → `-r typecheck` → test shared+api → web build.
-- `deploy.yml` (push to `main`): OIDC `azure/login` → ensure RG/ACR → `az acr build` (cloud,
-  no Windows issues) → `az deployment group create`. It resolves the ACR name with the **same**
-  `uniqueString` formula as `main.bicep`.
+- `deploy.yml` (push to `main`): OIDC `azure/login` → build & push the image to **GHCR** (via the
+  built-in `GITHUB_TOKEN`) → `az deployment group create` (the Container App pulls the private image
+  with the `GHCR_PULL_TOKEN` secret).
 - **Required secrets:** `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID` (OIDC
-  federated credential), `MET_USER_AGENT`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`,
-  `VAPID_SUBJECT`. **Var:** `AZURE_RESOURCE_GROUP`. See `infra/README.md`.
+  federated credential), `GHCR_PULL_TOKEN` (classic PAT, `read:packages`), `MET_USER_AGENT`,
+  `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`. **Var:** `AZURE_RESOURCE_GROUP`. See
+  `infra/README.md`.
 
 ## Custom domain & TLS (live)
 
@@ -106,6 +98,5 @@ set Cloudflare **SSL/TLS → Full (strict)**. Currently DNS-only (Azure serves H
 
 ## Post-deploy TODOs
 
-- Switch **ACR pull** from admin credentials to a **managed identity + `AcrPull`** role (TODO
-  noted in `main.bicep` / `infra/README.md`).
 - Set a **daily cap** on the Log Analytics workspace to stay in the App Insights free tier.
+- Prune old **GHCR** image versions periodically to stay within the free package allowance.

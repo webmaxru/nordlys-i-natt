@@ -17,7 +17,7 @@ cloud cover (MET Norway), and darkness (computed sun elevation).
 | [frontend.md](./frontend.md) | React PWA: components, hooks, state, i18n, map, share, consent |
 | [push-notifications.md](./push-notifications.md) | Web Push opt-in design, Edge auto-block findings, iOS constraints, backend cadence |
 | [deployment.md](./deployment.md) | Azure infra (Bicep), CI/CD, **manual deploy runbook**, secrets, cost |
-| [registry-ghcr.md](./registry-ghcr.md) | Migration from paid ACR Basic to private GitHub Container Registry, PAT setup, rollback |
+| [registry-ghcr.md](./registry-ghcr.md) | Container registry: private GitHub Container Registry (GHCR), PAT pull secret, build/push/deploy, pruning |
 | [subscriptions-admin.md](./subscriptions-admin.md) | Subscription administration and operational scripts |
 | [local-development.md](./local-development.md) | Setup, run, test, environment variables |
 | [troubleshooting.md](./troubleshooting.md) | **Top challenges & solutions** (the bugs that cost the most time) |

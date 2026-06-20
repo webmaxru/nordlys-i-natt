@@ -4,7 +4,6 @@ This Bicep deploys:
 
 - Log Analytics + workspace-based Application Insights
 - Storage account with the `subscriptions` table
-- Azure Container Registry (Basic)
 - Azure Container Apps managed environment
 - Container App for the web/API
 - Scheduled Container Apps Job for notifications
@@ -19,7 +18,7 @@ az deployment group create `
   --parameters @infra/main.parameters.json
 ```
 
-Build and push the image before deployment, then set `containerImage` to the full ACR image reference including tag.
+Build and push the image to GHCR before deployment, then set `containerImage` to the full GHCR image reference including tag (e.g. `ghcr.io/webmaxru/nordlys-i-natt:<tag>`), and pass `registryServer`/`registryUsername`/`registryPassword` for the private image pull.
 
 ## Scale-to-zero
 
@@ -35,11 +34,11 @@ The Docker image runs the API by default. The Job uses the same image and overri
 ["pnpm", "--filter", "@nordlys/api", "job"]
 ```
 
-ACR pulls currently use ACR admin credentials stored as Container Apps secrets for one-pass deployment reliability. A TODO in `main.bicep` marks replacing this with managed identity + AcrPull.
+The Container App and Job pull the **private GHCR** image using a GitHub PAT stored as a registry secret (the `registryPassword` Bicep param; the `GHCR_PULL_TOKEN` repo secret in CI). See [../docs/registry-ghcr.md](../docs/registry-ghcr.md).
 
 ## GitHub Actions setup
 
-The deployment workflow in `.github/workflows/deploy.yml` uses GitHub OIDC with `azure/login@v2`, builds the root `Dockerfile` in Azure Container Registry Tasks, and deploys `infra/main.bicep` at resource-group scope.
+The deployment workflow in `.github/workflows/deploy.yml` uses GitHub OIDC with `azure/login@v2`, builds and pushes the root `Dockerfile` image to **GHCR** (`ghcr.io/<owner>/<repo>`) with the built-in `GITHUB_TOKEN`, and deploys `infra/main.bicep` at resource-group scope.
 
 Create a Microsoft Entra app/service principal with permission to create resources in the target subscription/resource group, then add a federated credential for this repository and workflow. Example:
 
@@ -59,6 +58,7 @@ Configure these GitHub secrets:
 - `AZURE_CLIENT_ID`
 - `AZURE_TENANT_ID`
 - `AZURE_SUBSCRIPTION_ID`
+- `GHCR_PULL_TOKEN` — classic GitHub PAT with `read:packages` for the private GHCR pull secret
 - `MET_USER_AGENT` for the Bicep `metUserAgent` secure parameter
 - `VAPID_PUBLIC_KEY` for the Bicep `vapidPublicKey` secure parameter
 - `VAPID_PRIVATE_KEY` for the Bicep `vapidPrivateKey` secure parameter
@@ -69,6 +69,3 @@ Configure these GitHub variables:
 - `AZURE_RESOURCE_GROUP` for the target resource group
 - `LOCATION` (optional, defaults to `norwayeast`)
 - `NAME_PREFIX` (optional, defaults to `nordlys`)
-- `ACR_NAME` (optional safety override; if set, it must equal the Bicep-derived registry name)
-
-The workflow derives the ACR name with the same expression as `main.bicep`: `take('${toLower(replace(namePrefix, '-', ''))}acr${uniqueString(resourceGroup().id)}', 50)`.

@@ -1,64 +1,50 @@
-# Migrating the container registry to private GHCR
+# Container registry (GHCR)
 
-The deployed image is moving from Azure Container Registry Basic (`nordlysacreeyobitljk4fq.azurecr.io/nordlys/app`) to GitHub Container Registry at `ghcr.io/webmaxru/nordlys-i-natt`.
+The deployed image lives in **GitHub Container Registry**: `ghcr.io/webmaxru/nordlys-i-natt`.
+The package is **private** — it contains the app source, but **no secrets** are baked in (VAPID keys,
+the Table Storage connection string, and `MET_USER_AGENT` are injected at runtime as Container Apps
+secrets). GHCR has a free allowance for private packages, so there is **no always-on registry cost**.
 
-## Why migrate
+## Pull credentials (private image)
 
-ACR Basic has no free tier and costs about **53 NOK/month** for this app. GHCR has a free allowance for private packages, so it removes that always-on registry cost while keeping the repository and image private.
+Because the image is private, Azure Container Apps pull it with a **GitHub Personal Access Token**
+stored as a registry secret:
 
-## Private vs public image
+- The **Container App** and the **Container Apps Job** each have a `ghcr.io` registry entry with
+  username `webmaxru` and a `registry-password` secret holding the PAT.
+- In CI (`.github/workflows/deploy.yml`), the pull token comes from the repo secret
+  **`GHCR_PULL_TOKEN`** (a classic PAT with `read:packages`); the build-and-push step uses the
+  built-in `GITHUB_TOKEN`.
 
-Keep the image **private**. A private GHCR image requires a GitHub PAT as the Azure Container App pull secret, but it avoids exposing the package. A public image would be credential-free for Azure pulls, but the owner already chose to keep the repo private.
+Create a token at <https://github.com/settings/tokens> — a classic PAT with `read:packages` (and
+`write:packages` too if you also push images from your machine).
 
-No secrets should be baked into the image: VAPID keys, connection strings, and `MET_USER_AGENT` are injected at runtime through Container Apps secrets and environment variables.
-
-## Create the PAT
-
-Create a classic GitHub PAT at <https://github.com/settings/tokens> for the account that owns or can access `webmaxru/nordlys-i-natt`.
-
-Required scopes for the migration script:
-
-- `read:packages`
-- `write:packages`
-
-For CI deployments, add repository secret `GHCR_PULL_TOKEN` with at least `read:packages`; this becomes the long-lived Container Apps pull secret. The workflow uses `GITHUB_TOKEN` only for the build-and-push step.
-
-## Run the one-time cutover
-
-From Windows PowerShell in the repository root:
+## Build, push, deploy (manual, from PowerShell)
 
 ```powershell
-./scripts/migrate-to-ghcr.ps1 -GitHubPat <classic-pat>
+$Image = "ghcr.io/webmaxru/nordlys-i-natt"; $SHA = git rev-parse --short HEAD
+$Pat | docker login ghcr.io -u webmaxru --password-stdin
+docker build -t "${Image}:$SHA" -t "${Image}:latest" .
+docker push "${Image}:$SHA"; docker push "${Image}:latest"
+
+# point the live Container App + Job at the new image
+az containerapp update     -n nordlys-app-eeyobitljk4fq -g rg-nordlys --image "${Image}:$SHA"
+az containerapp job update  -n nordlys-job-eeyobitljk4fq -g rg-nordlys --image "${Image}:$SHA"
 ```
 
-After confirming production is healthy and the old ACR is no longer needed:
+If a Container App/Job registry credential ever needs (re)setting:
 
 ```powershell
-./scripts/migrate-to-ghcr.ps1 -GitHubPat <classic-pat> -DeleteAcr
+az containerapp registry set     -n nordlys-app-eeyobitljk4fq -g rg-nordlys --server ghcr.io --username webmaxru --password <pat>
+az containerapp job registry set  -n nordlys-job-eeyobitljk4fq -g rg-nordlys --server ghcr.io --username webmaxru --password <pat>
 ```
 
-`-DeleteAcr` prompts for confirmation unless `-Force` is also supplied. The script builds and pushes both `:<git-sha>` and `:latest`, configures the Container App and Container Apps Job to pull from private GHCR, updates their images, then verifies:
+## Free-tier limits and pruning
 
-- <https://nordlys.isainative.dev/api/health>
-- <https://nordlys.isainative.dev/>
+Private GHCR packages count toward GitHub Packages storage and data-transfer quotas (GitHub Free
+includes a small allowance — roughly 500 MB storage and 1 GB/month transfer; paid plans include
+more). Prune old image versions regularly to stay within the free allowance:
 
-## GHCR free-tier limits and pruning
-
-Private GHCR packages count toward GitHub Packages storage and data-transfer quotas. GitHub Free currently includes a small private-package allowance (for example, 500 MB storage and 1 GB/month transfer for personal/free accounts), while paid plans include higher allowances. Public packages do not count the same way, but this project intentionally keeps the image private.
-
-Prune old image versions regularly from the repository package page to stay within the free allowance:
-
-- Repository package page: <https://github.com/webmaxru/nordlys-i-natt/pkgs/container/nordlys-i-natt>
-- GitHub docs: <https://docs.github.com/en/packages/learn-github-packages/deleting-a-package-version>
-- Billing/limits docs: <https://docs.github.com/en/billing/managing-billing-for-github-packages/about-billing-for-github-packages>
-
-## Rollback
-
-If health checks fail after switching to GHCR, re-point the Container App and Job to the previous ACR image and registry credentials. The old ACR should not be deleted until GHCR health is green.
-
-Example rollback image updates, after restoring ACR registry credentials:
-
-```powershell
-az containerapp update -n nordlys-app-eeyobitljk4fq -g rg-nordlys --image nordlysacreeyobitljk4fq.azurecr.io/nordlys/app:<previous-tag>
-az containerapp job update -n nordlys-job-eeyobitljk4fq -g rg-nordlys --image nordlysacreeyobitljk4fq.azurecr.io/nordlys/app:<previous-tag>
-```
+- Package page: <https://github.com/webmaxru/nordlys-i-natt/pkgs/container/nordlys-i-natt>
+- Deleting versions: <https://docs.github.com/en/packages/learn-github-packages/deleting-a-package-version>
+- Billing/limits: <https://docs.github.com/en/billing/managing-billing-for-github-packages/about-billing-for-github-packages>

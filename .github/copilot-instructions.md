@@ -14,7 +14,7 @@ darkness (computed sun elevation). React PWA + Node/Fastify, deployed to Azure C
   - `infra` — Bicep (Container App + cron Job + GHCR registry credentials + Table Storage + Log Analytics + App Insights).
 - **One image, one Container App** serves the API **and** the built SPA (same origin → no web↔api CORS).
 - **Scale-to-zero** (`minReplicas=0`); a separate **Container Apps cron Job** runs the push evaluator.
-- Container registry is migrating from ACR to private GHCR: `ghcr.io/webmaxru/nordlys-i-natt`. Manual cutover is `scripts/migrate-to-ghcr.ps1` and requires a classic GitHub PAT; keep the image private and use a PAT-based pull secret.
+- Container registry is **private GHCR**: `ghcr.io/webmaxru/nordlys-i-natt`. Images are pulled with a PAT-based registry secret (repo secret `GHCR_PULL_TOKEN` in CI); keep the image private. See [docs/registry-ghcr.md](../docs/registry-ghcr.md).
 
 ## Conventions (follow these)
 
@@ -74,9 +74,9 @@ Most pain came from **"works locally, breaks at integration/deploy"**. Highlight
 4. **Bicep `ResourceNotFound` race:** `listKeys(resourceId(...))` creates no dependency. → emit the
    Log Analytics shared key from the module via **`workspace.listKeys()` output**; reference
    `module.outputs.*`. Only reference resources symbolically.
-5. **`az acr build` on Windows** crashes (long `node_modules` paths during tar; cp1252 Unicode in
-   log streaming cancels the run). → build with **local Docker** (or CI on Ubuntu); if forced,
-   use a clean `git archive` dir + `PYTHONUTF8=1`.
+5. **Windows image builds:** build with **local Docker** (Docker Desktop's Linux engine must be
+   running); BuildKit respects `.dockerignore` (skips `node_modules`) and handles long paths/UTF-8.
+   Set `PYTHONUTF8=1` for `az`. Images push to **GHCR**; CI builds on Ubuntu.
 6. **Timeline label overlap** (the "Now" label collided with the "Kp index" axis title). →
    decluttered; **screenshot SVG/chart UIs at real viewports**.
 
