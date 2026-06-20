@@ -35,6 +35,12 @@ darkness (computed sun elevation). React PWA + Node/Fastify, deployed to Azure C
 - Edge/Chromium can quiet or auto-block notification requests because of quiet-request settings,
   abusive/crowd-deny heuristics, low engagement, missing user gesture, or prior denials. See
   [docs/push-notifications.md](../docs/push-notifications.md).
+- `requestPermission()` has THREE results: `granted` → subscribe; `denied` → blocked state; `default`
+  → the request was dismissed/quietly held (Edge/Chrome quiet UI) — this is NOT a hard block, so show
+  "try again" guidance, never the blocked message (treating `default` as `denied` was a real bug).
+- The browser's lock-icon flyout only lists a **Notifications** row after a decision exists; re-enable
+  guidance must point to **Site settings → Notifications → Allow** (or `edge://`/`chrome://settings/content/notifications`),
+  not the quick lock list.
 - iOS/iPadOS Web Push requires an installed PWA on 16.4+; a normal Safari/Chrome tab cannot subscribe
   and should show Add-to-Home-Screen guidance.
 - Backend cadence lives in `apps/api/src/scheduler/evaluate.ts` + `config.quietHours`: Container Apps

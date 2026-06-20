@@ -115,7 +115,10 @@
     "working": "Working …",
     "iosTitle": "Add to Home Screen",
     "ios": "To get alerts on iPhone/iPad, add this app to your Home Screen: tap the Share button, choose ‘Add to Home Screen’, then open it from there.",
-    "blockedHint": "Your browser is blocking notifications — Microsoft Edge sometimes does this automatically. Click the lock icon in the address bar → Notifications → Allow, then reload.",
+    "blockedHint": "Notifications are blocked for this site. Open Site settings → Notifications → Allow, then reload the page.",
+    "dismissedTitle": "Permission wasn’t granted",
+    "dismissedHint": "Your browser didn’t complete the request — Microsoft Edge and Chrome sometimes hold notification prompts quietly. Look for a bell icon in the address bar, or open Site settings → Notifications → Allow, then try again.",
+    "tryAgain": "Try again",
     "subscribedDetail": "We'll alert you about aurora near {{place}}. Unsubscribe below anytime.",
     "subscribedCadence": "At most one alert per dark night, never 02:00–06:00."
   },

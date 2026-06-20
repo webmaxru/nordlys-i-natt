@@ -115,7 +115,10 @@
     "working": "Jobber …",
     "iosTitle": "Legg til på Hjem-skjerm",
     "ios": "For å få varsler på iPhone/iPad må du legge appen til på Hjem-skjermen: trykk på Del-knappen, velg «Legg til på Hjem-skjerm», og åpne den derfra.",
-    "blockedHint": "Nettleseren blokkerer varsler — Microsoft Edge gjør dette noen ganger automatisk. Klikk på hengelåsen i adressefeltet → Varsler → Tillat, og last siden på nytt.",
+    "blockedHint": "Varsler er blokkert for dette nettstedet. Åpne «Innstillinger for nettstedet» → Varsler → Tillat, og last siden på nytt.",
+    "dismissedTitle": "Tillatelse ble ikke gitt",
+    "dismissedHint": "Nettleseren fullførte ikke forespørselen — Microsoft Edge og Chrome holder noen ganger varselforespørsler stille. Se etter et bjelle-ikon i adressefeltet, eller åpne «Innstillinger for nettstedet» → Varsler → Tillat, og prøv igjen.",
+    "tryAgain": "Prøv igjen",
     "subscribedDetail": "Vi varsler deg om nordlys ved {{place}}. Si opp under når som helst.",
     "subscribedCadence": "Maks ett varsel per mørk natt, aldri 02:00–06:00."
   },

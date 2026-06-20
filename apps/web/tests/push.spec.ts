@@ -202,4 +202,27 @@ test.describe('push notifications', () => {
       .toBe(true);
     await expect.poll(() => subscriptionPosted).toBe(true);
   });
+
+  test('shows actionable guidance (not "blocked") when the browser quietly holds the request', async ({
+    page,
+  }) => {
+    let subscriptionPosted = false;
+    // Edge/Chrome quiet UI (or a dismissed prompt) resolves requestPermission to
+    // 'default' — this must NOT be treated as a hard block.
+    await installPushSpies(page, 'default');
+    await mockApp(page, () => {
+      subscriptionPosted = true;
+    });
+
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const section = page.locator('section.notify-button');
+    await expect(section).toBeVisible();
+
+    await section.getByRole('button', { name: /subscribe/i }).click();
+    await section.getByRole('button', { name: /allow notifications/i }).click();
+
+    await expect(section.getByRole('button', { name: /try again/i })).toBeVisible();
+    await expect(section).not.toContainText(/notifications are blocked/i);
+    expect(subscriptionPosted).toBe(false);
+  });
 });

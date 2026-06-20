@@ -26,8 +26,18 @@ The `Allow notifications` button in the explain step is the **only** caller of
 button handler so the browser sees a real user gesture and a clear user intent.
 
 After a successful subscription, the UI shows the notification cadence and an `Unsubscribe` button.
-If permission is denied, the UI enters a blocked state and gives short browser-setting guidance for
-re-enabling notifications.
+
+`Notification.requestPermission()` has **three** outcomes, and the app treats them differently:
+
+- `granted` → subscribe and show the subscribed state.
+- `denied` (the user actively blocked) → the **blocked** state with re-enable guidance.
+- `default` → the request was **dismissed or quietly held** by the browser (Edge/Chrome quiet UI). This
+  is **not** a hard block, so the app shows a separate “permission wasn’t granted” state with a
+  **Try again** button and a pointer to Site settings — never the misleading “blocked” message.
+
+> Pitfall (fixed June 2026): treating a `default` result as `denied` makes a quietly-held Edge request
+> look permanently blocked, and the blocked hint then points at a **Notifications** row that the browser
+> does not show until a decision exists (see below).
 
 ```mermaid
 stateDiagram-v2
@@ -35,8 +45,10 @@ stateDiagram-v2
   idle --> explain: Subscribe / supported browser
   idle --> install: Subscribe / iOS tab
   idle --> unsupported: Subscribe / unsupported
-  explain --> subscribed: Allow notifications / granted + subscribed
-  explain --> blocked: Allow notifications / denied
+  explain --> subscribed: Allow / granted + subscribed
+  explain --> blocked: Allow / denied
+  explain --> dismissed: Allow / default (quieted or dismissed)
+  dismissed --> explain: Try again
   subscribed --> idle: Unsubscribe
 ```
 
@@ -66,17 +78,21 @@ them only after the user first chooses `Subscribe`, reads the in-UI explanation,
 engagement signal, avoids surprising prompts, and reduces the chance that Edge/Chromium quiet-request
 or abusive-notification heuristics classify the site negatively.
 
-### Re-enabling notifications in Microsoft Edge
+### Re-enabling notifications (Edge & Chrome)
 
-If Edge has blocked the origin, users can re-enable it with either path:
+**Important:** the **Notifications** row does **not** appear in the address-bar lock/site flyout until
+the origin has an actual notification decision (granted or denied). Until then — including when a
+request was only *quieted* (`default`) — there is no Notifications toggle there (the flyout still shows
+Location, cookies, etc., but no Notifications). The reliable path is the full **Site settings** page:
 
-1. Open `https://nordlys.isainative.dev`, select the address-bar lock icon, set
-   **Notifications** to **Allow**, then reload.
-2. Or open **Settings → Cookies and site permissions → Notifications**, turn off
-   **Quiet notification requests** if needed, and remove the site from the **Block** list.
+- **Microsoft Edge**: lock icon → **Site settings** → **Notifications** → **Allow**, then reload; or
+  open `edge://settings/content/notifications`, turn off **Quiet notification requests** if needed, and
+  add the origin under **Allow**.
+- **Google Chrome**: lock/tune icon → **Site settings** → **Notifications** → **Allow**, then reload;
+  or open `chrome://settings/content/notifications` and add the origin under **Allow**.
 
-The app's blocked-state hint should surface the short version: use the lock icon or Edge notification
-settings to allow notifications, then reload.
+The app's `dismissed` and `blocked` hints surface the short version (look for a bell icon in the
+address bar, or open **Site settings → Notifications → Allow**, then reload / try again).
 
 ## iOS and Safari constraints
 
@@ -130,7 +146,9 @@ properties:
 - no subscription `POST` on initial page load;
 - no `Notification.requestPermission()` on initial page load;
 - no `PushManager.subscribe()` on initial page load;
-- a positive control where a click triggers permission and subscription.
+- a positive control where a click triggers permission and subscription;
+- a `default` (quieted/dismissed) result shows the actionable “try again” guidance, **not** the blocked
+  state, and does not subscribe.
 
 Run the web push tests with:
 

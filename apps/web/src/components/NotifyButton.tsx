@@ -13,7 +13,7 @@ import { trackEvent } from '../lib/analytics';
 import { useAppState } from '../state/AppStateContext';
 import './NotifyButton.css';
 
-type NotifyStep = 'idle' | 'explain' | 'install' | 'unsupported';
+type NotifyStep = 'idle' | 'explain' | 'install' | 'unsupported' | 'dismissed';
 
 export function NotifyButton() {
   const { i18n, t } = useTranslation();
@@ -76,22 +76,30 @@ export function NotifyButton() {
     setWorking(true);
     setFeedback(null);
     try {
+      // The native dialog resolves 'granted', 'denied', or 'default'. Edge and
+      // Chrome "quiet" the request (no modal, just a bell icon) and resolve
+      // 'default' when the user doesn't act — that is NOT a hard block, so we
+      // must not treat it as 'denied'.
       const result = await Notification.requestPermission();
       setPermission(result);
-      if (result !== 'granted') {
-        setEnabled(false);
-        setPermission('denied');
+
+      if (result === 'granted') {
+        await subscribeToPush(selectedLocation, i18n.resolvedLanguage ?? i18n.language);
+        setEnabled(true);
         setStep('idle');
+        trackEvent('notify_opt_in');
+        setFeedback(t('notify.success', { place: selectedLocation.name }));
         return;
       }
 
-      await subscribeToPush(selectedLocation, i18n.resolvedLanguage ?? i18n.language);
-      setEnabled(true);
-      setStep('idle');
-      trackEvent('notify_opt_in');
-      setFeedback(t('notify.success', { place: selectedLocation.name }));
+      setEnabled(false);
+      // 'denied' renders the blocked state (gated on permission === 'denied');
+      // 'default' (dismissed / quietly held by the browser) gets its own
+      // actionable guidance instead of a misleading "blocked" message.
+      setStep(result === 'denied' ? 'idle' : 'dismissed');
     } catch {
       setEnabled(false);
+      setStep('idle');
       setFeedback(t('notify.error'));
     } finally {
       setWorking(false);
@@ -219,6 +227,42 @@ export function NotifyButton() {
         <div className="notify-button__actions">
           <button
             className="secondary-button"
+            type="button"
+            onClick={() => {
+              setFeedback(null);
+              setStep('idle');
+            }}
+          >
+            {t('notify.notNow')}
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  if (step === 'dismissed') {
+    return (
+      <section className="notify-button notify-button--dismissed">
+        <div className="notify-button__content">
+          <strong>{t('notify.dismissedTitle')}</strong>
+          <p>{t('notify.dismissedHint')}</p>
+          {statusText ? <p className="notify-button__feedback">{statusText}</p> : null}
+        </div>
+        <div className="notify-button__actions">
+          <button
+            className="primary-button"
+            disabled={working}
+            type="button"
+            onClick={() => {
+              setFeedback(null);
+              setStep('explain');
+            }}
+          >
+            {t('notify.tryAgain')}
+          </button>
+          <button
+            className="secondary-button"
+            disabled={working}
             type="button"
             onClick={() => {
               setFeedback(null);
