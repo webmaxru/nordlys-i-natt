@@ -65,8 +65,7 @@
   fill: rgba(154, 166, 192, 0.14);
 }
 
-.timeline__cloud-line,
-.timeline__legend-line {
+.timeline__cloud-line {
   stroke: var(--muted);
   stroke-width: 3;
 }
@@ -139,26 +138,40 @@
   gap: 0.35rem;
 }
 
-.timeline__legend-dot {
+.timeline__legend-bar {
   display: inline-block;
-  width: 0.7rem;
-  height: 0.7rem;
-  border-radius: 999px;
+  box-sizing: border-box;
+  width: 0.5rem;
+  height: 0.95rem;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--go), var(--maybe), var(--no));
 }
 
-.timeline__legend-dot--visible {
-  border: 2px solid var(--fg);
+.timeline__legend-bar--visible {
   background: var(--go);
+  border: 1.5px solid var(--fg);
 }
 
-.timeline__legend-dot--dark {
-  background: rgba(110, 168, 254, 0.35);
+.timeline__legend-band {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 3px;
+  background: rgba(110, 168, 254, 0.22);
 }
 
 .timeline__legend-line {
   display: inline-block;
   width: 1rem;
   height: 0;
+  border-top: 3px solid var(--muted);
+}
+
+.timeline__hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
 }
 
 .timeline__skeleton-chart {

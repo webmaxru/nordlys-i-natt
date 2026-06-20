@@ -210,7 +210,7 @@ export function Timeline() {
     <section className="panel timeline" aria-labelledby="timeline-title">
       <div className="timeline__header">
         <div>
-          <p className="eyebrow">{t('timeline.darkness')}</p>
+          <p className="eyebrow">{t('timeline.chance')}</p>
           <h2 id="timeline-title">{t('timeline.title')}</h2>
         </div>
         <span className="timeline__required">
@@ -355,18 +355,23 @@ export function Timeline() {
 
       <div className="timeline__legend" aria-hidden="true">
         <span>
-          <i className="timeline__legend-dot timeline__legend-dot--visible" />
-          {t('timeline.visibleLegend')}
+          <i className="timeline__legend-bar" />
+          {t('timeline.strengthLegend')}
         </span>
         <span>
-          <i className="timeline__legend-dot timeline__legend-dot--dark" />
-          {t('timeline.darkLegend')}
+          <i className="timeline__legend-bar timeline__legend-bar--visible" />
+          {t('timeline.visibleLegend')}
         </span>
         <span>
           <i className="timeline__legend-line" />
           {t('timeline.clouds')}
         </span>
+        <span>
+          <i className="timeline__legend-band" />
+          {t('timeline.darkLegend')}
+        </span>
       </div>
+      <p className="timeline__hint">{t('timeline.readHint')}</p>
     </section>
   );
 }
