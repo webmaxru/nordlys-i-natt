@@ -339,13 +339,6 @@ export function Timeline() {
             y1={chart.top - 6}
             y2={chart.bottom + 10}
           />
-          <text
-            className="timeline__now-label"
-            x={Math.min(timeline.nowX + 6, chart.left + chartWidth - 28)}
-            y={chart.top - 12}
-          >
-            {t('timeline.now')}
-          </text>
           <text className="timeline__axis-title" x={chart.left} y={chart.top - 12}>
             {t('timeline.kp')}
           </text>
@@ -356,17 +349,6 @@ export function Timeline() {
             textAnchor="end"
           >
             {t('timeline.clouds')}
-          </text>
-          <text className="timeline__time-label" x={chart.left} y={chart.bottom + 32}>
-            {formatLocalHour(new Date(timeline.start).toISOString(), locale)}
-          </text>
-          <text
-            className="timeline__time-label"
-            x={chart.left + chartWidth}
-            y={chart.bottom + 32}
-            textAnchor="end"
-          >
-            {formatLocalHour(new Date(timeline.end).toISOString(), locale)}
           </text>
         </g>
       </svg>
