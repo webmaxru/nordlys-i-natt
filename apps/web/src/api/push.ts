@@ -20,6 +20,27 @@ export function isPushSupported(): boolean {
   );
 }
 
+/** iOS / iPadOS (incl. iPadOS reporting a desktop Safari user-agent). */
+export function isIos(): boolean {
+  if (typeof navigator === 'undefined') {
+    return false;
+  }
+  const ua = navigator.userAgent;
+  const iPadOsDesktop =
+    /Macintosh/.test(ua) && typeof document !== 'undefined' && 'ontouchend' in document;
+  return /iP(hone|od|ad)/.test(ua) || iPadOsDesktop;
+}
+
+/** Running as an installed PWA (standalone display mode / iOS home-screen app). */
+export function isStandalone(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  const standaloneMedia = window.matchMedia?.('(display-mode: standalone)').matches === true;
+  const iosStandalone = (navigator as Navigator & { standalone?: boolean }).standalone === true;
+  return standaloneMedia || iosStandalone;
+}
+
 export function getPermission(): NotificationPermission {
   if (!isPushSupported()) {
     return 'denied';

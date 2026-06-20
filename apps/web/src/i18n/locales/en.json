@@ -93,7 +93,10 @@
     "success": "You’ll get alerts for {{place}}",
     "error": "Could not enable notifications",
     "needLocation": "Pick a location first",
-    "working": "Working …"
+    "working": "Working …",
+    "iosTitle": "Add to Home Screen",
+    "ios": "On iPhone/iPad, add the app to your Home Screen to get alerts: tap the Share button, choose ‘Add to Home Screen’, then open the app from there.",
+    "blockedHint": "Click the padlock in the address bar → Notifications → Allow, then reload the page."
   },
   "consent": {
     "title": "Privacy",

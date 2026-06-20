@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   getLocalSubscriptionId,
   getPermission,
+  isIos,
   isPushSupported,
+  isStandalone,
   subscribeToPush,
   unsubscribeFromPush,
 } from '../api/push';
@@ -14,98 +16,116 @@ import './NotifyButton.css';
 export function NotifyButton() {
   const { i18n, t } = useTranslation();
   const { selectedLocation } = useAppState();
+
+  const supported = isPushSupported();
+  // iOS only allows Web Push from an installed (home-screen) PWA, never a browser tab.
+  const iosNeedsInstall = !supported && isIos() && !isStandalone();
+
+  const [permission, setPermission] = useState<NotificationPermission>(getPermission());
   const [enabled, setEnabled] = useState(false);
   const [working, setWorking] = useState(false);
-  const [message, setMessage] = useState(t('notify.description'));
-  const supported = isPushSupported();
+  const [feedback, setFeedback] = useState<string | null>(null);
 
+  const refresh = useCallback(() => {
+    const current = getPermission();
+    setPermission(current);
+    setEnabled(Boolean(getLocalSubscriptionId()) && current === 'granted');
+  }, []);
+
+  // Re-check on mount and whenever the user returns (they may have changed
+  // browser/OS notification settings in another tab/window).
   useEffect(() => {
-    if (!supported) {
-      setEnabled(false);
-      setMessage(t('notify.unsupported'));
-      return;
-    }
-
-    const permission = getPermission();
-    setEnabled(Boolean(getLocalSubscriptionId()) && permission === 'granted');
-    setMessage(
-      permission === 'denied' ? t('notify.blocked') : t('notify.description'),
-    );
-  }, [supported, t]);
+    refresh();
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') refresh();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', refresh);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', refresh);
+    };
+  }, [refresh]);
 
   async function handleToggle() {
-    if (!supported) {
-      setMessage(t('notify.unsupported'));
-      return;
-    }
-
     if (!selectedLocation) {
-      setMessage(t('notify.needLocation'));
+      setFeedback(t('notify.needLocation'));
       return;
     }
 
     setWorking(true);
-    setMessage(t('notify.working'));
-
+    setFeedback(null);
     try {
       if (enabled) {
         await unsubscribeFromPush();
         setEnabled(false);
-        setMessage(t('notify.description'));
         return;
       }
 
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') {
+      const result = await Notification.requestPermission();
+      setPermission(result);
+      if (result !== 'granted') {
         setEnabled(false);
-        setMessage(t('notify.blocked'));
         return;
       }
 
-      await subscribeToPush(
-        selectedLocation,
-        i18n.resolvedLanguage ?? i18n.language,
-      );
+      await subscribeToPush(selectedLocation, i18n.resolvedLanguage ?? i18n.language);
       setEnabled(true);
       trackEvent('notify_opt_in');
-      setMessage(t('notify.success', { place: selectedLocation.name }));
+      setFeedback(t('notify.success', { place: selectedLocation.name }));
     } catch {
       setEnabled(false);
-      setMessage(t('notify.error'));
+      setFeedback(t('notify.error'));
     } finally {
       setWorking(false);
     }
   }
 
-  const buttonDisabled = working || !supported || !selectedLocation;
-  const status = !supported
-    ? t('notify.unsupported')
-    : !selectedLocation
-      ? t('notify.needLocation')
-      : enabled
-        ? t('notify.enabled')
-        : t('notify.prompt');
+  let heading: string;
+  let detail = '';
+  if (iosNeedsInstall) {
+    heading = t('notify.iosTitle');
+    detail = t('notify.ios');
+  } else if (!supported) {
+    heading = t('notify.unsupported');
+  } else if (!selectedLocation) {
+    heading = t('notify.needLocation');
+    detail = t('notify.description');
+  } else if (permission === 'denied') {
+    heading = t('notify.blocked');
+    detail = t('notify.blockedHint');
+  } else if (enabled) {
+    heading = t('notify.enabled');
+    detail = t('notify.description');
+  } else {
+    heading = t('notify.prompt');
+    detail = t('notify.description');
+  }
+
+  if (working) detail = t('notify.working');
+  else if (feedback) detail = feedback;
+
+  const showButton = supported && !iosNeedsInstall;
+  const buttonDisabled = working || !selectedLocation || (permission === 'denied' && !enabled);
 
   return (
     <section className="notify-button">
       <div>
-        <strong>{status}</strong>
-        <p>{message}</p>
+        <strong>{heading}</strong>
+        {detail ? <p>{detail}</p> : null}
       </div>
-      <button
-        className="secondary-button"
-        disabled={buttonDisabled}
-        type="button"
-        onClick={() => {
-          void handleToggle();
-        }}
-      >
-        {working
-          ? t('notify.working')
-          : enabled
-            ? t('notify.disable')
-            : t('notify.enable')}
-      </button>
+      {showButton ? (
+        <button
+          className="secondary-button"
+          disabled={buttonDisabled}
+          type="button"
+          onClick={() => {
+            void handleToggle();
+          }}
+        >
+          {working ? t('notify.working') : enabled ? t('notify.disable') : t('notify.enable')}
+        </button>
+      ) : null}
     </section>
   );
 }
