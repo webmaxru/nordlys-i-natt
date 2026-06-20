@@ -10,6 +10,13 @@ Aurora go/no-go for Norway. Tells you whether you can see the northern lights
 Output: a **GO / MAYBE / NO** verdict + best hour + a 3-day timeline + an aurora-oval
 map + a shareable result card, plus optional push notifications when conditions turn good.
 
+## Documentation
+
+Detailed technical docs live in [`docs/`](./docs/README.md) — architecture, the verdict
+engine, external-API gotchas, backend, frontend, deployment runbook, and a
+[troubleshooting / top-challenges](./docs/troubleshooting.md) guide. Contributor conventions and
+a distilled challenges summary are in [`.github/copilot-instructions.md`](./.github/copilot-instructions.md).
+
 ## Monorepo layout
 
 | Path | What |
