@@ -5,6 +5,7 @@ import { ConsentBanner } from './components/ConsentBanner';
 import { Layout } from './components/Layout';
 import { LocationPicker } from './components/LocationPicker';
 import { NotifyButton } from './components/NotifyButton';
+import { PwaReloadPrompt } from './components/PwaReloadPrompt';
 import { ShareCard } from './components/ShareCard';
 import { Timeline } from './components/Timeline';
 import { VerdictGauge } from './components/VerdictGauge';
@@ -21,6 +22,7 @@ export default function App() {
         <NotifyButton />
       </Layout>
       <ConsentBanner />
+      <PwaReloadPrompt />
     </AppStateProvider>
   );
 }

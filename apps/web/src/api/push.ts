@@ -61,6 +61,7 @@ export async function subscribeToPush(
   location: NamedLocation,
   lang: string,
 ): Promise<{ id: string }> {
+  // Must only be called from an explicit user gesture after notification permission is requested.
   const key = await getPublicKey();
   const registration = await navigator.serviceWorker.ready;
   const subscription = await registration.pushManager.subscribe({

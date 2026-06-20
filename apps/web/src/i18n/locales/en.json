@@ -57,7 +57,14 @@
   },
   "footer": {
     "attribution": "Data: MET Norway · NOAA SWPC · Kartverket",
+    "madeBy": "Made in Norway by",
+    "github": "Source on GitHub",
     "privacy": "Privacy"
+  },
+  "pwa": {
+    "updateAvailable": "A new version is available",
+    "reload": "Reload",
+    "dismiss": "Dismiss"
   },
   "timeline": {
     "title": "Next 3 days",

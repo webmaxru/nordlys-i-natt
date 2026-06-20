@@ -502,14 +502,22 @@ button:active:not(:disabled) {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 0.75rem;
   font-size: 0.9rem;
+}
+
+.attribution-footer__credit {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .attribution-footer a {
   color: var(--fg);
   font-weight: 800;
+  text-underline-offset: 0.2em;
 }
 
 @media (min-width: 680px) {

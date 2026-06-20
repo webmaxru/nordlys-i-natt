@@ -57,7 +57,14 @@
   },
   "footer": {
     "attribution": "Data: MET Norway · NOAA SWPC · Kartverket",
+    "madeBy": "Laget i Norge av",
+    "github": "Kildekode på GitHub",
     "privacy": "Personvern"
+  },
+  "pwa": {
+    "updateAvailable": "En ny versjon er tilgjengelig",
+    "reload": "Last inn på nytt",
+    "dismiss": "Lukk"
   },
   "timeline": {
     "title": "Neste 3 døgn",

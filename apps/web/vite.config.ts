@@ -21,7 +21,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       manifest: {
         name: 'Nordlys i natt?',
         short_name: 'Nordlys',

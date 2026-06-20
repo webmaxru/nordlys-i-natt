@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { registerSW } from 'virtual:pwa-register';
 import './i18n';
 import './styles.css';
 import App from './App';
@@ -53,7 +52,3 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 initAnalytics();
 window.addEventListener('appinstalled', () => trackEvent('pwa_installed'));
-
-if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-  registerSW({ immediate: true });
-}
