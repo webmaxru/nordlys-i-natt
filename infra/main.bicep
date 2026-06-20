@@ -77,8 +77,6 @@ module registry 'modules/registry.bicep' = {
   }
 }
 
-var workspaceSharedKey = listKeys(resourceId('Microsoft.OperationalInsights/workspaces', workspaceName), '2022-10-01').primarySharedKey
-
 // TODO: Replace ACR admin credentials with AcrPull via managed identity after
 // validating a two-phase or user-assigned identity deployment flow for image pulls.
 module containerApp 'modules/containerapp.bicep' = {
@@ -91,7 +89,7 @@ module containerApp 'modules/containerapp.bicep' = {
     acrName: registry.outputs.registryName
     acrLoginServer: registry.outputs.loginServer
     logAnalyticsCustomerId: monitoring.outputs.workspaceCustomerId
-    logAnalyticsSharedKey: workspaceSharedKey
+    logAnalyticsSharedKey: monitoring.outputs.workspaceSharedKey
     minReplicas: minReplicas
     maxReplicas: maxReplicas
     cpu: cpu
