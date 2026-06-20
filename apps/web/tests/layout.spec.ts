@@ -91,9 +91,15 @@ function hasHorizontalOverflow(page: Page) {
   );
 }
 
-// `defaultBrowserType` cannot be set in a describe-level test.use(); keep the
-// rest of the device profile (viewport / userAgent / isMobile / touch).
-const { defaultBrowserType: _iphoneBrowser, ...IPHONE_13 } = devices['iPhone 13'];
+// `defaultBrowserType` cannot be set in a describe-level test.use(), so pick
+// only the layout-relevant fields from the device profile.
+const IPHONE_13 = {
+  viewport: devices['iPhone 13'].viewport,
+  userAgent: devices['iPhone 13'].userAgent,
+  deviceScaleFactor: devices['iPhone 13'].deviceScaleFactor,
+  isMobile: devices['iPhone 13'].isMobile,
+  hasTouch: devices['iPhone 13'].hasTouch,
+};
 
 test.describe('mobile layout (iPhone)', () => {
   test.use(IPHONE_13);
