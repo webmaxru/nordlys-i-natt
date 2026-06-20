@@ -27,7 +27,15 @@ container serves.
 - `api/kartverket.ts` — `searchPlaces(q)`, `reverseGeocode(lat,lon)` (direct, CORS-open).
 - `api/push.ts` — subscribe/unsubscribe via the service worker's `pushManager`.
 - `hooks/` — `useForecast(location)`, `useOvationGrid(bbox)`, `usePlaceSearch()` (debounced),
-  `useGeolocation()` (fires only on explicit user action).
+  `useGeolocation()` (fires only on explicit user action; exposes a typed error `reason` so the
+  UI can give actionable, iOS-aware guidance when location is blocked).
+- **Cache persistence** — `main.tsx` wraps the app in `PersistQueryClientProvider`
+  (`@tanstack/react-query-persist-client` + a localStorage sync persister, key
+  `nordlys.query-cache`). On launch the last forecast is rehydrated synchronously so the verdict
+  shows **immediately**, then revalidates in the background (stale-while-revalidate). Only
+  `forecast` queries are persisted; `maxAge` 12h, `buster` `nordlys-forecast-v1`, `gcTime` 24h.
+  `VerdictGauge` keeps showing cached data if a refresh fails (it only errors when there is no
+  data at all), so a stale/offline start still shows the last-known status.
 
 ## Components (`components/`)
 
