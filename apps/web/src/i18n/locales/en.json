@@ -28,6 +28,8 @@
     "title": "Where will you watch?",
     "selected": "Selected location",
     "noneSelected": "None selected",
+    "changeLocation": "Change location",
+    "done": "Done",
     "useMyLocation": "Use my location",
     "requesting": "Getting location …",
     "resolving": "Finding nearest place …",
@@ -102,7 +104,7 @@
     "needLocation": "Pick a location first",
     "working": "Working …",
     "iosTitle": "Add to Home Screen",
-    "ios": "On iPhone/iPad, add the app to your Home Screen to get alerts: tap the Share button, choose ‘Add to Home Screen’, then open the app from there.",
+    "ios": "To get alerts on iPhone/iPad, add this app to your Home Screen: tap the Share button, choose ‘Add to Home Screen’, then open it from there.",
     "blockedHint": "Click the padlock in the address bar → Notifications → Allow, then reload the page."
   },
   "consent": {

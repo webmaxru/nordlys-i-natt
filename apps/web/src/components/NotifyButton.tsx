@@ -84,7 +84,7 @@ export function NotifyButton() {
   let heading: string;
   let detail = '';
   if (iosNeedsInstall) {
-    heading = t('notify.iosTitle');
+    heading = t('notify.prompt');
     detail = t('notify.ios');
   } else if (!supported) {
     heading = t('notify.unsupported');

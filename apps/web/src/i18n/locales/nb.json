@@ -28,6 +28,8 @@
     "title": "Hvor skal du se?",
     "selected": "Valgt sted",
     "noneSelected": "Ingen valgt",
+    "changeLocation": "Bytt sted",
+    "done": "Ferdig",
     "useMyLocation": "Bruk min posisjon",
     "requesting": "Henter posisjon …",
     "resolving": "Finner nærmeste sted …",
@@ -102,7 +104,7 @@
     "needLocation": "Velg et sted først",
     "working": "Jobber …",
     "iosTitle": "Legg til på Hjem-skjerm",
-    "ios": "På iPhone/iPad må appen legges til på Hjem-skjermen for å kunne sende varsler: trykk Del-knappen og velg «Legg til på Hjem-skjerm», og åpne appen derfra.",
+    "ios": "For å få varsler på iPhone/iPad må du legge appen til på Hjem-skjermen: trykk på Del-knappen, velg «Legg til på Hjem-skjerm», og åpne den derfra.",
     "blockedHint": "Klikk på hengelåsen i adressefeltet → Varsler → Tillat, og last siden på nytt."
   },
   "consent": {

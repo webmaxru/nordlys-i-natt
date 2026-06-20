@@ -21,8 +21,12 @@ interface KartverketPoint {
 interface KartverketPlace {
   kommuner?: KartverketRegion[];
   fylker?: KartverketRegion[];
+  navnestatus?: string;
   representasjonspunkt?: KartverketPoint;
   stedsnavn?: KartverketPlaceName[];
+  'skrivemåte'?: string;
+  'språk'?: string;
+  stedstatus?: string;
 }
 
 interface KartverketResponse {
@@ -34,6 +38,11 @@ function firstParamValue(value: string | undefined): string | undefined {
 }
 
 function chooseName(place: KartverketPlace): string | undefined {
+  const placeName = place['skrivemåte']?.trim();
+  if (placeName) {
+    return placeName;
+  }
+
   const names = place.stedsnavn ?? [];
   const preferred =
     names.find(
@@ -44,7 +53,7 @@ function chooseName(place: KartverketPlace): string | undefined {
     names.find((name) => name.navnestatus === 'hovednavn') ??
     names[0];
 
-  return preferred?.['skrivemåte'];
+  return preferred?.['skrivemåte']?.trim() || undefined;
 }
 
 function formatRegion(place: KartverketPlace): string | undefined {
@@ -63,7 +72,12 @@ function toNamedLocation(place: KartverketPlace): NamedLocation | null {
   const lat = place.representasjonspunkt?.nord;
   const lon = place.representasjonspunkt?.['øst'];
 
-  if (!name || typeof lat !== 'number' || typeof lon !== 'number') {
+  if (
+    !name ||
+    typeof lat !== 'number' ||
+    typeof lon !== 'number' ||
+    (place.stedstatus !== undefined && place.stedstatus !== 'aktiv')
+  ) {
     return null;
   }
 
@@ -73,6 +87,30 @@ function toNamedLocation(place: KartverketPlace): NamedLocation | null {
     lon,
     region: formatRegion(place),
   };
+}
+
+function normalizeSearchText(value: string): string {
+  return value
+    .toLocaleLowerCase('nb-NO')
+    .replaceAll('æ', 'ae')
+    .replaceAll('ø', 'o')
+    .replaceAll('å', 'a')
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '');
+}
+
+function relevanceRank(place: NamedLocation, normalizedQuery: string): number {
+  const normalizedName = normalizeSearchText(place.name);
+
+  if (normalizedName === normalizedQuery) {
+    return 0;
+  }
+
+  if (normalizedName.startsWith(normalizedQuery)) {
+    return 1;
+  }
+
+  return 2;
 }
 
 async function fetchKartverket(path: string): Promise<KartverketResponse> {
@@ -104,6 +142,7 @@ export async function searchPlaces(query: string): Promise<NamedLocation[]> {
   });
   const data = await fetchKartverket(`/navn?${params.toString()}`);
   const seen = new Set<string>();
+  const normalizedQuery = normalizeSearchText(trimmed);
 
   return (data.navn ?? [])
     .map(toNamedLocation)
@@ -119,7 +158,14 @@ export async function searchPlaces(query: string): Promise<NamedLocation[]> {
 
       seen.add(key);
       return true;
-    });
+    })
+    .map((place, index) => ({
+      index,
+      place,
+      rank: relevanceRank(place, normalizedQuery),
+    }))
+    .sort((a, b) => a.rank - b.rank || a.index - b.index)
+    .map(({ place }) => place);
 }
 
 export async function reverseGeocode(

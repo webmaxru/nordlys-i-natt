@@ -14,7 +14,7 @@ export function Layout({
   return (
     <div className="app-shell">
       <header className="app-header">
-        <div>
+        <div className="app-header__brand">
           <p className="eyebrow">{t('app.tagline')}</p>
           <h1>{t('app.title')}</h1>
         </div>
