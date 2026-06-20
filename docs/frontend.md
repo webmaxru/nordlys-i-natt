@@ -60,8 +60,8 @@ merged into the generated SW via `workbox.importScripts`. Icons + `og-image.png`
 ## SEO / social
 
 `index.html` carries full SEO + Open Graph + Twitter Card meta + JSON-LD, and a generated
-`public/og-image.png` (1200×630). The canonical / `og:url` / `og:image` use the placeholder
-domain `https://nordlys-i-natt.no` — **update to the real domain after wiring DNS**.
+`public/og-image.png` (1200×630). The canonical / `og:url` / `og:image` point to the live domain
+**`https://nordlys.isainative.dev`**.
 
 ## Analytics (`lib/analytics.ts`)
 

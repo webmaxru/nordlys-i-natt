@@ -57,6 +57,5 @@ Data from **MET Norway**, **NOAA SWPC**, and **Kartverket** — see in-app foote
 
 `apps/web/index.html` ships full SEO + Open Graph + Twitter Card meta and JSON-LD,
 with a generated `public/og-image.png` (1200×630), `robots.txt`, and `sitemap.xml`.
-The canonical / `og:url` / `og:image` use the placeholder domain
-`https://nordlys-i-natt.no` — **update these to your real domain after deploy**.
+The canonical / `og:url` / `og:image` point to the live domain **`https://nordlys.isainative.dev`**.
 

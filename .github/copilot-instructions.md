@@ -3,6 +3,7 @@
 Aurora go/no-go for Norway. Tells a user whether they can see the northern lights **tonight,
 from their location**, by combining aurora strength (NOAA SWPC), cloud cover (MET Norway), and
 darkness (computed sun elevation). React PWA + Node/Fastify, deployed to Azure Container Apps.
+**Live: https://nordlys.isainative.dev**
 
 ## Stack & layout
 

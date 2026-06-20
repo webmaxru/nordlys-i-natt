@@ -82,10 +82,30 @@ az containerapp job update -n ${PREFIX}-job-... -g $RG --image $ACR.azurecr.io/n
   federated credential), `MET_USER_AGENT`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`,
   `VAPID_SUBJECT`. **Var:** `AZURE_RESOURCE_GROUP`. See `infra/README.md`.
 
+## Custom domain & TLS (live)
+
+Live at **https://nordlys.isainative.dev** with an Azure **managed certificate** (auto-renews).
+The DNS provider is Cloudflare; the setup that was used:
+
+1. In Cloudflare DNS for the zone, add two records:
+   - **CNAME** `nordlys` → the Container App default FQDN, **DNS only (grey cloud)** — Azure must
+     reach the real origin to validate ownership and issue the cert; Cloudflare's proxy would
+     intercept and present its own certificate.
+   - **TXT** `asuid.nordlys` → the app's `customDomainVerificationId`
+     (`az containerapp show -n <app> -g <rg> --query properties.customDomainVerificationId -o tsv`).
+2. Bind the hostname + a managed cert:
+   ```bash
+   az containerapp hostname add  -n <app> -g <rg> --hostname nordlys.isainative.dev
+   az containerapp hostname bind -n <app> -g <rg> --hostname nordlys.isainative.dev \
+     --environment <env> --validation-method CNAME
+   ```
+3. The SEO `canonical` / `og:url` / `og:image` / `sitemap.xml` already point to this domain.
+
+*Optional:* to front it with Cloudflare's CDN/WAF, switch the CNAME to **Proxied (orange)** **and**
+set Cloudflare **SSL/TLS → Full (strict)**. Currently DNS-only (Azure serves HTTPS directly).
+
 ## Post-deploy TODOs
 
-- Point a **custom domain** at the Container App and update the SEO `og:url` / `canonical` in
-  `apps/web/index.html` (currently the placeholder `nordlys-i-natt.no`).
 - Switch **ACR pull** from admin credentials to a **managed identity + `AcrPull`** role (TODO
   noted in `main.bicep` / `infra/README.md`).
 - Set a **daily cap** on the Log Analytics workspace to stay in the App Insights free tier.
