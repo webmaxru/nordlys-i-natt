@@ -277,9 +277,13 @@ export function NotifyButton() {
   }
 
   return (
-    <section className="notify-button">
+    <section className="notify-button notify-button--cta">
+      <span className="notify-button__icon" aria-hidden="true">
+        🔔
+      </span>
       <div className="notify-button__content">
-        <strong>{t('notify.prompt')}</strong>
+        <strong>{t('notify.ctaTitle')}</strong>
+        <p className="notify-button__detail">{t('notify.ctaDetail')}</p>
         {statusText ? <p className="notify-button__feedback">{statusText}</p> : null}
       </div>
       <div className="notify-button__actions">

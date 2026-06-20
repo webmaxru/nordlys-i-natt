@@ -103,6 +103,8 @@
     "disable": "Unsubscribe",
     "enabled": "Alerts are on",
     "prompt": "Get a heads-up when the aurora is likely overhead.",
+    "ctaTitle": "Free aurora alerts",
+    "ctaDetail": "Instant push the moment the lights are likely overhead.",
     "description": "At most one alert per dark night, never 02:00–06:00.",
     "explain": "Your browser will now ask for permission. You'll get at most one alert per dark night when the lights are likely — never 02:00–06:00. Unsubscribe anytime here.",
     "allow": "Allow notifications",

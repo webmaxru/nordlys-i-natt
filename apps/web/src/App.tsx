@@ -16,10 +16,10 @@ export default function App() {
       <Layout footer={<AttributionFooter />}>
         <LocationPicker />
         <VerdictGauge />
+        <NotifyButton />
         <Timeline />
         <AuroraMap />
         <ShareCard />
-        <NotifyButton />
       </Layout>
       <ConsentBanner />
       <PwaReloadPrompt />

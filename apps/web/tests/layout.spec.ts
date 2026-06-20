@@ -173,9 +173,13 @@ test.describe('mobile layout (iPhone)', () => {
     });
     await mockApp(page);
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    // Wait for the forecast to settle so the gauge reaches its final height
+    // before we interact — the notify CTA now sits directly under the gauge, so
+    // clicking mid-load would chase a shifting target.
+    await page.waitForSelector('section.gauge .gauge__badge');
     const section = page.locator('section.notify-button');
     await section.scrollIntoViewIfNeeded();
-    await expect(section).toContainText(/get a heads-up/i);
+    await expect(section).toContainText(/free aurora alerts/i);
     await expect(section.getByRole('button', { name: /subscribe/i })).toBeVisible();
 
     await section.getByRole('button', { name: /subscribe/i }).click();
@@ -183,6 +187,40 @@ test.describe('mobile layout (iPhone)', () => {
     await expect(section.locator('strong')).toContainText(/add to home screen/i);
     await expect(section).toContainText(/add this app to your home screen/i);
     await expect(section.getByRole('button', { name: /not now/i })).toBeVisible();
+  });
+
+  test('notify opt-in CTA (idle) fits the viewport with no horizontal overflow', async ({
+    page,
+  }) => {
+    // Force the first-visit idle opt-in CTA. Headless Chromium otherwise reports
+    // Notification.permission === 'denied' and renders the blocked card, so the
+    // idle row (a flex layout that previously blew out the grid track) is never
+    // exercised. This guards the regression where the CTA overflowed 390px.
+    await page.addInitScript(() => {
+      try {
+        Object.defineProperty(Notification, 'permission', {
+          configurable: true,
+          get: () => 'default',
+        });
+      } catch {
+        // Some engines disallow redefining the static getter; ignore.
+      }
+    });
+    await mockApp(page);
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('section.gauge .gauge__badge');
+
+    const cta = page.locator('section.notify-button');
+    await expect(cta.getByRole('button', { name: /subscribe/i })).toBeVisible();
+    expect(await hasHorizontalOverflow(page)).toBe(false);
+
+    const fits = await page.evaluate(() => {
+      const el = document.querySelector('section.notify-button')!;
+      return (
+        el.getBoundingClientRect().right <= document.documentElement.clientWidth + 1
+      );
+    });
+    expect(fits).toBe(true);
   });
 });
 

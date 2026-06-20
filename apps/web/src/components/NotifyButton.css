@@ -55,6 +55,79 @@
   border-color: rgb(255 255 255 / 18%);
 }
 
+/* Prominent but slim opt-in CTA shown directly under the verdict (idle state).
+   Stays a single compact row so the Subscribe action fits on the mobile first
+   screen, while reading as a clear "free, instant alerts" highlight. */
+.notify-button--cta {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.7rem;
+  border-color: rgb(110 168 254 / 35%);
+  border-left: 3px solid var(--accent);
+  background:
+    radial-gradient(circle at top left, rgb(110 168 254 / 16%), transparent 60%),
+    var(--bg-elev);
+}
+
+.notify-button--cta .notify-button__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 999px;
+  background: rgb(110 168 254 / 18%);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.notify-button--cta .notify-button__content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.notify-button--cta strong {
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.notify-button--cta .notify-button__detail {
+  margin-top: 0.12rem;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notify-button--cta .notify-button__actions {
+  flex: 0 0 auto;
+}
+
+.notify-button--cta .notify-button__actions .primary-button {
+  width: auto;
+  min-height: 2.4rem;
+  padding-inline: 1.15rem;
+  white-space: nowrap;
+}
+
+@media (min-width: 680px) {
+  .notify-button--cta {
+    gap: 0.9rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .notify-button--cta strong {
+    font-size: 1rem;
+  }
+
+  .notify-button--cta .notify-button__detail {
+    font-size: 0.88rem;
+  }
+}
+
 @media (min-width: 640px) {
   .notify-button {
     align-items: center;

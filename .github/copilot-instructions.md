@@ -46,6 +46,16 @@ darkness (computed sun elevation). React PWA + Node/Fastify, deployed to Azure C
   and should show Add-to-Home-Screen guidance.
 - Backend cadence lives in `apps/api/src/scheduler/evaluate.ts` + `config.quietHours`: Container Apps
   cron `*/20 * * * *`, send only `GO`, at most once per 6h, quiet by default 02:00–06:00 Europe/Oslo.
+- **Prominence:** `NotifyButton` renders in **position #2, directly under `VerdictGauge`** (first screen on
+  mobile + desktop). Its idle state is a **slim accent CTA row** (`.notify-button--cta`: bell badge +
+  `notify.ctaTitle` + `notify.ctaDetail` + `Subscribe`) that must stay one compact row so the verdict
+  remains above it. Other states (explain/install/blocked/…) keep the original card layout.
+- **Gotcha (idle CTA testing + layout):** headless Chromium reports `Notification.permission === 'denied'`,
+  so the component renders the *blocked* card and the idle CTA row is never exercised — spoof
+  `Object.defineProperty(Notification,'permission',{get:()=>'default'})` (or delete `Notification` for the
+  iOS sim) to reach it. The idle flex row's `nowrap` content blew out the `.app-main` grid until it was
+  pinned to `grid-template-columns: minmax(0, 1fr)`; keep that guard. `layout.spec.ts` has a regression
+  test asserting the idle CTA causes no horizontal overflow at 390px.
 
 ## Commands
 

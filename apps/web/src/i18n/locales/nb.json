@@ -103,6 +103,8 @@
     "disable": "Si opp",
     "enabled": "Varsler er på",
     "prompt": "Få et tips når nordlyset trolig er over deg.",
+    "ctaTitle": "Gratis nordlysvarsler",
+    "ctaDetail": "Øyeblikkelig push når nordlyset trolig er over deg.",
     "description": "Maks ett varsel per mørk natt, aldri 02:00–06:00.",
     "explain": "Nettleseren spør deg nå om tillatelse. Du får maks ett varsel per mørk natt når sjansen er god — aldri 02:00–06:00. Du kan når som helst si opp her.",
     "allow": "Tillat varsler",
