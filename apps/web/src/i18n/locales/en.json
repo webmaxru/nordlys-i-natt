@@ -2,5 +2,121 @@
   "app": {
     "title": "Aurora tonight?",
     "tagline": "Can you see the northern lights tonight?"
+  },
+  "verdict": {
+    "GO": {
+      "label": "GO",
+      "subtitle": "Good chances tonight"
+    },
+    "MAYBE": {
+      "label": "MAYBE",
+      "subtitle": "Possible, but conditions are mixed"
+    },
+    "NO": {
+      "label": "NO",
+      "subtitle": "Not likely tonight"
+    }
+  },
+  "reason": {
+    "none": "Conditions look good.",
+    "not_dark": "It will not get dark enough.",
+    "kp_too_low": "The Kp forecast is too low for this location.",
+    "too_cloudy": "Too much cloud cover is forecast."
+  },
+  "location": {
+    "heading": "Location",
+    "title": "Where will you watch?",
+    "selected": "Selected location",
+    "noneSelected": "None selected",
+    "useMyLocation": "Use my location",
+    "requesting": "Getting location …",
+    "resolving": "Finding nearest place …",
+    "geoError": "We could not get your location.",
+    "myLocationName": "My location",
+    "searchLabel": "Search for a place",
+    "searchPlaceholder": "Search for Tromsø, Alta, Oslo …",
+    "searching": "Searching …",
+    "noResults": "No places found.",
+    "presetsHeading": "Quick picks"
+  },
+  "gauge": {
+    "heading": "Forecast",
+    "bestHour": "Best around {{hour}}",
+    "kpCurrentVsRequired": "Kp {{kp}} / needs Kp {{requiredKp}}",
+    "pickLocation": "Pick a location to get tonight’s aurora forecast.",
+    "loading": "Calculating your chances …",
+    "error": "We could not load the forecast right now.",
+    "retry": "Try again"
+  },
+  "footer": {
+    "attribution": "Data: MET Norway · NOAA SWPC · Kartverket",
+    "privacy": "Privacy"
+  },
+  "timeline": {
+    "title": "Next 3 days",
+    "kp": "Kp index",
+    "clouds": "Cloud cover",
+    "darkness": "Darkness",
+    "now": "Now",
+    "visibleLegend": "Aurora visible",
+    "darkLegend": "Dark enough",
+    "cloudPct": "{{pct}}% clouds",
+    "noData": "No data yet",
+    "hourAria": "{{time}}: Kp {{kp}}, {{cloud}}% clouds"
+  },
+  "map": {
+    "title": "Aurora map",
+    "you": "Your location",
+    "oval": "Aurora oval (probability)",
+    "loading": "Loading map …",
+    "intensity": "Intensity",
+    "attribution": "Map: Kartverket · Aurora: NOAA"
+  },
+  "share": {
+    "button": "Share",
+    "title": "Aurora tonight?",
+    "generating": "Creating image …",
+    "copied": "Copied!",
+    "downloaded": "Image saved",
+    "shareError": "Could not share",
+    "caption": "{{verdict}} in {{place}} tonight",
+    "na": "Sharing not supported"
+  },
+  "notify": {
+    "enable": "Notify me about aurora",
+    "disable": "Turn off alerts",
+    "enabled": "Alerts are on",
+    "prompt": "Get notified when aurora is visible here",
+    "description": "We send a push notification when conditions turn good for your location.",
+    "blocked": "Notifications are blocked in your browser",
+    "unsupported": "Your browser does not support notifications",
+    "success": "You’ll get alerts for {{place}}",
+    "error": "Could not enable notifications",
+    "needLocation": "Pick a location first",
+    "working": "Working …"
+  },
+  "consent": {
+    "title": "Privacy",
+    "message": "We use anonymous, cookie-free analytics to improve the app. You can opt out any time.",
+    "accept": "OK",
+    "decline": "Only necessary",
+    "learnMore": "Learn more",
+    "analytics": "Anonymous analytics"
+  },
+  "privacy": {
+    "title": "Privacy",
+    "intro": "This app is built to collect as little data about you as possible.",
+    "whatWeUse": "What we use",
+    "whatWeUseBody": "Your location (only in your browser, to fetch the forecast), chosen language and consent are stored locally. If you enable aurora alerts, we store your push subscription and a coarse location to send the alert.",
+    "whatWeDont": "What we don’t do",
+    "whatWeDontBody": "No ads, no tracking cookies, no sharing with third parties. Analytics are anonymous and cookie-free.",
+    "retention": "Retention",
+    "retentionBody": "You can turn off alerts at any time, which deletes your subscription.",
+    "analyticsHeading": "Analytics",
+    "analyticsOn": "Anonymous analytics are on",
+    "analyticsOff": "Anonymous analytics are off",
+    "toggleOn": "Turn on",
+    "toggleOff": "Turn off",
+    "back": "Back"
   }
 }

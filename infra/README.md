@@ -36,3 +36,39 @@ The Docker image runs the API by default. The Job uses the same image and overri
 ```
 
 ACR pulls currently use ACR admin credentials stored as Container Apps secrets for one-pass deployment reliability. A TODO in `main.bicep` marks replacing this with managed identity + AcrPull.
+
+## GitHub Actions setup
+
+The deployment workflow in `.github/workflows/deploy.yml` uses GitHub OIDC with `azure/login@v2`, builds the root `Dockerfile` in Azure Container Registry Tasks, and deploys `infra/main.bicep` at resource-group scope.
+
+Create a Microsoft Entra app/service principal with permission to create resources in the target subscription/resource group, then add a federated credential for this repository and workflow. Example:
+
+```powershell
+az ad app federated-credential create `
+  --id <app-client-id> `
+  --parameters '{
+    "name": "github-nordlys-main",
+    "issuer": "https://token.actions.githubusercontent.com",
+    "subject": "repo:<owner>/<repo>:ref:refs/heads/main",
+    "audiences": ["api://AzureADTokenExchange"]
+  }'
+```
+
+Configure these GitHub secrets:
+
+- `AZURE_CLIENT_ID`
+- `AZURE_TENANT_ID`
+- `AZURE_SUBSCRIPTION_ID`
+- `MET_USER_AGENT` for the Bicep `metUserAgent` secure parameter
+- `VAPID_PUBLIC_KEY` for the Bicep `vapidPublicKey` secure parameter
+- `VAPID_PRIVATE_KEY` for the Bicep `vapidPrivateKey` secure parameter
+- `VAPID_SUBJECT` for the Bicep `vapidSubject` secure parameter
+
+Configure these GitHub variables:
+
+- `AZURE_RESOURCE_GROUP` for the target resource group
+- `LOCATION` (optional, defaults to `norwayeast`)
+- `NAME_PREFIX` (optional, defaults to `nordlys`)
+- `ACR_NAME` (optional safety override; if set, it must equal the Bicep-derived registry name)
+
+The workflow derives the ACR name with the same expression as `main.bicep`: `take('${toLower(replace(namePrefix, '-', ''))}acr${uniqueString(resourceGroup().id)}', 50)`.

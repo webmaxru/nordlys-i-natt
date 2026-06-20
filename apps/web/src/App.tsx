@@ -1,15 +1,26 @@
-import { useTranslation } from 'react-i18next';
+import { AppStateProvider } from './state/AppStateContext';
+import { AttributionFooter } from './components/AttributionFooter';
+import { AuroraMap } from './components/AuroraMap';
+import { ConsentBanner } from './components/ConsentBanner';
+import { Layout } from './components/Layout';
+import { LocationPicker } from './components/LocationPicker';
+import { NotifyButton } from './components/NotifyButton';
+import { ShareCard } from './components/ShareCard';
+import { Timeline } from './components/Timeline';
+import { VerdictGauge } from './components/VerdictGauge';
 
-/**
- * Placeholder shell — replaced by the core-UI phase with the location picker,
- * verdict gauge, timeline, map, etc.
- */
 export default function App() {
-  const { t } = useTranslation();
   return (
-    <main className="app">
-      <h1>{t('app.title')}</h1>
-      <p>{t('app.tagline')}</p>
-    </main>
+    <AppStateProvider>
+      <Layout footer={<AttributionFooter />}>
+        <LocationPicker />
+        <VerdictGauge />
+        <Timeline />
+        <AuroraMap />
+        <ShareCard />
+        <NotifyButton />
+      </Layout>
+      <ConsentBanner />
+    </AppStateProvider>
   );
 }

@@ -1,0 +1,132 @@
+# Required GitHub secrets:
+# - AZURE_CLIENT_ID: Microsoft Entra app/client ID with a GitHub OIDC federated credential.
+# - AZURE_TENANT_ID: Microsoft Entra tenant ID.
+# - AZURE_SUBSCRIPTION_ID: Azure subscription ID.
+# - MET_USER_AGENT: Secure value for the Bicep metUserAgent parameter.
+# - VAPID_PUBLIC_KEY: Secure value for the Bicep vapidPublicKey parameter.
+# - VAPID_PRIVATE_KEY: Secure value for the Bicep vapidPrivateKey parameter.
+# - VAPID_SUBJECT: Secure value for the Bicep vapidSubject parameter.
+# Required GitHub variables:
+# - AZURE_RESOURCE_GROUP: Target resource group for the resource-group scoped Bicep deployment.
+# Optional GitHub variables:
+# - LOCATION: Azure region; defaults to norwayeast.
+# - NAME_PREFIX: Bicep namePrefix; defaults to nordlys.
+# - ACR_NAME: Optional safety override. If set, it must match the Bicep-derived ACR name:
+#   take('${toLower(replace(namePrefix, '-', ''))}acr${uniqueString(resourceGroup().id)}', 50).
+
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP || 'rg-nordlys' }}
+  LOCATION: ${{ vars.LOCATION || 'norwayeast' }}
+  NAME_PREFIX: ${{ vars.NAME_PREFIX || 'nordlys' }}
+  ACR_NAME: ${{ vars.ACR_NAME || '' }}
+
+jobs:
+  deploy:
+    name: Build image and deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Ensure resource group
+        run: az group create --name "$AZURE_RESOURCE_GROUP" --location "$LOCATION"
+
+      - name: Resolve Bicep-derived resource names
+        run: |
+          cat > .resolve-names.bicep <<'BICEP'
+          targetScope = 'resourceGroup'
+
+          param namePrefix string = 'nordlys'
+
+          var suffix = uniqueString(resourceGroup().id)
+          var safePrefix = toLower(replace(namePrefix, '-', ''))
+          var registryName = take('${safePrefix}acr${suffix}', 50)
+          var containerAppName = '${namePrefix}-app-${suffix}'
+
+          output registryName string = registryName
+          output containerAppName string = containerAppName
+          BICEP
+
+          derived_acr_name="$(az deployment group create \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --name "resolve-names-${GITHUB_RUN_ID}" \
+            --template-file .resolve-names.bicep \
+            --parameters namePrefix="$NAME_PREFIX" \
+            --query properties.outputs.registryName.value \
+            --output tsv)"
+          container_app_name="$(az deployment group show \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --name "resolve-names-${GITHUB_RUN_ID}" \
+            --query properties.outputs.containerAppName.value \
+            --output tsv)"
+
+          if [ -n "$ACR_NAME" ] && [ "$ACR_NAME" != "$derived_acr_name" ]; then
+            echo "ACR_NAME variable '$ACR_NAME' does not match Bicep-derived ACR name '$derived_acr_name'." >&2
+            exit 1
+          fi
+
+          echo "ACR_NAME=$derived_acr_name" >> "$GITHUB_ENV"
+          echo "CONTAINER_APP_NAME=$container_app_name" >> "$GITHUB_ENV"
+          echo "Bicep-derived ACR name: $derived_acr_name"
+          echo "Bicep-derived Container App name: $container_app_name"
+
+      - name: Ensure Azure Container Registry
+        run: |
+          if ! az acr show --name "$ACR_NAME" --resource-group "$AZURE_RESOURCE_GROUP" > /dev/null 2>&1; then
+            az acr create \
+              --name "$ACR_NAME" \
+              --resource-group "$AZURE_RESOURCE_GROUP" \
+              --sku Basic \
+              --admin-enabled true
+          fi
+
+      - name: Build and push image with ACR Tasks
+        run: |
+          az acr build \
+            --registry "$ACR_NAME" \
+            --image "nordlys/app:${GITHUB_SHA}" \
+            --image "nordlys/app:latest" \
+            .
+
+      - name: Deploy Azure infrastructure
+        run: |
+          az deployment group create \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --template-file infra/main.bicep \
+            --parameters @infra/main.parameters.json \
+              location="$LOCATION" \
+              namePrefix="$NAME_PREFIX" \
+              containerImage="${ACR_NAME}.azurecr.io/nordlys/app:${GITHUB_SHA}" \
+              metUserAgent="${{ secrets.MET_USER_AGENT }}" \
+              vapidPublicKey="${{ secrets.VAPID_PUBLIC_KEY }}" \
+              vapidPrivateKey="${{ secrets.VAPID_PRIVATE_KEY }}" \
+              vapidSubject="${{ secrets.VAPID_SUBJECT }}"
+
+      - name: Output Container App FQDN
+        run: |
+          fqdn="$(az containerapp show \
+            --name "$CONTAINER_APP_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --query properties.configuration.ingress.fqdn \
+            --output tsv)"
+          echo "Container App FQDN: https://${fqdn}"

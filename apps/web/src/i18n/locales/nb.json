@@ -2,5 +2,121 @@
   "app": {
     "title": "Nordlys i natt?",
     "tagline": "Kan du se nordlyset i natt?"
+  },
+  "verdict": {
+    "GO": {
+      "label": "GO",
+      "subtitle": "Gode sjanser i natt"
+    },
+    "MAYBE": {
+      "label": "KANSKJE",
+      "subtitle": "Mulig, men forholdene er usikre"
+    },
+    "NO": {
+      "label": "NEI",
+      "subtitle": "Ikke sannsynlig i natt"
+    }
+  },
+  "reason": {
+    "none": "Forholdene ser gode ut.",
+    "not_dark": "Det blir ikke mørkt nok.",
+    "kp_too_low": "Kp-varselet er for lavt for stedet.",
+    "too_cloudy": "Det er meldt for mye skyer."
+  },
+  "location": {
+    "heading": "Sted",
+    "title": "Hvor skal du se?",
+    "selected": "Valgt sted",
+    "noneSelected": "Ingen valgt",
+    "useMyLocation": "Bruk min posisjon",
+    "requesting": "Henter posisjon …",
+    "resolving": "Finner nærmeste sted …",
+    "geoError": "Vi klarte ikke å hente posisjonen din.",
+    "myLocationName": "Min posisjon",
+    "searchLabel": "Søk etter sted",
+    "searchPlaceholder": "Søk etter Tromsø, Alta, Oslo …",
+    "searching": "Søker …",
+    "noResults": "Ingen steder funnet.",
+    "presetsHeading": "Raske valg"
+  },
+  "gauge": {
+    "heading": "Varsel",
+    "bestHour": "Best rundt {{hour}}",
+    "kpCurrentVsRequired": "Kp {{kp}} / trenger Kp {{requiredKp}}",
+    "pickLocation": "Velg et sted for å få nattens nordlysvarsel.",
+    "loading": "Beregner sjansene …",
+    "error": "Vi klarte ikke å hente varselet akkurat nå.",
+    "retry": "Prøv igjen"
+  },
+  "footer": {
+    "attribution": "Data: MET Norway · NOAA SWPC · Kartverket",
+    "privacy": "Personvern"
+  },
+  "timeline": {
+    "title": "Neste 3 døgn",
+    "kp": "Kp-indeks",
+    "clouds": "Skydekke",
+    "darkness": "Mørke",
+    "now": "Nå",
+    "visibleLegend": "Synlig nordlys",
+    "darkLegend": "Mørkt nok",
+    "cloudPct": "{{pct}} % skyer",
+    "noData": "Ingen data ennå",
+    "hourAria": "Kl. {{time}}: Kp {{kp}}, {{cloud}} % skyer"
+  },
+  "map": {
+    "title": "Nordlyskart",
+    "you": "Din posisjon",
+    "oval": "Nordlysoval (sannsynlighet)",
+    "loading": "Laster kart …",
+    "intensity": "Intensitet",
+    "attribution": "Kart: Kartverket · Nordlys: NOAA"
+  },
+  "share": {
+    "button": "Del",
+    "title": "Nordlys i natt?",
+    "generating": "Lager bilde …",
+    "copied": "Kopiert!",
+    "downloaded": "Lagret bilde",
+    "shareError": "Kunne ikke dele",
+    "caption": "{{verdict}} i {{place}} i natt",
+    "na": "Deling støttes ikke"
+  },
+  "notify": {
+    "enable": "Varsle meg om nordlys",
+    "disable": "Skru av varsler",
+    "enabled": "Varsler er på",
+    "prompt": "Få et varsel når nordlyset er synlig her",
+    "description": "Vi sender push-varsel når forholdene blir gode for stedet ditt.",
+    "blocked": "Varsler er blokkert i nettleseren",
+    "unsupported": "Nettleseren støtter ikke varsler",
+    "success": "Du får nå varsler for {{place}}",
+    "error": "Kunne ikke slå på varsler",
+    "needLocation": "Velg et sted først",
+    "working": "Jobber …"
+  },
+  "consent": {
+    "title": "Personvern",
+    "message": "Vi bruker anonym, informasjonskapsel-fri statistikk for å forbedre appen. Du kan når som helst si nei.",
+    "accept": "Greit",
+    "decline": "Kun nødvendig",
+    "learnMore": "Les mer",
+    "analytics": "Anonym statistikk"
+  },
+  "privacy": {
+    "title": "Personvern",
+    "intro": "Denne appen er laget for å samle minst mulig data om deg.",
+    "whatWeUse": "Det vi bruker",
+    "whatWeUseBody": "Posisjon (kun i nettleseren din for å hente varsel), valgt språk og samtykke lagres lokalt. Hvis du slår på nordlysvarsler, lagrer vi push-abonnementet og en grov posisjon for å kunne sende varselet.",
+    "whatWeDont": "Det vi ikke gjør",
+    "whatWeDontBody": "Ingen reklame, ingen sporings-informasjonskapsler, ingen deling med tredjeparter. Statistikk er anonym og uten informasjonskapsler.",
+    "retention": "Lagring",
+    "retentionBody": "Du kan skru av varsler når som helst, da slettes abonnementet ditt.",
+    "analyticsHeading": "Statistikk",
+    "analyticsOn": "Anonym statistikk er på",
+    "analyticsOff": "Anonym statistikk er av",
+    "toggleOn": "Skru på",
+    "toggleOff": "Skru av",
+    "back": "Tilbake"
   }
 }
