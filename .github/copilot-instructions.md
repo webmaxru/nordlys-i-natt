@@ -26,6 +26,20 @@ darkness (computed sun elevation). React PWA + Node/Fastify, deployed to Azure C
 - Secrets live in gitignored `.env` files (`apps/api/.env`, `apps/web/.env`) — never commit them.
 - Local subscription store = **file JSON**; prod = **Azure Table Storage** (one `SubscriptionStore` interface).
 
+## Push notifications
+
+- Push opt-in uses a **soft prompt / double opt-in** in `NotifyButton`: keep the initial idle UI
+  consistent on every platform (short sentence + `Subscribe`). Never call
+  `Notification.requestPermission()` or `subscribeToPush()` on load; call them only from the explicit
+  user-gesture `Allow notifications` button after the in-UI explanation.
+- Edge/Chromium can quiet or auto-block notification requests because of quiet-request settings,
+  abusive/crowd-deny heuristics, low engagement, missing user gesture, or prior denials. See
+  [docs/push-notifications.md](../docs/push-notifications.md).
+- iOS/iPadOS Web Push requires an installed PWA on 16.4+; a normal Safari/Chrome tab cannot subscribe
+  and should show Add-to-Home-Screen guidance.
+- Backend cadence lives in `apps/api/src/scheduler/evaluate.ts` + `config.quietHours`: Container Apps
+  cron `*/20 * * * *`, send only `GO`, at most once per 6h, quiet by default 02:00–06:00 Europe/Oslo.
+
 ## Commands
 
 ```bash
@@ -69,6 +83,7 @@ Load the relevant doc when working in that area:
 - [docs/external-apis.md](../docs/external-apis.md) — MET / NOAA / Kartverket integration **and gotchas**
 - [docs/backend.md](../docs/backend.md) — Fastify routes/services, push notifications, cron job, config/env
 - [docs/frontend.md](../docs/frontend.md) — components, hooks, state, i18n, PWA, SEO, analytics
+- [docs/push-notifications.md](../docs/push-notifications.md) — Web Push soft prompt, Edge auto-block findings, iOS constraints, cadence
 - [docs/deployment.md](../docs/deployment.md) — Bicep, CI/CD, **manual `az` runbook**, secrets, cost
 - [docs/local-development.md](../docs/local-development.md) — setup, env vars, run, test
 - [docs/troubleshooting.md](../docs/troubleshooting.md) — **top challenges & solutions** (full detail)

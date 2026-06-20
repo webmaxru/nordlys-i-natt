@@ -99,12 +99,15 @@
     "na": "Sharing not supported"
   },
   "notify": {
-    "enable": "Notify me about aurora",
-    "disable": "Turn off alerts",
+    "enable": "Subscribe",
+    "disable": "Unsubscribe",
     "enabled": "Alerts are on",
-    "prompt": "Get notified when aurora is visible here",
-    "description": "We send a push notification when conditions turn good for your location.",
-    "blocked": "Notifications are blocked in your browser",
+    "prompt": "Get a heads-up when the aurora is likely overhead.",
+    "description": "At most one alert per dark night, never 02:00–06:00.",
+    "explain": "Your browser will now ask for permission. You'll get at most one alert per dark night when the lights are likely — never 02:00–06:00. Unsubscribe anytime here.",
+    "allow": "Allow notifications",
+    "notNow": "Not now",
+    "blocked": "Notifications are blocked",
     "unsupported": "Your browser does not support notifications",
     "success": "You’ll get alerts for {{place}}",
     "error": "Could not enable notifications",
@@ -112,7 +115,9 @@
     "working": "Working …",
     "iosTitle": "Add to Home Screen",
     "ios": "To get alerts on iPhone/iPad, add this app to your Home Screen: tap the Share button, choose ‘Add to Home Screen’, then open it from there.",
-    "blockedHint": "Click the padlock in the address bar → Notifications → Allow, then reload the page."
+    "blockedHint": "Your browser is blocking notifications — Microsoft Edge sometimes does this automatically. Click the lock icon in the address bar → Notifications → Allow, then reload.",
+    "subscribedDetail": "We'll alert you about aurora near {{place}}. Unsubscribe below anytime.",
+    "subscribedCadence": "At most one alert per dark night, never 02:00–06:00."
   },
   "consent": {
     "title": "Privacy",

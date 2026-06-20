@@ -43,7 +43,7 @@ export function isStandalone(): boolean {
 
 export function getPermission(): NotificationPermission {
   if (!isPushSupported()) {
-    return 'denied';
+    return 'default';
   }
 
   return Notification.permission;

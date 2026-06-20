@@ -175,7 +175,7 @@ test.describe('push notifications', () => {
       .toBe(false);
   });
 
-  test('POSTs a push subscription only after clicking the notify button', async ({
+  test('POSTs a push subscription only after the soft prompt allow button', async ({
     page,
     context,
   }) => {
@@ -191,7 +191,8 @@ test.describe('push notifications', () => {
     await page.waitForTimeout(500);
     expect(subscriptionPosted).toBe(false);
 
-    await page.getByRole('button', { name: /notify me about aurora/i }).click();
+    await page.getByRole('button', { name: /subscribe/i }).click();
+    await page.getByRole('button', { name: /allow notifications/i }).click();
 
     await expect
       .poll(() => page.evaluate(() => window.__permissionRequested))

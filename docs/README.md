@@ -15,6 +15,7 @@ cloud cover (MET Norway), and darkness (computed sun elevation).
 | [external-apis.md](./external-apis.md) | MET Norway, NOAA SWPC, Kartverket integration **and their gotchas** |
 | [backend.md](./backend.md) | Fastify API: proxy, caching, `/api/forecast`, push notifications, cron job |
 | [frontend.md](./frontend.md) | React PWA: components, hooks, state, i18n, map, share, consent |
+| [push-notifications.md](./push-notifications.md) | Web Push opt-in design, Edge auto-block findings, iOS constraints, backend cadence |
 | [deployment.md](./deployment.md) | Azure infra (Bicep), CI/CD, **manual deploy runbook**, secrets, cost |
 | [local-development.md](./local-development.md) | Setup, run, test, environment variables |
 | [troubleshooting.md](./troubleshooting.md) | **Top challenges & solutions** (the bugs that cost the most time) |

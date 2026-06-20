@@ -13,6 +13,8 @@ import { trackEvent } from '../lib/analytics';
 import { useAppState } from '../state/AppStateContext';
 import './NotifyButton.css';
 
+type NotifyStep = 'idle' | 'explain' | 'install' | 'unsupported';
+
 export function NotifyButton() {
   const { i18n, t } = useTranslation();
   const { selectedLocation } = useAppState();
@@ -23,6 +25,7 @@ export function NotifyButton() {
 
   const [permission, setPermission] = useState<NotificationPermission>(getPermission());
   const [enabled, setEnabled] = useState(false);
+  const [step, setStep] = useState<NotifyStep>('idle');
   const [working, setWorking] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
@@ -47,30 +50,44 @@ export function NotifyButton() {
     };
   }, [refresh]);
 
-  async function handleToggle() {
+  function handleSubscribeClick() {
     if (!selectedLocation) {
       setFeedback(t('notify.needLocation'));
+      return;
+    }
+
+    setFeedback(null);
+    if (iosNeedsInstall) {
+      setStep('install');
+    } else if (supported) {
+      setStep('explain');
+    } else {
+      setStep('unsupported');
+    }
+  }
+
+  async function handleAllowClick() {
+    if (!selectedLocation) {
+      setFeedback(t('notify.needLocation'));
+      setStep('idle');
       return;
     }
 
     setWorking(true);
     setFeedback(null);
     try {
-      if (enabled) {
-        await unsubscribeFromPush();
-        setEnabled(false);
-        return;
-      }
-
       const result = await Notification.requestPermission();
       setPermission(result);
       if (result !== 'granted') {
         setEnabled(false);
+        setPermission('denied');
+        setStep('idle');
         return;
       }
 
       await subscribeToPush(selectedLocation, i18n.resolvedLanguage ?? i18n.language);
       setEnabled(true);
+      setStep('idle');
       trackEvent('notify_opt_in');
       setFeedback(t('notify.success', { place: selectedLocation.name }));
     } catch {
@@ -81,51 +98,156 @@ export function NotifyButton() {
     }
   }
 
-  let heading: string;
-  let detail = '';
-  if (iosNeedsInstall) {
-    heading = t('notify.prompt');
-    detail = t('notify.ios');
-  } else if (!supported) {
-    heading = t('notify.unsupported');
-  } else if (!selectedLocation) {
-    heading = t('notify.needLocation');
-    detail = t('notify.description');
-  } else if (permission === 'denied') {
-    heading = t('notify.blocked');
-    detail = t('notify.blockedHint');
-  } else if (enabled) {
-    heading = t('notify.enabled');
-    detail = t('notify.description');
-  } else {
-    heading = t('notify.prompt');
-    detail = t('notify.description');
+  async function handleUnsubscribeClick() {
+    setWorking(true);
+    setFeedback(null);
+    try {
+      await unsubscribeFromPush();
+      setEnabled(false);
+      setStep('idle');
+    } catch {
+      setFeedback(t('notify.error'));
+    } finally {
+      setWorking(false);
+    }
   }
 
-  if (working) detail = t('notify.working');
-  else if (feedback) detail = feedback;
+  const statusText = working ? t('notify.working') : feedback;
 
-  const showButton = supported && !iosNeedsInstall;
-  const buttonDisabled = working || !selectedLocation || (permission === 'denied' && !enabled);
+  if (enabled) {
+    return (
+      <section className="notify-button notify-button--subscribed">
+        <div className="notify-button__content">
+          <strong>{t('notify.enabled')}</strong>
+          <p>{t('notify.subscribedDetail', { place: selectedLocation?.name ?? '' })}</p>
+          <p>{t('notify.subscribedCadence')}</p>
+          {statusText ? <p className="notify-button__feedback">{statusText}</p> : null}
+        </div>
+        <div className="notify-button__actions">
+          <button
+            className="secondary-button"
+            disabled={working}
+            type="button"
+            onClick={() => {
+              void handleUnsubscribeClick();
+            }}
+          >
+            {working ? t('notify.working') : t('notify.disable')}
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  if (permission === 'denied') {
+    return (
+      <section className="notify-button notify-button--blocked">
+        <div className="notify-button__content">
+          <strong>{t('notify.blocked')}</strong>
+          <p>{t('notify.blockedHint')}</p>
+          {statusText ? <p className="notify-button__feedback">{statusText}</p> : null}
+        </div>
+      </section>
+    );
+  }
+
+  if (step === 'explain') {
+    return (
+      <section className="notify-button notify-button--explain">
+        <div className="notify-button__content">
+          <strong>{t('notify.enable')}</strong>
+          <p>{t('notify.explain')}</p>
+          {statusText ? <p className="notify-button__feedback">{statusText}</p> : null}
+        </div>
+        <div className="notify-button__actions">
+          <button
+            className="primary-button"
+            disabled={working}
+            type="button"
+            onClick={() => {
+              void handleAllowClick();
+            }}
+          >
+            {working ? t('notify.working') : t('notify.allow')}
+          </button>
+          <button
+            className="secondary-button"
+            disabled={working}
+            type="button"
+            onClick={() => {
+              setFeedback(null);
+              setStep('idle');
+            }}
+          >
+            {t('notify.notNow')}
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  if (step === 'install') {
+    return (
+      <section className="notify-button notify-button--install">
+        <div className="notify-button__content">
+          <strong>{t('notify.iosTitle')}</strong>
+          <p>{t('notify.ios')}</p>
+        </div>
+        <div className="notify-button__actions">
+          <button
+            className="secondary-button"
+            type="button"
+            onClick={() => {
+              setFeedback(null);
+              setStep('idle');
+            }}
+          >
+            {t('notify.notNow')}
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  if (step === 'unsupported') {
+    return (
+      <section className="notify-button notify-button--unsupported">
+        <div className="notify-button__content">
+          <strong>{t('notify.unsupported')}</strong>
+          {statusText ? <p className="notify-button__feedback">{statusText}</p> : null}
+        </div>
+        <div className="notify-button__actions">
+          <button
+            className="secondary-button"
+            type="button"
+            onClick={() => {
+              setFeedback(null);
+              setStep('idle');
+            }}
+          >
+            {t('notify.notNow')}
+          </button>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="notify-button">
-      <div>
-        <strong>{heading}</strong>
-        {detail ? <p>{detail}</p> : null}
+      <div className="notify-button__content">
+        <strong>{t('notify.prompt')}</strong>
+        {statusText ? <p className="notify-button__feedback">{statusText}</p> : null}
       </div>
-      {showButton ? (
+      <div className="notify-button__actions">
         <button
-          className="secondary-button"
-          disabled={buttonDisabled}
+          className="primary-button"
+          disabled={working}
           type="button"
-          onClick={() => {
-            void handleToggle();
-          }}
+          onClick={handleSubscribeClick}
         >
-          {working ? t('notify.working') : enabled ? t('notify.disable') : t('notify.enable')}
+          {t('notify.enable')}
         </button>
-      ) : null}
+      </div>
     </section>
   );
 }

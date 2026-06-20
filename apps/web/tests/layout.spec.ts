@@ -161,7 +161,7 @@ test.describe('mobile layout (iPhone)', () => {
     expect(await page.locator('.search-results__item').count()).toBeGreaterThan(0);
   });
 
-  test('iOS browser tab shows the "Get notified" title (not "Add to Home Screen")', async ({
+  test('iOS browser tab starts with Subscribe, then shows Add to Home Screen', async ({
     page,
   }) => {
     // Simulate an iOS Safari tab where Web Push is unavailable.
@@ -175,8 +175,14 @@ test.describe('mobile layout (iPhone)', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     const section = page.locator('section.notify-button');
     await section.scrollIntoViewIfNeeded();
-    await expect(section.locator('strong')).toContainText(/get notified/i);
-    await expect(section.locator('button')).toHaveCount(0);
+    await expect(section).toContainText(/get a heads-up/i);
+    await expect(section.getByRole('button', { name: /subscribe/i })).toBeVisible();
+
+    await section.getByRole('button', { name: /subscribe/i }).click();
+
+    await expect(section.locator('strong')).toContainText(/add to home screen/i);
+    await expect(section).toContainText(/add this app to your home screen/i);
+    await expect(section.getByRole('button', { name: /not now/i })).toBeVisible();
   });
 });
 

@@ -99,12 +99,15 @@
     "na": "Deling støttes ikke"
   },
   "notify": {
-    "enable": "Varsle meg om nordlys",
-    "disable": "Skru av varsler",
+    "enable": "Abonner",
+    "disable": "Si opp",
     "enabled": "Varsler er på",
-    "prompt": "Få et varsel når nordlyset er synlig her",
-    "description": "Vi sender push-varsel når forholdene blir gode for stedet ditt.",
-    "blocked": "Varsler er blokkert i nettleseren",
+    "prompt": "Få et tips når nordlyset trolig er over deg.",
+    "description": "Maks ett varsel per mørk natt, aldri 02:00–06:00.",
+    "explain": "Nettleseren spør deg nå om tillatelse. Du får maks ett varsel per mørk natt når sjansen er god — aldri 02:00–06:00. Du kan når som helst si opp her.",
+    "allow": "Tillat varsler",
+    "notNow": "Ikke nå",
+    "blocked": "Varsler er blokkert",
     "unsupported": "Nettleseren støtter ikke varsler",
     "success": "Du får nå varsler for {{place}}",
     "error": "Kunne ikke slå på varsler",
@@ -112,7 +115,9 @@
     "working": "Jobber …",
     "iosTitle": "Legg til på Hjem-skjerm",
     "ios": "For å få varsler på iPhone/iPad må du legge appen til på Hjem-skjermen: trykk på Del-knappen, velg «Legg til på Hjem-skjerm», og åpne den derfra.",
-    "blockedHint": "Klikk på hengelåsen i adressefeltet → Varsler → Tillat, og last siden på nytt."
+    "blockedHint": "Nettleseren blokkerer varsler — Microsoft Edge gjør dette noen ganger automatisk. Klikk på hengelåsen i adressefeltet → Varsler → Tillat, og last siden på nytt.",
+    "subscribedDetail": "Vi varsler deg om nordlys ved {{place}}. Si opp under når som helst.",
+    "subscribedCadence": "Maks ett varsel per mørk natt, aldri 02:00–06:00."
   },
   "consent": {
     "title": "Personvern",
