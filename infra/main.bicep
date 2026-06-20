@@ -6,8 +6,18 @@ param location string = 'norwayeast'
 @description('Short prefix used for resource names. Use lowercase letters and numbers for best compatibility.')
 param namePrefix string = 'nordlys'
 
-@description('Full container image reference including ACR login server and tag, for example nordlysacr.azurecr.io/nordlys:latest.')
-param containerImage string
+@description('Full container image reference including registry and tag, for example ghcr.io/webmaxru/nordlys-i-natt:latest.')
+param containerImage string = 'ghcr.io/webmaxru/nordlys-i-natt:latest'
+
+@description('Container registry server used by Container Apps image pulls.')
+param registryServer string = 'ghcr.io'
+
+@description('Container registry username used by Container Apps image pulls.')
+param registryUsername string
+
+@description('Container registry password/token used by Container Apps image pulls.')
+@secure()
+param registryPassword string
 
 @description('Minimum Container App replicas. Set to 0 for scale-to-zero.')
 param minReplicas int = 0
@@ -45,7 +55,6 @@ var safePrefix = toLower(replace(namePrefix, '-', ''))
 var workspaceName = '${namePrefix}-law-${suffix}'
 var appInsightsName = '${namePrefix}-appi-${suffix}'
 var storageAccountName = take('${safePrefix}st${suffix}', 24)
-var registryName = take('${safePrefix}acr${suffix}', 50)
 var environmentName = '${namePrefix}-cae-${suffix}'
 var containerAppName = '${namePrefix}-app-${suffix}'
 var jobName = '${namePrefix}-job-${suffix}'
@@ -69,16 +78,6 @@ module storage 'modules/storage.bicep' = {
   }
 }
 
-module registry 'modules/registry.bicep' = {
-  name: 'registry'
-  params: {
-    location: location
-    registryName: registryName
-  }
-}
-
-// TODO: Replace ACR admin credentials with AcrPull via managed identity after
-// validating a two-phase or user-assigned identity deployment flow for image pulls.
 module containerApp 'modules/containerapp.bicep' = {
   name: 'container-app'
   params: {
@@ -86,8 +85,9 @@ module containerApp 'modules/containerapp.bicep' = {
     environmentName: environmentName
     containerAppName: containerAppName
     containerImage: containerImage
-    acrName: registry.outputs.registryName
-    acrLoginServer: registry.outputs.loginServer
+    registryServer: registryServer
+    registryUsername: registryUsername
+    registryPassword: registryPassword
     logAnalyticsCustomerId: monitoring.outputs.workspaceCustomerId
     logAnalyticsSharedKey: monitoring.outputs.workspaceSharedKey
     minReplicas: minReplicas
@@ -110,8 +110,9 @@ module job 'modules/job.bicep' = {
     jobName: jobName
     environmentId: containerApp.outputs.environmentId
     containerImage: containerImage
-    acrName: registry.outputs.registryName
-    acrLoginServer: registry.outputs.loginServer
+    registryServer: registryServer
+    registryUsername: registryUsername
+    registryPassword: registryPassword
     cronExpression: cronExpression
     cpu: cpu
     memory: memory
@@ -125,5 +126,4 @@ module job 'modules/job.bicep' = {
 }
 
 output containerAppFqdn string = containerApp.outputs.fqdn
-output acrLoginServer string = registry.outputs.loginServer
 output appInsightsConnectionString string = monitoring.outputs.appInsightsConnectionString

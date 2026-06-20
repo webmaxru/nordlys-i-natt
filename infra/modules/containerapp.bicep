@@ -2,8 +2,10 @@ param location string
 param environmentName string
 param containerAppName string
 param containerImage string
-param acrName string
-param acrLoginServer string
+param registryServer string
+param registryUsername string
+@secure()
+param registryPassword string
 param logAnalyticsCustomerId string
 @secure()
 param logAnalyticsSharedKey string
@@ -37,9 +39,6 @@ resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   }
 }
 
-var acrCredentials = listCredentials(resourceId('Microsoft.ContainerRegistry/registries', acrName), '2023-07-01')
-var acrPassword = acrCredentials.passwords[0].value
-
 resource app 'Microsoft.App/containerApps@2024-03-01' = {
   name: containerAppName
   location: location
@@ -63,15 +62,15 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
       }
       registries: [
         {
-          server: acrLoginServer
-          username: acrName
-          passwordSecretRef: 'acr-password'
+          server: registryServer
+          username: registryUsername
+          passwordSecretRef: 'registry-password'
         }
       ]
       secrets: [
         {
-          name: 'acr-password'
-          value: acrPassword
+          name: 'registry-password'
+          value: registryPassword
         }
         {
           name: 'azure-table-connection-string'

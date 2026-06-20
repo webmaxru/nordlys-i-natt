@@ -2,8 +2,10 @@ param location string
 param jobName string
 param environmentId string
 param containerImage string
-param acrName string
-param acrLoginServer string
+param registryServer string
+param registryUsername string
+@secure()
+param registryPassword string
 param cronExpression string = '*/20 * * * *'
 param cpu string = '0.5'
 param memory string = '1.0Gi'
@@ -18,9 +20,6 @@ param vapidPublicKey string
 param vapidPrivateKey string
 @secure()
 param vapidSubject string
-
-var acrCredentials = listCredentials(resourceId('Microsoft.ContainerRegistry/registries', acrName), '2023-07-01')
-var acrPassword = acrCredentials.passwords[0].value
 
 resource job 'Microsoft.App/jobs@2024-03-01' = {
   name: jobName
@@ -41,15 +40,15 @@ resource job 'Microsoft.App/jobs@2024-03-01' = {
       }
       registries: [
         {
-          server: acrLoginServer
-          username: acrName
-          passwordSecretRef: 'acr-password'
+          server: registryServer
+          username: registryUsername
+          passwordSecretRef: 'registry-password'
         }
       ]
       secrets: [
         {
-          name: 'acr-password'
-          value: acrPassword
+          name: 'registry-password'
+          value: registryPassword
         }
         {
           name: 'azure-table-connection-string'

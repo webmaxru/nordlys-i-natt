@@ -11,9 +11,10 @@ darkness (computed sun elevation). React PWA + Node/Fastify, deployed to Azure C
   - `packages/shared` (`@nordlys/shared`) — domain types + the **verdict engine** (built to `dist/`).
   - `apps/api` (`@nordlys/api`) — **Fastify 5, run via `tsx` (no compile)**; routes auto-loaded from `src/routes/*.ts`.
   - `apps/web` (`@nordlys/web`) — React 18 + Vite + PWA + TanStack Query + react-i18next (nb/en).
-  - `infra` — Bicep (Container App + cron Job + ACR + Table Storage + Log Analytics + App Insights).
+  - `infra` — Bicep (Container App + cron Job + GHCR registry credentials + Table Storage + Log Analytics + App Insights).
 - **One image, one Container App** serves the API **and** the built SPA (same origin → no web↔api CORS).
 - **Scale-to-zero** (`minReplicas=0`); a separate **Container Apps cron Job** runs the push evaluator.
+- Container registry is migrating from ACR to private GHCR: `ghcr.io/webmaxru/nordlys-i-natt`. Manual cutover is `scripts/migrate-to-ghcr.ps1` and requires a classic GitHub PAT; keep the image private and use a PAT-based pull secret.
 
 ## Conventions (follow these)
 
@@ -91,5 +92,6 @@ Load the relevant doc when working in that area:
 - [docs/frontend.md](../docs/frontend.md) — components, hooks, state, i18n, PWA, SEO, analytics
 - [docs/push-notifications.md](../docs/push-notifications.md) — Web Push soft prompt, Edge auto-block findings, iOS constraints, cadence
 - [docs/deployment.md](../docs/deployment.md) — Bicep, CI/CD, **manual `az` runbook**, secrets, cost
+- [docs/registry-ghcr.md](../docs/registry-ghcr.md) — private GHCR migration, PAT setup, image pruning, rollback
 - [docs/local-development.md](../docs/local-development.md) — setup, env vars, run, test
 - [docs/troubleshooting.md](../docs/troubleshooting.md) — **top challenges & solutions** (full detail)

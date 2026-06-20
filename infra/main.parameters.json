@@ -9,7 +9,16 @@
       "value": "nordlys"
     },
     "containerImage": {
-      "value": "nordlysacr.azurecr.io/nordlys:latest"
+      "value": "ghcr.io/webmaxru/nordlys-i-natt:latest"
+    },
+    "registryServer": {
+      "value": "ghcr.io"
+    },
+    "registryUsername": {
+      "value": "webmaxru"
+    },
+    "registryPassword": {
+      "value": "<github-classic-pat-with-read-packages>"
     },
     "minReplicas": {
       "value": 0
