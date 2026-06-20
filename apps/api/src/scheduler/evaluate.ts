@@ -1,6 +1,7 @@
 import { buildForecast } from '../services/forecast';
 import { sendPush } from '../services/push';
 import { createStore, type Sub } from '../services/store';
+import { config } from '../config';
 import { initTelemetry, trackEvent } from '../telemetry';
 
 type EvaluateResult = {
@@ -46,7 +47,7 @@ export async function evaluateAndNotify(): Promise<EvaluateResult> {
       const verdict = forecast.verdict.verdict;
       const updatedSub: Sub = { ...sub, lastVerdict: verdict };
 
-      if (verdict !== 'GO' || !shouldNotify(sub)) {
+      if (verdict !== 'GO' || !shouldNotify(sub) || inQuietHours()) {
         await store.upsert(updatedSub);
         continue;
       }
@@ -97,4 +98,28 @@ function shouldNotify(sub: Sub): boolean {
     !Number.isFinite(lastNotified) ||
     Date.now() - lastNotified > sixHoursMs
   );
+}
+
+/**
+ * True when `hour` (0–23) falls inside the quiet window [start, end).
+ * Supports windows that wrap past midnight (start > end). Disabled when start === end.
+ * Pure + exported for testing.
+ */
+export function isInQuietWindow(hour: number, start: number, end: number): boolean {
+  if (!Number.isFinite(start) || !Number.isFinite(end) || start === end) {
+    return false;
+  }
+  return start < end ? hour >= start && hour < end : hour >= start || hour < end;
+}
+
+/** Whether the current Europe/Oslo time is within the configured quiet hours. */
+function inQuietHours(now: Date = new Date()): boolean {
+  const hour = Number(
+    new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Oslo',
+      hour: 'numeric',
+      hourCycle: 'h23',
+    }).format(now),
+  );
+  return isInQuietWindow(hour, config.quietHours.start, config.quietHours.end);
 }

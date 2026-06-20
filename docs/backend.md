@@ -41,7 +41,8 @@ new endpoints drop in without editing a central registry.
    endpoint, keys, **coarse** lat/lon (rounded ~2 dp), name, lang, timestamps, last verdict.
 2. The cron **Job** runs `scheduler/evaluate.ts` `evaluateAndNotify()` every ~20 min: for each
    subscription it `buildForecast()`s and, when the verdict crosses to **GO** (and not recently
-   notified), sends a localized Web Push `{ title, body, url }`. Expired subscriptions (404/410)
+   notified, and outside **quiet hours** — Europe/Oslo `QUIET_HOURS_START..END`, default 02:00–06:00),
+   sends a localized Web Push `{ title, body, url }`. Expired subscriptions (404/410)
    are deleted. Resilient per-subscription (one failure never aborts the loop).
 3. The **service worker** (`apps/web/public/push-sw.js`, pulled in via `workbox.importScripts`)
    shows the notification and handles `notificationclick`. **Payload contract:** `{ title, body, url }`.
@@ -53,6 +54,7 @@ new endpoints drop in without editing a central registry.
 | `PORT` | listen port (8080) |
 | `MET_USER_AGENT` | **required real contact** for api.met.no (placeholders get 403) |
 | `MET_CACHE_TTL_SECONDS` / `NOAA_CACHE_TTL_SECONDS` | cache TTLs |
+| `QUIET_HOURS_START` / `QUIET_HOURS_END` | suppress push during these Europe/Oslo hours `[start, end)` (default 2–6; set equal to disable) |
 | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` / `VAPID_SUBJECT` | Web Push (`npx web-push generate-vapid-keys`) |
 | `STORE_DRIVER` (`file`\|`table`) + `STORE_FILE_PATH` / `AZURE_TABLE_CONNECTION_STRING` / `AZURE_TABLE_NAME` | subscription store |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING` | server telemetry (no-op if unset) |

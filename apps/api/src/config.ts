@@ -17,6 +17,12 @@ export const config = {
     cacheTtlSeconds: Number(process.env.NOAA_CACHE_TTL_SECONDS ?? 600),
   },
 
+  /** Suppress push during these Europe/Oslo hours [start, end). Set start === end to disable. */
+  quietHours: {
+    start: Number(process.env.QUIET_HOURS_START ?? 2),
+    end: Number(process.env.QUIET_HOURS_END ?? 6),
+  },
+
   vapid: {
     publicKey: process.env.VAPID_PUBLIC_KEY ?? '',
     privateKey: process.env.VAPID_PRIVATE_KEY ?? '',
