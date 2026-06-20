@@ -4,7 +4,7 @@ Aurora go/no-go for Norway. The app answers one question for the user's location
 **"Can I see the northern lights tonight?"** — by combining aurora strength (NOAA),
 cloud cover (MET Norway), and darkness (computed sun elevation).
 
-> Live: an Azure Container App (FQDN from the deployment output). Repo: private `webmaxru/nordlys-i-natt`.
+> Live: **https://nordlys.isainative.dev** (Azure Container App, scale-to-zero, Azure managed TLS). Repo: private `webmaxru/nordlys-i-natt`.
 
 ## Documentation index
 
