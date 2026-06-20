@@ -29,7 +29,7 @@ export function VerdictGauge() {
     );
   }
 
-  if (forecast.isLoading) {
+  if (forecast.isLoading && !forecast.data) {
     return (
       <section className="panel gauge">
         <div className="skeleton skeleton--badge" />
@@ -40,7 +40,7 @@ export function VerdictGauge() {
     );
   }
 
-  if (forecast.isError || !forecast.data) {
+  if (!forecast.data) {
     return (
       <section className="panel gauge gauge--error">
         <p className="eyebrow">{t('gauge.heading')}</p>
