@@ -7,6 +7,7 @@ import {
   subscribeToPush,
   unsubscribeFromPush,
 } from '../api/push';
+import { trackEvent } from '../lib/analytics';
 import { useAppState } from '../state/AppStateContext';
 import './NotifyButton.css';
 
@@ -66,6 +67,7 @@ export function NotifyButton() {
         i18n.resolvedLanguage ?? i18n.language,
       );
       setEnabled(true);
+      trackEvent('notify_opt_in');
       setMessage(t('notify.success', { place: selectedLocation.name }));
     } catch {
       setEnabled(false);

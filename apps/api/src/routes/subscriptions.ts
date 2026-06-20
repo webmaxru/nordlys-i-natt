@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify';
 import { config } from '../config';
 import { createStore, subscriptionId, type Sub } from '../services/store';
+import { trackEvent } from '../telemetry';
 
 type SubscriptionBody = {
   subscription?: {
@@ -42,6 +43,7 @@ const subscriptions: FastifyPluginAsync = async (app) => {
     };
 
     await store.upsert(sub);
+    trackEvent('subscription_created');
     return { id: sub.id };
   });
 
@@ -52,6 +54,7 @@ const subscriptions: FastifyPluginAsync = async (app) => {
     }
 
     await store.remove(params.id);
+    trackEvent('subscription_deleted');
     return reply.code(204).send();
   });
 };

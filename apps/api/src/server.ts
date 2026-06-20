@@ -6,6 +6,7 @@ import cors from '@fastify/cors';
 import autoload from '@fastify/autoload';
 import fastifyStatic from '@fastify/static';
 import { config } from './config';
+import { initTelemetry } from './telemetry';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -15,6 +16,8 @@ const here = dirname(fileURLToPath(import.meta.url));
  * central registration file.
  */
 export async function buildServer(): Promise<FastifyInstance> {
+  initTelemetry();
+
   const app = Fastify({
     logger: { level: process.env.LOG_LEVEL ?? 'info' },
   });

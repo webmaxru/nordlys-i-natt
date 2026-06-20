@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 import { buildForecast } from '../services/forecast';
+import { trackEvent } from '../telemetry';
 
 function parseCoordinate(value: unknown, min: number, max: number): number | null {
   const parsed = typeof value === 'string' ? Number(value) : NaN;
@@ -20,11 +21,17 @@ const forecast: FastifyPluginAsync = async (app) => {
     }
 
     try {
-      return await buildForecast({
+      const forecast = await buildForecast({
         lat,
         lon,
         name: query.name?.trim() || `${lat}, ${lon}`,
       });
+      trackEvent('verdict_computed', {
+        verdict: forecast.verdict.verdict,
+        reason: forecast.verdict.reason,
+        latBand: Math.round(lat),
+      });
+      return forecast;
     } catch (err) {
       app.log.error({ err }, 'Failed to build forecast');
       return reply.code(502).send({ error: 'Upstream fetch failed' });

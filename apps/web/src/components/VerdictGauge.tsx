@@ -1,11 +1,24 @@
-import type { CSSProperties } from 'react';
+import { useEffect, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatLocalHour, verdictColor } from '../lib/format';
+import { trackEvent } from '../lib/analytics';
 import { useAppState } from '../state/AppStateContext';
 
 export function VerdictGauge() {
   const { i18n, t } = useTranslation();
   const { selectedLocation, forecast } = useAppState();
+  const telemetryVerdict = forecast.data?.verdict;
+
+  useEffect(() => {
+    if (!telemetryVerdict) {
+      return;
+    }
+
+    trackEvent('verdict_viewed', {
+      verdict: telemetryVerdict.verdict,
+      reason: telemetryVerdict.reason,
+    });
+  }, [telemetryVerdict]);
 
   if (!selectedLocation) {
     return (

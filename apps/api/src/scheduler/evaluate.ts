@@ -1,6 +1,7 @@
 import { buildForecast } from '../services/forecast';
 import { sendPush } from '../services/push';
 import { createStore, type Sub } from '../services/store';
+import { initTelemetry, trackEvent } from '../telemetry';
 
 type EvaluateResult = {
   checked: number;
@@ -27,6 +28,8 @@ const messages = {
 >;
 
 export async function evaluateAndNotify(): Promise<EvaluateResult> {
+  initTelemetry();
+
   const store = createStore();
   const subs = await store.list();
   const result: EvaluateResult = { checked: 0, sent: 0, removed: 0 };
@@ -72,6 +75,10 @@ export async function evaluateAndNotify(): Promise<EvaluateResult> {
       // eslint-disable-next-line no-console
       console.error('[evaluate] subscription failed', { id: sub.id, err });
     }
+  }
+
+  if (result.sent > 0) {
+    trackEvent('push_sent', { count: result.sent });
   }
 
   return result;

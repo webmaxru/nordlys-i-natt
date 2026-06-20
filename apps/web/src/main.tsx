@@ -5,6 +5,7 @@ import { registerSW } from 'virtual:pwa-register';
 import './i18n';
 import './styles.css';
 import App from './App';
+import { initAnalytics, trackEvent } from './lib/analytics';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,6 +20,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </React.StrictMode>,
 );
+
+initAnalytics();
+window.addEventListener('appinstalled', () => trackEvent('pwa_installed'));
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   registerSW({ immediate: true });

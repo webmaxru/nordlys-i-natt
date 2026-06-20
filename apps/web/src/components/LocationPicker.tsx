@@ -5,6 +5,7 @@ import { PRESET_LOCATIONS } from '../data/presetLocations';
 import { reverseGeocode } from '../api/kartverket';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { usePlaceSearch } from '../hooks/usePlaceSearch';
+import { trackEvent } from '../lib/analytics';
 import { useAppState } from '../state/AppStateContext';
 
 function locationLabel(location: NamedLocation): string {
@@ -41,6 +42,7 @@ export function LocationPicker() {
             lon: geolocation.coords!.lon,
           },
         );
+        trackEvent('location_selected', { source: 'geo' });
         setGeoMessage(null);
       })
       .catch(() => {
@@ -54,8 +56,12 @@ export function LocationPicker() {
     };
   }, [geolocation.coords, setSelectedLocation, t]);
 
-  const chooseLocation = (location: NamedLocation) => {
+  const chooseLocation = (
+    location: NamedLocation,
+    source: 'search' | 'preset',
+  ) => {
     setSelectedLocation(location);
+    trackEvent('location_selected', { source });
     setQuery('');
   };
 
@@ -119,7 +125,7 @@ export function LocationPicker() {
             <button
               className="search-results__item"
               key={`${location.name}-${location.lat}-${location.lon}`}
-              onClick={() => chooseLocation(location)}
+              onClick={() => chooseLocation(location, 'search')}
               type="button"
             >
               <span>{location.name}</span>
@@ -136,7 +142,7 @@ export function LocationPicker() {
             <button
               className="chip"
               key={location.name}
-              onClick={() => chooseLocation(location)}
+              onClick={() => chooseLocation(location, 'preset')}
               type="button"
             >
               {location.name}

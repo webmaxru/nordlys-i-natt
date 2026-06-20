@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nordlys-i-natt.no/sitemap.xml

@@ -2,6 +2,7 @@ import { useRef, useState, type CSSProperties } from 'react';
 import { toPng } from 'html-to-image';
 import { useTranslation } from 'react-i18next';
 import { formatLocalHour, verdictColor } from '../lib/format';
+import { trackEvent } from '../lib/analytics';
 import { useAppState } from '../state/AppStateContext';
 import './ShareCard.css';
 
@@ -81,6 +82,8 @@ export function ShareCard() {
               : '';
 
   async function handleShare() {
+    trackEvent('share_clicked');
+
     if (!cardRef.current) {
       setStatus('na');
       return;
