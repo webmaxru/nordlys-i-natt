@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Nordlys i natt?">
+  <defs>
+    <radialGradient id="sky" cx="50%" cy="25%" r="80%">
+      <stop offset="0" stop-color="#183a66" />
+      <stop offset="0.55" stop-color="#0b1020" />
+      <stop offset="1" stop-color="#05070f" />
+    </radialGradient>
+    <linearGradient id="aurora" x1="54" y1="116" x2="458" y2="306" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#53f5a6" />
+      <stop offset="0.48" stop-color="#84f7c8" />
+      <stop offset="1" stop-color="#7c5cff" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="108" fill="url(#sky)" />
+  <path d="M48 198c78-84 139 52 225-15 65-50 112-54 191-4-92-6-126 44-185 82-89 58-153-66-231-63Z" fill="url(#aurora)" opacity="0.9" filter="url(#glow)" />
+  <path d="M57 301c69-32 122-15 181 11 72 32 137 45 220-10-65 95-167 111-269 67-52-22-87-41-132-14Z" fill="#53f5a6" opacity="0.24" />
+  <circle cx="389" cy="113" r="33" fill="#f8fbff" opacity="0.92" />
+  <path d="M96 398 191 278l72 90 53-63 100 93H96Z" fill="#071022" />
+  <path d="M191 278 96 398h190l-67-84-28 35-24-30Z" fill="#102640" />
+</svg>

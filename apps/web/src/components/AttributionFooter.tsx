@@ -6,7 +6,7 @@ export function AttributionFooter() {
   return (
     <div className="attribution-footer">
       <span>{t('footer.attribution')}</span>
-      <a href="#privacy">{t('footer.privacy')}</a>
+      <a href="#personvern">{t('footer.privacy')}</a>
     </div>
   );
 }

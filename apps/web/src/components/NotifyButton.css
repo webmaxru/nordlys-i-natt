@@ -1,0 +1,22 @@
+.notify-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 6%);
+}
+
+.notify-button p {
+  margin: 0.35rem 0 0;
+  color: var(--muted-text);
+}
+
+@media (max-width: 640px) {
+  .notify-button {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
