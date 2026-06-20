@@ -157,6 +157,7 @@ button:disabled {
   display: grid;
   gap: 0.55rem;
   padding: 0.6rem;
+  min-width: 0;
 }
 
 .location-picker__heading {
@@ -278,11 +279,17 @@ button:disabled {
 .location-picker__controls {
   display: grid;
   gap: 0.65rem;
+  min-width: 0;
   animation: controls-in 180ms ease-out;
+}
+
+.preset-locations {
+  min-width: 0;
 }
 
 .location-picker__search {
   position: relative;
+  min-width: 0;
 }
 
 .search-results {
@@ -330,6 +337,7 @@ button:disabled {
   display: flex;
   flex-wrap: nowrap;
   gap: 0.45rem;
+  min-width: 0;
   margin-inline: -0.1rem;
   overflow-x: auto;
   padding: 0 0.1rem 0.2rem;
