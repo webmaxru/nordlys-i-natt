@@ -72,7 +72,6 @@ export async function evaluateAndNotify(): Promise<EvaluateResult> {
 
       await store.upsert(updatedSub);
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('[evaluate] subscription failed', { id: sub.id, err });
     }
   }
