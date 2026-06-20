@@ -7,54 +7,77 @@ type GeolocationStatus =
   | 'denied'
   | 'unsupported';
 
+export type GeolocationErrorReason =
+  | 'unsupported'
+  | 'insecure'
+  | 'denied'
+  | 'unavailable'
+  | 'timeout'
+  | 'unknown';
+
 interface Coordinates {
   lat: number;
   lon: number;
 }
 
+function isSupported(): boolean {
+  return typeof navigator !== 'undefined' && 'geolocation' in navigator;
+}
+
 function getInitialStatus(): GeolocationStatus {
-  return typeof navigator === 'undefined' || !navigator.geolocation
-    ? 'unsupported'
-    : 'idle';
+  return isSupported() ? 'idle' : 'unsupported';
 }
 
 export function useGeolocation() {
   const [status, setStatus] = useState<GeolocationStatus>(getInitialStatus);
   const [coords, setCoords] = useState<Coordinates | null>(null);
-  const [error, setError] = useState<GeolocationPositionError | Error | null>(
-    null,
-  );
+  const [reason, setReason] = useState<GeolocationErrorReason | null>(null);
 
   const request = useCallback(() => {
-    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+    if (!isSupported()) {
       setStatus('unsupported');
-      setError(new Error('Geolocation is not supported'));
+      setReason('unsupported');
+      return;
+    }
+
+    // iOS Safari silently rejects geolocation on non-secure origins (no prompt).
+    if (typeof window !== 'undefined' && window.isSecureContext === false) {
+      setStatus('denied');
+      setReason('insecure');
       return;
     }
 
     setStatus('prompting');
-    setError(null);
+    setReason(null);
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setStatus('granted');
+        setReason(null);
         setCoords({
           lat: position.coords.latitude,
           lon: position.coords.longitude,
         });
       },
       (positionError) => {
-        setStatus(
-          positionError.code === positionError.PERMISSION_DENIED
-            ? 'denied'
-            : 'idle',
-        );
-        setError(positionError);
+        let nextReason: GeolocationErrorReason = 'unknown';
+        if (positionError.code === positionError.PERMISSION_DENIED) {
+          nextReason = 'denied';
+        } else if (positionError.code === positionError.POSITION_UNAVAILABLE) {
+          nextReason = 'unavailable';
+        } else if (positionError.code === positionError.TIMEOUT) {
+          nextReason = 'timeout';
+        }
+
+        setStatus(nextReason === 'denied' ? 'denied' : 'idle');
+        setReason(nextReason);
         setCoords(null);
       },
-      { enableHighAccuracy: true, timeout: 10_000, maximumAge: 5 * 60_000 },
+      // Regional accuracy is enough for aurora; high accuracy is slower and
+      // times out more often on mobile. A generous timeout avoids false errors.
+      { enableHighAccuracy: false, timeout: 15_000, maximumAge: 5 * 60_000 },
     );
   }, []);
 
-  return { status, coords, request, error };
+  return { status, coords, request, reason };
 }

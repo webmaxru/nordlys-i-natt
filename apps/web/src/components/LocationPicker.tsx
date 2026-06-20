@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { NamedLocation } from '@nordlys/shared';
 import { PRESET_LOCATIONS } from '../data/presetLocations';
 import { reverseGeocode } from '../api/kartverket';
+import { isIos } from '../api/push';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { usePlaceSearch } from '../hooks/usePlaceSearch';
 import { trackEvent } from '../lib/analytics';
@@ -46,9 +47,19 @@ export function LocationPicker() {
         setGeoMessage(null);
       })
       .catch(() => {
-        if (active) {
-          setGeoMessage(t('location.geoError'));
+        if (!active) {
+          return;
         }
+
+        // Reverse geocoding failed, but we already have a valid fix — use it
+        // rather than discarding the location the user just granted.
+        setSelectedLocation({
+          name: t('location.myLocationName'),
+          lat: geolocation.coords!.lat,
+          lon: geolocation.coords!.lon,
+        });
+        trackEvent('location_selected', { source: 'geo' });
+        setGeoMessage(null);
       });
 
     return () => {
@@ -64,6 +75,30 @@ export function LocationPicker() {
     trackEvent('location_selected', { source });
     setQuery('');
   };
+
+  let geoError: string | null = null;
+  switch (geolocation.reason) {
+    case 'denied':
+      geoError = isIos()
+        ? t('location.geoDeniedIos')
+        : t('location.geoDenied');
+      break;
+    case 'insecure':
+      geoError = t('location.geoInsecure');
+      break;
+    case 'unsupported':
+      geoError = t('location.geoUnsupported');
+      break;
+    case 'unavailable':
+    case 'timeout':
+      geoError = t('location.geoUnavailable');
+      break;
+    case 'unknown':
+      geoError = t('location.geoError');
+      break;
+    default:
+      geoError = null;
+  }
 
   return (
     <section className="panel location-picker" aria-labelledby="location-title">
@@ -92,10 +127,8 @@ export function LocationPicker() {
           : t('location.useMyLocation')}
       </button>
       {geoMessage ? <p className="helper-text">{geoMessage}</p> : null}
-      {geolocation.error ? (
-        <p className="helper-text helper-text--error">
-          {t('location.geoError')}
-        </p>
+      {geoError ? (
+        <p className="helper-text helper-text--error">{geoError}</p>
       ) : null}
 
       <label className="search-field">
