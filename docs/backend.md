@@ -65,9 +65,12 @@ Local secrets live in `apps/api/.env` (gitignored). Never commit them.
 ## Telemetry (`telemetry.ts`)
 
 `applicationinsights` Node SDK, initialized only when a connection string is present (else a
-no-op). Sampled at 30%, noisy auto-collection disabled. Emits key events: `verdict_computed`,
-`subscription_created/deleted`, `push_sent` (no PII; coarse latitude only). See
-[deployment.md](./deployment.md) for the privacy posture.
+no-op). Sampled at 30% (noisy auto-collection disabled). Emits `verdict_computed`,
+`subscription_created/deleted`, `push_sent`, and **`page_view`** — a cookieless, consent-free
+server-side visitor count from an `onResponse` hook in `server.ts` (keyed on
+`Sec-Fetch-Dest: document`), forced to 100% sampling for exact counts. No PII; coarse latitude only.
+
+→ Full reference: **[analytics.md](./analytics.md)**; privacy posture also in [deployment.md](./deployment.md).
 
 ## Why `tsx` (and the autoload coupling)
 

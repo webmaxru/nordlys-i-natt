@@ -48,7 +48,7 @@ container serves.
 | `AuroraMap` | react-leaflet + Kartverket grayscale tiles + OVATION oval overlay + user marker |
 | `ShareCard` | renders the verdict to a PNG (`html-to-image`) → Web Share / download |
 | `NotifyButton` | push opt-in (permission + subscribe) |
-| `ConsentBanner`, `PrivacyPolicy` | cookie-free consent (opt-out) + privacy view (toggled via `#personvern` hash) |
+| `ConsentBanner`, `PrivacyPolicy` | cookie-free, **opt-in** analytics consent + privacy view (toggled via `#personvern` hash) |
 
 `data/presetLocations.ts` seeds the preset chips (Tromsø … Kristiansand). **Note:** this lives
 under `src/data/` — keep `data` out of broad ignore globs (see [troubleshooting.md](./troubleshooting.md)).
@@ -74,5 +74,9 @@ merged into the generated SW via `workbox.importScripts`. Icons + `og-image.png`
 ## Analytics (`lib/analytics.ts`)
 
 `@microsoft/applicationinsights-web`, **cookieless** (`disableCookiesUsage: true`), no PII,
-gated on `isAnalyticsAllowed()`. No connection string → no-op. Events: `location_selected`,
-`verdict_viewed`, `share_clicked`, `pwa_installed`, `notify_opt_in`.
+lazy-loaded and gated on `isAnalyticsAllowed()` (**opt-in**). No connection string → no-op.
+Client events: `location_selected`, `verdict_viewed`, `share_clicked`, `pwa_installed`,
+`notify_opt_in`. Visitor counts are collected **server-side** instead (cookieless, no consent).
+
+→ Full reference: **[analytics.md](./analytics.md)** (both pipelines, consent model, sampling,
+privacy posture, KQL cookbook).

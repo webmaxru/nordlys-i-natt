@@ -16,6 +16,7 @@ cloud cover (MET Norway), and darkness (computed sun elevation).
 | [backend.md](./backend.md) | Fastify API: proxy, caching, `/api/forecast`, push notifications, cron job |
 | [frontend.md](./frontend.md) | React PWA: components, hooks, state, i18n, map, share, consent |
 | [push-notifications.md](./push-notifications.md) | Web Push opt-in design, Edge auto-block findings, iOS constraints, backend cadence |
+| [analytics.md](./analytics.md) | Telemetry & engagement: client (consent-gated) + server (cookieless) App Insights events, consent model, sampling, privacy posture, KQL cookbook |
 | [deployment.md](./deployment.md) | Azure infra (Bicep), CI/CD, **manual deploy runbook**, secrets, cost |
 | [registry-ghcr.md](./registry-ghcr.md) | Container registry: private GitHub Container Registry (GHCR), PAT pull secret, build/push/deploy, pruning |
 | [subscriptions-admin.md](./subscriptions-admin.md) | Subscription administration and operational scripts |

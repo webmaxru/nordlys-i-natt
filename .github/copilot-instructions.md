@@ -109,6 +109,7 @@ Load the relevant doc when working in that area:
 - [docs/backend.md](../docs/backend.md) — Fastify routes/services, push notifications, cron job, config/env
 - [docs/frontend.md](../docs/frontend.md) — components, hooks, state, i18n, PWA, SEO, analytics
 - [docs/push-notifications.md](../docs/push-notifications.md) — Web Push soft prompt, Edge auto-block findings, iOS constraints, cadence
+- [docs/analytics.md](../docs/analytics.md) — client (consent-gated) + server (cookieless) App Insights events, consent model, `page_view` counting, sampling, privacy posture, KQL
 - [docs/deployment.md](../docs/deployment.md) — Bicep, CI/CD, **manual `az` runbook**, secrets, cost
 - [docs/registry-ghcr.md](../docs/registry-ghcr.md) — private GHCR migration, PAT setup, image pruning, rollback
 - [docs/local-development.md](../docs/local-development.md) — setup, env vars, run, test
