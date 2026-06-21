@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { formatLocalHour, verdictColor } from '../lib/format';
 import { trackEvent } from '../lib/analytics';
 import { useAppState } from '../state/AppStateContext';
+import { GaugeLoading } from './GaugeLoading';
 
 export function VerdictGauge() {
   const { i18n, t } = useTranslation();
@@ -30,14 +31,7 @@ export function VerdictGauge() {
   }
 
   if (forecast.isLoading && !forecast.data) {
-    return (
-      <section className="panel gauge">
-        <div className="skeleton skeleton--badge" />
-        <div className="skeleton skeleton--line" />
-        <div className="skeleton skeleton--line skeleton--short" />
-        <p className="helper-text">{t('gauge.loading')}</p>
-      </section>
-    );
+    return <GaugeLoading />;
   }
 
   if (!forecast.data) {

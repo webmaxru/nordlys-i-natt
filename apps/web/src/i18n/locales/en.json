@@ -52,6 +52,13 @@
     "kpCurrentVsRequired": "Kp {{kp}} / needs Kp {{requiredKp}}",
     "pickLocation": "Pick a location to get tonight’s aurora forecast.",
     "loading": "Calculating your chances …",
+    "loadingMessages": [
+      "Scanning the sky for green …",
+      "Checking how transparent the clouds are …",
+      "Waiting for the sun to clock off …",
+      "Catching the solar wind …",
+      "Consulting the Kp oracle …"
+    ],
     "error": "We could not load the forecast right now.",
     "retry": "Try again"
   },

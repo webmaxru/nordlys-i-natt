@@ -255,6 +255,22 @@ button:disabled {
   color: var(--no);
 }
 
+.gauge__loading {
+  animation: gauge-loading-fade 0.45s ease;
+}
+
+@keyframes gauge-loading-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .search-field {
   position: relative;
   display: grid;

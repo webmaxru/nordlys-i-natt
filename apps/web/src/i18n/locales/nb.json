@@ -52,6 +52,13 @@
     "kpCurrentVsRequired": "Kp {{kp}} / trenger Kp {{requiredKp}}",
     "pickLocation": "Velg et sted for å få nattens nordlysvarsel.",
     "loading": "Beregner sjansene …",
+    "loadingMessages": [
+      "Speider etter grønt på himmelen …",
+      "Sjekker hvor gjennomsiktige skyene er …",
+      "Venter på at sola tar kvelden …",
+      "Fanger solvinden …",
+      "Spør Kp-orakelet …"
+    ],
     "error": "Vi klarte ikke å hente varselet akkurat nå.",
     "retry": "Prøv igjen"
   },
