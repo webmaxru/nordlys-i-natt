@@ -31,6 +31,19 @@ export function initTelemetry(): void {
     .start();
 
   appInsights.defaultClient.config.samplingPercentage = 30;
+
+  // Keep visitor counts exact: never sample `page_view` events (they're low
+  // volume and used directly for analytics), while everything else stays at 30%.
+  appInsights.defaultClient.addTelemetryProcessor((envelope) => {
+    const data = envelope.data as
+      | { baseType?: string; baseData?: { name?: string } }
+      | undefined;
+    if (data?.baseType === 'EventData' && data.baseData?.name === 'page_view') {
+      envelope.sampleRate = 100;
+    }
+    return true;
+  });
+
   enabled = true;
 }
 

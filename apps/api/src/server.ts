@@ -1,14 +1,31 @@
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import Fastify, { type FastifyInstance } from 'fastify';
+import Fastify, { type FastifyInstance, type FastifyRequest } from 'fastify';
 import cors from '@fastify/cors';
 import autoload from '@fastify/autoload';
 import fastifyStatic from '@fastify/static';
 import { config } from './config';
-import { initTelemetry } from './telemetry';
+import { initTelemetry, trackEvent } from './telemetry';
 
 const here = dirname(fileURLToPath(import.meta.url));
+
+/**
+ * A top-level page navigation (the HTML shell), as opposed to an asset, an
+ * `/api` call or a `fetch`. `Sec-Fetch-Dest: document` is the reliable modern
+ * signal; fall back to the `Accept` header + "no file extension" for older
+ * browsers that don't send Sec-Fetch-* (e.g. older Safari).
+ */
+function isDocumentRequest(req: FastifyRequest, path: string): boolean {
+  const dest = req.headers['sec-fetch-dest'];
+  if (typeof dest === 'string') {
+    return dest === 'document';
+  }
+  const accept = String(req.headers['accept'] ?? '');
+  const lastSegment = path.split('/').pop() ?? '';
+  const looksLikeAsset = /\.[a-z0-9]+$/i.test(lastSegment);
+  return accept.includes('text/html') && !looksLikeAsset;
+}
 
 /**
  * Build the Fastify app. Routes are auto-loaded from ./routes (each file is a
@@ -24,6 +41,19 @@ export async function buildServer(): Promise<FastifyInstance> {
 
   await app.register(cors, { origin: true });
   await app.register(autoload, { dir: join(here, 'routes') });
+
+  // Count page views server-side. This is fully cookieless — nothing is stored
+  // on or read from the user's device — so it needs no consent banner. Only
+  // top-level navigations (the HTML shell) are counted, never assets/api/fetch.
+  app.addHook('onResponse', (req, reply, done) => {
+    if (req.method === 'GET' && reply.statusCode < 400) {
+      const path = (req.raw.url ?? '').split('?')[0];
+      if (!path.startsWith('/api') && isDocumentRequest(req, path)) {
+        trackEvent('page_view', { path });
+      }
+    }
+    done();
+  });
 
   // Serve the built SPA when present (single-container deployment).
   const webDist = config.webDistPath || resolve(here, '../../web/dist');
