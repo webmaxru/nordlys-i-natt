@@ -66,13 +66,23 @@ az containerapp job update  -n nordlys-job-eeyobitljk4fq -g $RG --image "${Image
 ## CI/CD (`.github/workflows`)
 
 - `ci.yml` (PRs): pnpm install → build shared → `-r typecheck` → test shared+api → web build.
-- `deploy.yml` (push to `main`): OIDC `azure/login` → build & push the image to **GHCR** (via the
-  built-in `GITHUB_TOKEN`) → `az deployment group create` (the Container App pulls the private image
-  with the `GHCR_PULL_TOKEN` secret).
+- `deploy.yml` (push to `main`, or `workflow_dispatch`): build & push the image to **GHCR** (built-in
+  `GITHUB_TOKEN`, `packages: write`) → OIDC `azure/login` → `az deployment group create` → **Re-bind
+  custom domain**. The Container App pulls the private image with the `GHCR_PULL_TOKEN` secret.
 - **Required secrets:** `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID` (OIDC
   federated credential), `GHCR_PULL_TOKEN` (classic PAT, `read:packages`), `MET_USER_AGENT`,
-  `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`. **Var:** `AZURE_RESOURCE_GROUP`. See
-  `infra/README.md`.
+  `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`. **Vars:** `AZURE_RESOURCE_GROUP`,
+  `CUSTOM_DOMAIN` (optional host to keep bound, e.g. `nordlys.isainative.dev`). See `infra/README.md`.
+- **One-time setup gotchas (each caused a real deploy failure):**
+  1. **`deploy.yml` must be valid YAML** — an unquoted inline `run: echo "...: https://..."` (colon-space)
+     makes GitHub fail the whole file at parse time → every run is a 0s `startup_failure`. Keep such
+     `run:` values as block scalars (`run: |`).
+  2. **GHCR package access** — because the image package pre-existed the workflow, the repo's
+     `GITHUB_TOKEN` is denied `write_package` until you grant it: package → *Manage Actions access* →
+     add the repo with **Write** (https://github.com/users/webmaxru/packages/container/nordlys-i-natt/settings).
+  3. **OIDC federated credential** subject must be exactly `repo:webmaxru/nordlys-i-natt:ref:refs/heads/main`
+     (issuer `https://token.actions.githubusercontent.com`, audience `api://AzureADTokenExchange`); the
+     app's service principal needs **Contributor** on `rg-nordlys`.
 
 ## Custom domain & TLS (live)
 
@@ -92,6 +102,18 @@ The DNS provider is Cloudflare; the setup that was used:
      --environment <env> --validation-method CNAME
    ```
 3. The SEO `canonical` / `og:url` / `og:image` / `sitemap.xml` already point to this domain.
+
+> **Redeploy gotcha:** a resource-group Bicep deploy **resets `ingress.customDomains`** and drops this
+> binding — the custom host goes TLS-down (the default `*.azurecontainerapps.io` FQDN stays up). The
+> managed certificate survives at the **environment** level, so `deploy.yml`'s **Re-bind custom domain**
+> step (gated on the `CUSTOM_DOMAIN` var) looks the cert up by subject and restores the binding on every
+> run. To restore manually:
+> ```bash
+> cert=$(az containerapp env certificate list -n <env> -g <rg> --managed-certificates-only \
+>   --query "[?properties.subjectName=='nordlys.isainative.dev'].id | [0]" -o tsv)
+> az containerapp hostname bind -n <app> -g <rg> --hostname nordlys.isainative.dev \
+>   --environment <env> --certificate "$cert"
+> ```
 
 *Optional:* to front it with Cloudflare's CDN/WAF, switch the CNAME to **Proxied (orange)** **and**
 set Cloudflare **SSL/TLS → Full (strict)**. Currently DNS-only (Azure serves HTTPS directly).

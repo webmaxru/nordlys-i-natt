@@ -89,6 +89,14 @@ Most pain came from **"works locally, breaks at integration/deploy"**. Highlight
    Set `PYTHONUTF8=1` for `az`. Images push to **GHCR**; CI builds on Ubuntu.
 6. **Timeline label overlap** (the "Now" label collided with the "Kp index" axis title). →
    decluttered; **screenshot SVG/chart UIs at real viewports**.
+7. **CI/CD deploy pitfalls (all hit in one session):** `deploy.yml` failed silently at parse time
+   (0s `startup_failure`) because an inline `run: echo "…: https://…"` colon-space broke YAML — keep
+   such values as block scalars (`run: |`). Actions can't push to a **pre-existing GHCR package**
+   until the repo is granted **Write** (package → *Manage Actions access*). And a resource-group
+   **Bicep deploy wipes `ingress.customDomains`**, dropping the custom domain every deploy → the
+   workflow's *Re-bind custom domain* step restores it (the managed cert persists at the env level;
+   gated on the `CUSTOM_DOMAIN` var). Push to `main` now auto-deploys via OIDC. See
+   [docs/deployment.md](../docs/deployment.md).
 
 ## On-demand documentation
 
