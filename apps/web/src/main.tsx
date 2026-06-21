@@ -6,7 +6,6 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 import './i18n';
 import './styles.css';
 import App from './App';
-import { initAnalytics, trackEvent } from './lib/analytics';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +48,3 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </PersistQueryClientProvider>
   </React.StrictMode>,
 );
-
-initAnalytics();
-window.addEventListener('appinstalled', () => trackEvent('pwa_installed'));

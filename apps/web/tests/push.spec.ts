@@ -61,7 +61,6 @@ async function mockApp(
   );
 
   await page.addInitScript(({ loc }) => {
-    localStorage.setItem('nordlys.consent.analytics', 'denied');
     localStorage.setItem('i18nextLng', 'en');
     localStorage.setItem('nordlys.location', loc);
   }, { loc: TROMSO });

@@ -9,7 +9,6 @@ import {
   subscribeToPush,
   unsubscribeFromPush,
 } from '../api/push';
-import { trackEvent } from '../lib/analytics';
 import { useAppState } from '../state/AppStateContext';
 import './NotifyButton.css';
 
@@ -87,7 +86,6 @@ export function NotifyButton() {
         await subscribeToPush(selectedLocation, i18n.resolvedLanguage ?? i18n.language);
         setEnabled(true);
         setStep('idle');
-        trackEvent('notify_opt_in');
         setFeedback(t('notify.success', { place: selectedLocation.name }));
         return;
       }

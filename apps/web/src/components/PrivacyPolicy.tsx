@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  getAnalyticsConsent,
-  onConsentChange,
-  setAnalyticsConsent,
-  type ConsentState,
-} from '../state/consent';
 import './PrivacyPolicy.css';
 
 const PRIVACY_HASH = '#personvern';
@@ -30,8 +24,6 @@ function closePrivacyPolicy() {
 export function PrivacyPolicy() {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(() => isPrivacyHash());
-  const [consent, setConsent] = useState<ConsentState>(() => getAnalyticsConsent());
-  const analyticsEnabled = consent === 'granted';
 
   useEffect(() => {
     const handleHashChange = () => setIsOpen(isPrivacyHash());
@@ -39,8 +31,6 @@ export function PrivacyPolicy() {
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
-
-  useEffect(() => onConsentChange(setConsent), []);
 
   if (!isOpen) {
     return null;
@@ -69,22 +59,11 @@ export function PrivacyPolicy() {
         <h3>{t('privacy.whatWeDont')}</h3>
         <p>{t('privacy.whatWeDontBody')}</p>
 
+        <h3>{t('privacy.analyticsHeading')}</h3>
+        <p>{t('privacy.analyticsBody')}</p>
+
         <h3>{t('privacy.retention')}</h3>
         <p>{t('privacy.retentionBody')}</p>
-
-        <div className="privacy-analytics">
-          <div>
-            <h3>{t('privacy.analyticsHeading')}</h3>
-            <p>{analyticsEnabled ? t('privacy.analyticsOn') : t('privacy.analyticsOff')}</p>
-          </div>
-          <button
-            className="privacy-toggle"
-            onClick={() => setAnalyticsConsent(analyticsEnabled ? 'denied' : 'granted')}
-            type="button"
-          >
-            {analyticsEnabled ? t('privacy.toggleOff') : t('privacy.toggleOn')}
-          </button>
-        </div>
       </section>
     </div>
   );

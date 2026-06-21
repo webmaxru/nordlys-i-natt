@@ -1,10 +1,10 @@
 import { AppStateProvider } from './state/AppStateContext';
 import { AttributionFooter } from './components/AttributionFooter';
 import { AuroraMap } from './components/AuroraMap';
-import { ConsentBanner } from './components/ConsentBanner';
 import { Layout } from './components/Layout';
 import { LocationPicker } from './components/LocationPicker';
 import { NotifyButton } from './components/NotifyButton';
+import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { PwaReloadPrompt } from './components/PwaReloadPrompt';
 import { ShareCard } from './components/ShareCard';
 import { Timeline } from './components/Timeline';
@@ -21,7 +21,7 @@ export default function App() {
         <AuroraMap />
         <ShareCard />
       </Layout>
-      <ConsentBanner />
+      <PrivacyPolicy />
       <PwaReloadPrompt />
     </AppStateProvider>
   );

@@ -131,28 +131,17 @@
     "subscribedDetail": "Vi varsler deg om nordlys ved {{place}}. Si opp under når som helst.",
     "subscribedCadence": "Maks ett varsel per mørk natt, aldri 02:00–06:00."
   },
-  "consent": {
-    "title": "Personvern",
-    "message": "Vi bruker anonym, informasjonskapsel-fri statistikk for å forbedre appen. Du kan når som helst si nei.",
-    "accept": "Greit",
-    "decline": "Kun nødvendig",
-    "learnMore": "Les mer",
-    "analytics": "Anonym statistikk"
-  },
   "privacy": {
     "title": "Personvern",
     "intro": "Denne appen er laget for å samle minst mulig data om deg.",
     "whatWeUse": "Det vi bruker",
-    "whatWeUseBody": "Posisjon (kun i nettleseren din for å hente varsel), valgt språk og samtykke lagres lokalt. Hvis du slår på nordlysvarsler, lagrer vi push-abonnementet og en grov posisjon for å kunne sende varselet.",
+    "whatWeUseBody": "Posisjon (kun i nettleseren din for å hente varsel) og valgt språk lagres lokalt på enheten din. Hvis du slår på nordlysvarsler, lagrer vi push-abonnementet og en grov posisjon for å kunne sende varselet.",
     "whatWeDont": "Det vi ikke gjør",
-    "whatWeDontBody": "Ingen reklame, ingen sporings-informasjonskapsler, ingen deling med tredjeparter. Statistikk er anonym og uten informasjonskapsler.",
+    "whatWeDontBody": "Ingen informasjonskapsler, ingen reklame, ingen sporing på tvers av nettsteder, ingen deling med tredjeparter.",
     "retention": "Lagring",
     "retentionBody": "Du kan skru av varsler når som helst, da slettes abonnementet ditt.",
     "analyticsHeading": "Statistikk",
-    "analyticsOn": "Anonym statistikk er på",
-    "analyticsOff": "Anonym statistikk er av",
-    "toggleOn": "Skru på",
-    "toggleOff": "Skru av",
+    "analyticsBody": "Vi teller besøk samlet på vår egen server — uten informasjonskapsler og uten å spore deg på tvers av nettsteder — så det finnes ingen samtykkebanner å klikke på.",
     "back": "Tilbake"
   }
 }

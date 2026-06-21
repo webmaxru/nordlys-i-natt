@@ -10,14 +10,11 @@ container serves.
 ## App shell & state
 
 - `App.tsx` composes everything inside `<AppStateProvider><Layout>…</Layout></AppStateProvider>`
-  plus a fixed `<ConsentBanner/>`. Feature components are rendered here once; later changes go
+  plus a `<PrivacyPolicy/>` overlay. Feature components are rendered here once; later changes go
   into the component files, not `App.tsx`.
 - `state/AppStateContext.tsx` — `useAppState()` exposes
   `{ selectedLocation, setSelectedLocation, forecast: { data, isLoading, isError, refetch } }`.
   `selectedLocation` is persisted to `localStorage` (`nordlys.location`).
-- `state/consent.ts` — the cookie‑free consent source of truth:
-  `getAnalyticsConsent()`, `setAnalyticsConsent()`, `onConsentChange()`, `isAnalyticsAllowed()`,
-  key `nordlys.consent.analytics`. Analytics initialize **only** after consent.
 
 ## Data layer
 
@@ -48,7 +45,7 @@ container serves.
 | `AuroraMap` | react-leaflet + Kartverket grayscale tiles + OVATION oval overlay + user marker |
 | `ShareCard` | renders the verdict to a PNG (`html-to-image`) → Web Share / download |
 | `NotifyButton` | push opt-in (permission + subscribe) |
-| `ConsentBanner`, `PrivacyPolicy` | cookie-free, **opt-in** analytics consent + privacy view (toggled via `#personvern` hash) |
+| `PrivacyPolicy` | privacy view (toggled via `#personvern` hash); **no cookie banner** — analytics are server-side |
 
 `data/presetLocations.ts` seeds the preset chips (Tromsø … Kristiansand). **Note:** this lives
 under `src/data/` — keep `data` out of broad ignore globs (see [troubleshooting.md](./troubleshooting.md)).
@@ -57,7 +54,7 @@ under `src/data/` — keep `data` out of broad ignore globs (see [troubleshootin
 
 `i18n/index.ts` (i18next + browser language detector, persisted) with `locales/nb.json` (default)
 and `locales/en.json`. **Both files must stay key-for-key in sync.** Add new strings under a
-namespace (`timeline.*`, `map.*`, `share.*`, `notify.*`, `consent.*`, `privacy.*`).
+namespace (`timeline.*`, `map.*`, `share.*`, `notify.*`, `privacy.*`).
 
 ## PWA & service worker
 
@@ -71,12 +68,8 @@ merged into the generated SW via `workbox.importScripts`. Icons + `og-image.png`
 `public/og-image.png` (1200×630). The canonical / `og:url` / `og:image` point to the live domain
 **`https://nordlys.isainative.dev`**.
 
-## Analytics (`lib/analytics.ts`)
+## Analytics
 
-`@microsoft/applicationinsights-web`, **cookieless** (`disableCookiesUsage: true`), no PII,
-lazy-loaded and gated on `isAnalyticsAllowed()` (**opt-in**). No connection string → no-op.
-Client events: `location_selected`, `verdict_viewed`, `share_clicked`, `pwa_installed`,
-`notify_opt_in`. Visitor counts are collected **server-side** instead (cookieless, no consent).
-
-→ Full reference: **[analytics.md](./analytics.md)** (both pipelines, consent model, sampling,
-privacy posture, KQL cookbook).
+The frontend has **no analytics SDK and no cookie/consent banner**. All usage analytics are
+collected **server-side** (cookieless) by the Fastify backend — see **[analytics.md](./analytics.md)**.
+Adding any client-side analytics/storage would re-introduce the EU consent-banner requirement.

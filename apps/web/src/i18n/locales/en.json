@@ -131,28 +131,17 @@
     "subscribedDetail": "We'll alert you about aurora near {{place}}. Unsubscribe below anytime.",
     "subscribedCadence": "At most one alert per dark night, never 02:00–06:00."
   },
-  "consent": {
-    "title": "Privacy",
-    "message": "We use anonymous, cookie-free analytics to improve the app. You can opt out any time.",
-    "accept": "OK",
-    "decline": "Only necessary",
-    "learnMore": "Learn more",
-    "analytics": "Anonymous analytics"
-  },
   "privacy": {
     "title": "Privacy",
     "intro": "This app is built to collect as little data about you as possible.",
     "whatWeUse": "What we use",
-    "whatWeUseBody": "Your location (only in your browser, to fetch the forecast), chosen language and consent are stored locally. If you enable aurora alerts, we store your push subscription and a coarse location to send the alert.",
+    "whatWeUseBody": "Your location (only in your browser, to fetch the forecast) and chosen language are stored locally on your device. If you enable aurora alerts, we store your push subscription and a coarse location to send the alert.",
     "whatWeDont": "What we don’t do",
-    "whatWeDontBody": "No ads, no tracking cookies, no sharing with third parties. Analytics are anonymous and cookie-free.",
+    "whatWeDontBody": "No cookies, no ads, no cross-site tracking, no sharing with third parties.",
     "retention": "Retention",
     "retentionBody": "You can turn off alerts at any time, which deletes your subscription.",
     "analyticsHeading": "Analytics",
-    "analyticsOn": "Anonymous analytics are on",
-    "analyticsOff": "Anonymous analytics are off",
-    "toggleOn": "Turn on",
-    "toggleOff": "Turn off",
+    "analyticsBody": "We count visits on our own server in aggregate — without cookies and without tracking you across sites — so there is no consent banner to click.",
     "back": "Back"
   }
 }

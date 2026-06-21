@@ -75,7 +75,6 @@ async function mockApp(
 
   await page.addInitScript(
     ({ loc, lang, seed }) => {
-      localStorage.setItem('nordlys.consent.analytics', 'denied');
       localStorage.setItem('i18nextLng', lang);
       if (seed) localStorage.setItem('nordlys.location', loc);
     },

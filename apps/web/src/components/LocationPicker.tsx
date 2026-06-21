@@ -6,7 +6,6 @@ import { reverseGeocode } from '../api/kartverket';
 import { isIos } from '../api/push';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { usePlaceSearch } from '../hooks/usePlaceSearch';
-import { trackEvent } from '../lib/analytics';
 import { useAppState } from '../state/AppStateContext';
 
 function locationLabel(location: NamedLocation): string {
@@ -45,7 +44,6 @@ export function LocationPicker() {
             lon: geolocation.coords!.lon,
           },
         );
-        trackEvent('location_selected', { source: 'geo' });
         setGeoMessage(null);
         setIsExpanded(false);
       })
@@ -61,7 +59,6 @@ export function LocationPicker() {
           lat: geolocation.coords!.lat,
           lon: geolocation.coords!.lon,
         });
-        trackEvent('location_selected', { source: 'geo' });
         setGeoMessage(null);
         setIsExpanded(false);
       });
@@ -71,12 +68,8 @@ export function LocationPicker() {
     };
   }, [geolocation.coords, setSelectedLocation, t]);
 
-  const chooseLocation = (
-    location: NamedLocation,
-    source: 'search' | 'preset',
-  ) => {
+  const chooseLocation = (location: NamedLocation) => {
     setSelectedLocation(location);
-    trackEvent('location_selected', { source });
     setQuery('');
     setIsExpanded(false);
   };
@@ -187,7 +180,7 @@ export function LocationPicker() {
                   <button
                     className="search-results__item"
                     key={`${location.name}-${location.lat}-${location.lon}`}
-                    onClick={() => chooseLocation(location, 'search')}
+                    onClick={() => chooseLocation(location)}
                     type="button"
                   >
                     <span>{location.name}</span>
@@ -206,7 +199,7 @@ export function LocationPicker() {
                   <button
                     className="chip"
                     key={location.name}
-                    onClick={() => chooseLocation(location, 'preset')}
+                    onClick={() => chooseLocation(location)}
                     type="button"
                   >
                     {location.name}
