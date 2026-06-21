@@ -94,4 +94,5 @@ jobs:
           echo "fqdn=$fqdn" >> "$GITHUB_OUTPUT"
 
       - name: Output Container App FQDN
-        run: echo "Container App FQDN: https://${{ steps.deploy.outputs.fqdn }}"
+        run: |
+          echo "Container App FQDN: https://${{ steps.deploy.outputs.fqdn }}"
