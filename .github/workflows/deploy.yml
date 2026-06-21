@@ -96,3 +96,26 @@ jobs:
       - name: Output Container App FQDN
         run: |
           echo "Container App FQDN: https://${{ steps.deploy.outputs.fqdn }}"
+
+      - name: Re-bind custom domain
+        # A resource-group Bicep deploy resets ingress.customDomains, which drops
+        # any manually-added custom domain (e.g. nordlys.isainative.dev). The
+        # managed certificate survives at the environment level, so re-bind it
+        # here. No-op when CUSTOM_DOMAIN is unset or its managed cert isn't issued
+        # yet (add the hostname + cert once, then this keeps it bound every deploy).
+        if: vars.CUSTOM_DOMAIN != ''
+        env:
+          CUSTOM_DOMAIN: ${{ vars.CUSTOM_DOMAIN }}
+        run: |
+          appName="$(az containerapp list -g "$AZURE_RESOURCE_GROUP" --query "[0].name" -o tsv)"
+          envName="$(az containerapp env list -g "$AZURE_RESOURCE_GROUP" --query "[0].name" -o tsv)"
+          cert="$(az containerapp env certificate list -n "$envName" -g "$AZURE_RESOURCE_GROUP" \
+            --managed-certificates-only \
+            --query "[?properties.subjectName=='$CUSTOM_DOMAIN'].id | [0]" -o tsv)"
+          if [ -z "$cert" ]; then
+            echo "No managed certificate for $CUSTOM_DOMAIN yet — skipping re-bind."
+            exit 0
+          fi
+          az containerapp hostname bind -n "$appName" -g "$AZURE_RESOURCE_GROUP" \
+            --hostname "$CUSTOM_DOMAIN" --environment "$envName" --certificate "$cert"
+          echo "Re-bound https://$CUSTOM_DOMAIN"
