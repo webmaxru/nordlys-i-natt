@@ -217,60 +217,7 @@
                 "position": {
                   "x": 0,
                   "y": 9,
-                  "colSpan": 6,
-                  "rowSpan": 4
-                },
-                "metadata": {
-                  "inputs": [
-                    {
-                      "name": "resourceTypeMode",
-                      "value": "resource"
-                    },
-                    {
-                      "name": "resourceId",
-                      "value": "[variables('appInsightsResourceId')]"
-                    },
-                    {
-                      "name": "scope",
-                      "value": {
-                        "resourceIds": [
-                          "[variables('appInsightsResourceId')]"
-                        ]
-                      }
-                    },
-                    {
-                      "name": "resourceType",
-                      "value": "[variables('appInsightsResourceType')]"
-                    }
-                  ],
-                  "type": "Extension/Microsoft_Azure_Monitoring_Logs/PartType/LogsDashboardPart",
-                  "settings": {
-                    "content": {
-                      "PartTitle": "Location source",
-                      "PartSubTitle": "location_selected by source (consent-gated)",
-                      "Query": "customEvents\n| where name == \"location_selected\"\n| extend source = tostring(customDimensions.source)\n| summarize hits = sum(itemCount) by source\n| render barchart",
-                      "Dimensions": {
-                        "chartType": "barchart",
-                        "category": "source",
-                        "value": "hits"
-                      },
-                      "Version": "1.0",
-                      "resourceTypeMode": "resource",
-                      "scope": {
-                        "resourceIds": [
-                          "[variables('appInsightsResourceId')]"
-                        ]
-                      },
-                      "timeRange": "P30D"
-                    }
-                  }
-                }
-              },
-              {
-                "position": {
-                  "x": 6,
-                  "y": 9,
-                  "colSpan": 6,
+                  "colSpan": 12,
                   "rowSpan": 4
                 },
                 "metadata": {

@@ -258,9 +258,7 @@ customEvents
     visitsNd = sumif(itemCount, name == 'page_view' and timestamp > ago(${Days}d)),
     forecasts = sumif(itemCount, name == 'verdict_computed' and timestamp > ago(${Days}d)),
     optIns = sumif(itemCount, name == 'subscription_created' and timestamp > ago(${Days}d)),
-    unsubscribes = sumif(itemCount, name == 'subscription_deleted' and timestamp > ago(${Days}d)),
-    shares = sumif(itemCount, name == 'share_clicked' and timestamp > ago(${Days}d)),
-    installs = sumif(itemCount, name == 'pwa_installed' and timestamp > ago(${Days}d))
+    unsubscribes = sumif(itemCount, name == 'subscription_deleted' and timestamp > ago(${Days}d))
 "@
 
     $verdictQuery = @"
@@ -344,8 +342,6 @@ range day from start to startofday(now()) step 1d
     Write-Info 'Conversions (last window)'
     Write-Host ('  Opt-ins:       {0}  subscription_created' -f (Format-Number -Value (Get-Number -Object $summary -Name 'optIns')))
     Write-Host ('  Unsubscribes:  {0}  subscription_deleted' -f (Format-Number -Value (Get-Number -Object $summary -Name 'unsubscribes')))
-    Write-Host ('  Shares:        {0}  share_clicked (client-side, consent-gated; undercounts)' -f (Format-Number -Value (Get-Number -Object $summary -Name 'shares')))
-    Write-Host ('  Installs:      {0}  pwa_installed (client-side, consent-gated; undercounts)' -f (Format-Number -Value (Get-Number -Object $summary -Name 'installs')))
     Write-Host ''
 
     Write-Info 'Current push subscribers'
@@ -360,7 +356,6 @@ range day from start to startofday(now()) step 1d
 
     Show-DailyTrend -Rows $dailyRows
     Write-Host ''
-    Write-WarningLine 'Note: shares and installs are client-side consent-gated events, so they undercount real usage.'
 }
 catch {
     Write-Failure $_.Exception.Message
