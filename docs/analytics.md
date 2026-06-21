@@ -213,6 +213,37 @@ customEvents
 these custom events (build a funnel `location_selected → verdict_viewed → notify_opt_in`).
 Pin any Logs chart to an **Azure Dashboard**, or build a **Workbook** for a reusable report.
 
+## Dashboard & terminal tools
+
+Two ready-made ways to read these metrics without writing KQL:
+
+### Azure dashboard (`infra/analytics-dashboard.json`)
+
+A shared **Azure Portal Dashboard** `nordlys-engagement-dashboard` (in `rg-nordlys`) with tiles
+for **daily visitors**, **verdict mix**, an **engagement snapshot**, **location source**, and
+**subscriber growth** (all sampling-aware — `sum(itemCount)`). Open it from the
+[portal](https://portal.azure.com/#dashboard/arm/subscriptions/d0b7d6ee-17bf-4c4f-b79d-4f6c2cb583fd/resourceGroups/rg-nordlys/providers/Microsoft.Portal/dashboards/nordlys-engagement-dashboard),
+or (re)deploy it from the committed template:
+
+```bash
+az deployment group create -g rg-nordlys --template-file infra/analytics-dashboard.json
+```
+
+### Terminal report (`scripts/analytics.ps1`)
+
+Pulls the key numbers straight to the terminal — no portal needed. Needs `az` logged in;
+auto-adds the `application-insights` CLI extension if missing.
+
+```powershell
+pwsh scripts/analytics.ps1                 # last 30 days (default)
+pwsh scripts/analytics.ps1 -Days 7         # last 7 days
+pwsh scripts/analytics.ps1 -Days 90 -ResourceGroup rg-nordlys -AppName nordlys-appi-eeyobitljk4fq
+```
+
+It prints visitors (today / 7d / N days, exact), forecast loads, the GO/MAYBE/NO mix,
+conversions (opt-ins, unsubscribes, shares, installs), the current push-subscriber count, and a
+14-day daily-visits sparkline.
+
 ## Caveats & gotchas
 
 - **Client events under-count** real usage — they only fire for visitors who accepted the

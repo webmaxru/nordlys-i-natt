@@ -1,0 +1,344 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "dashboardName": {
+      "type": "string",
+      "defaultValue": "nordlys-engagement-dashboard"
+    }
+  },
+  "variables": {
+    "appInsightsResourceId": "/subscriptions/d0b7d6ee-17bf-4c4f-b79d-4f6c2cb583fd/resourceGroups/rg-nordlys/providers/Microsoft.Insights/components/nordlys-appi-eeyobitljk4fq",
+    "appInsightsResourceType": "microsoft.insights/components",
+    "defaultTimeRange": {
+      "value": {
+        "relative": {
+          "duration": 30,
+          "timeUnit": 1
+        }
+      },
+      "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Portal/dashboards",
+      "apiVersion": "2020-09-01-preview",
+      "name": "[parameters('dashboardName')]",
+      "location": "norwayeast",
+      "tags": {
+        "hidden-title": "Nordlys — Engagement"
+      },
+      "properties": {
+        "lenses": [
+          {
+            "order": 0,
+            "parts": [
+              {
+                "position": {
+                  "x": 0,
+                  "y": 0,
+                  "colSpan": 12,
+                  "rowSpan": 2
+                },
+                "metadata": {
+                  "inputs": [],
+                  "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                  "settings": {
+                    "content": {
+                      "settings": {
+                        "content": "# Nordlys — Engagement\nKey Application Insights analytics for the last 30 days.",
+                        "title": "Nordlys — Engagement",
+                        "subtitle": "Application Insights: nordlys-appi-eeyobitljk4fq",
+                        "markdownUri": null
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "position": {
+                  "x": 0,
+                  "y": 2,
+                  "colSpan": 6,
+                  "rowSpan": 4
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "resourceTypeMode",
+                      "value": "resource"
+                    },
+                    {
+                      "name": "resourceId",
+                      "value": "[variables('appInsightsResourceId')]"
+                    },
+                    {
+                      "name": "scope",
+                      "value": {
+                        "resourceIds": [
+                          "[variables('appInsightsResourceId')]"
+                        ]
+                      }
+                    },
+                    {
+                      "name": "resourceType",
+                      "value": "[variables('appInsightsResourceType')]"
+                    }
+                  ],
+                  "type": "Extension/Microsoft_Azure_Monitoring_Logs/PartType/LogsDashboardPart",
+                  "settings": {
+                    "content": {
+                      "PartTitle": "Daily visitors",
+                      "PartSubTitle": "page_view events (exact, unsampled)",
+                      "Query": "customEvents\n| where name == \"page_view\"\n| summarize visits = sum(itemCount) by bin(timestamp, 1d)\n| render timechart",
+                      "Dimensions": {
+                        "chartType": "timechart",
+                        "xAxis": "timestamp",
+                        "yAxis": "visits"
+                      },
+                      "Version": "1.0",
+                      "resourceTypeMode": "resource",
+                      "scope": {
+                        "resourceIds": [
+                          "[variables('appInsightsResourceId')]"
+                        ]
+                      },
+                      "timeRange": "P30D"
+                    }
+                  }
+                }
+              },
+              {
+                "position": {
+                  "x": 6,
+                  "y": 2,
+                  "colSpan": 6,
+                  "rowSpan": 4
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "resourceTypeMode",
+                      "value": "resource"
+                    },
+                    {
+                      "name": "resourceId",
+                      "value": "[variables('appInsightsResourceId')]"
+                    },
+                    {
+                      "name": "scope",
+                      "value": {
+                        "resourceIds": [
+                          "[variables('appInsightsResourceId')]"
+                        ]
+                      }
+                    },
+                    {
+                      "name": "resourceType",
+                      "value": "[variables('appInsightsResourceType')]"
+                    }
+                  ],
+                  "type": "Extension/Microsoft_Azure_Monitoring_Logs/PartType/LogsDashboardPart",
+                  "settings": {
+                    "content": {
+                      "PartTitle": "Verdict mix",
+                      "PartSubTitle": "verdict_computed by verdict (sample-adjusted)",
+                      "Query": "customEvents\n| where name == \"verdict_computed\"\n| extend verdict = tostring(customDimensions.verdict)\n| summarize hits = sum(itemCount) by verdict\n| render piechart",
+                      "Dimensions": {
+                        "chartType": "piechart",
+                        "category": "verdict",
+                        "value": "hits"
+                      },
+                      "Version": "1.0",
+                      "resourceTypeMode": "resource",
+                      "scope": {
+                        "resourceIds": [
+                          "[variables('appInsightsResourceId')]"
+                        ]
+                      },
+                      "timeRange": "P30D"
+                    }
+                  }
+                }
+              },
+              {
+                "position": {
+                  "x": 0,
+                  "y": 6,
+                  "colSpan": 12,
+                  "rowSpan": 3
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "resourceTypeMode",
+                      "value": "resource"
+                    },
+                    {
+                      "name": "resourceId",
+                      "value": "[variables('appInsightsResourceId')]"
+                    },
+                    {
+                      "name": "scope",
+                      "value": {
+                        "resourceIds": [
+                          "[variables('appInsightsResourceId')]"
+                        ]
+                      }
+                    },
+                    {
+                      "name": "resourceType",
+                      "value": "[variables('appInsightsResourceType')]"
+                    }
+                  ],
+                  "type": "Extension/Microsoft_Azure_Monitoring_Logs/PartType/LogsDashboardPart",
+                  "settings": {
+                    "content": {
+                      "PartTitle": "Engagement snapshot",
+                      "PartSubTitle": "30-day totals (sum(itemCount))",
+                      "Query": "customEvents\n| summarize visits = sumif(itemCount, name == \"page_view\"), forecasts = sumif(itemCount, name == \"verdict_computed\"), opt_ins = sumif(itemCount, name == \"subscription_created\"), shares = sumif(itemCount, name == \"share_clicked\"), installs = sumif(itemCount, name == \"pwa_installed\")",
+                      "Dimensions": {
+                        "chartType": "table"
+                      },
+                      "Version": "1.0",
+                      "resourceTypeMode": "resource",
+                      "scope": {
+                        "resourceIds": [
+                          "[variables('appInsightsResourceId')]"
+                        ]
+                      },
+                      "timeRange": "P30D"
+                    }
+                  }
+                }
+              },
+              {
+                "position": {
+                  "x": 0,
+                  "y": 9,
+                  "colSpan": 6,
+                  "rowSpan": 4
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "resourceTypeMode",
+                      "value": "resource"
+                    },
+                    {
+                      "name": "resourceId",
+                      "value": "[variables('appInsightsResourceId')]"
+                    },
+                    {
+                      "name": "scope",
+                      "value": {
+                        "resourceIds": [
+                          "[variables('appInsightsResourceId')]"
+                        ]
+                      }
+                    },
+                    {
+                      "name": "resourceType",
+                      "value": "[variables('appInsightsResourceType')]"
+                    }
+                  ],
+                  "type": "Extension/Microsoft_Azure_Monitoring_Logs/PartType/LogsDashboardPart",
+                  "settings": {
+                    "content": {
+                      "PartTitle": "Location source",
+                      "PartSubTitle": "location_selected by source (consent-gated)",
+                      "Query": "customEvents\n| where name == \"location_selected\"\n| extend source = tostring(customDimensions.source)\n| summarize hits = sum(itemCount) by source\n| render barchart",
+                      "Dimensions": {
+                        "chartType": "barchart",
+                        "category": "source",
+                        "value": "hits"
+                      },
+                      "Version": "1.0",
+                      "resourceTypeMode": "resource",
+                      "scope": {
+                        "resourceIds": [
+                          "[variables('appInsightsResourceId')]"
+                        ]
+                      },
+                      "timeRange": "P30D"
+                    }
+                  }
+                }
+              },
+              {
+                "position": {
+                  "x": 6,
+                  "y": 9,
+                  "colSpan": 6,
+                  "rowSpan": 4
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "resourceTypeMode",
+                      "value": "resource"
+                    },
+                    {
+                      "name": "resourceId",
+                      "value": "[variables('appInsightsResourceId')]"
+                    },
+                    {
+                      "name": "scope",
+                      "value": {
+                        "resourceIds": [
+                          "[variables('appInsightsResourceId')]"
+                        ]
+                      }
+                    },
+                    {
+                      "name": "resourceType",
+                      "value": "[variables('appInsightsResourceType')]"
+                    }
+                  ],
+                  "type": "Extension/Microsoft_Azure_Monitoring_Logs/PartType/LogsDashboardPart",
+                  "settings": {
+                    "content": {
+                      "PartTitle": "Subscriber growth",
+                      "PartSubTitle": "subscription_created/deleted by day",
+                      "Query": "customEvents\n| where name in (\"subscription_created\", \"subscription_deleted\")\n| summarize hits = sum(itemCount) by name, bin(timestamp, 1d)\n| render timechart",
+                      "Dimensions": {
+                        "chartType": "timechart",
+                        "xAxis": "timestamp",
+                        "yAxis": "hits",
+                        "series": "name"
+                      },
+                      "Version": "1.0",
+                      "resourceTypeMode": "resource",
+                      "scope": {
+                        "resourceIds": [
+                          "[variables('appInsightsResourceId')]"
+                        ]
+                      },
+                      "timeRange": "P30D"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "metadata": {
+          "model": {
+            "timeRange": "[variables('defaultTimeRange')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "dashboardName": {
+      "type": "string",
+      "value": "[parameters('dashboardName')]"
+    },
+    "dashboardResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Portal/dashboards', parameters('dashboardName'))]"
+    }
+  }
+}

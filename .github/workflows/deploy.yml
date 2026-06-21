@@ -23,6 +23,8 @@ on:
       - '**.md'
       - 'docs/**'
       - '.github/**'
+      - 'scripts/**'
+      - 'infra/analytics-dashboard.json'
   workflow_dispatch:
 
 permissions:
