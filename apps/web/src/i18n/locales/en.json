@@ -39,7 +39,6 @@
     "geoUnavailable": "Couldn’t get a location fix. Try again, or pick a place below.",
     "geoUnsupported": "Your browser can’t share location. Pick a place below.",
     "geoInsecure": "Location needs a secure (https) connection.",
-    "myLocationName": "My location",
     "searchLabel": "Search for a place",
     "searchPlaceholder": "Search for Tromsø, Alta, Oslo …",
     "searching": "Searching …",

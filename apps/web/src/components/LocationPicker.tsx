@@ -6,6 +6,7 @@ import { reverseGeocode } from '../api/kartverket';
 import { isIos } from '../api/push';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { usePlaceSearch } from '../hooks/usePlaceSearch';
+import { formatCoordinateName } from '../lib/format';
 import { useAppState } from '../state/AppStateContext';
 
 function locationLabel(location: NamedLocation): string {
@@ -39,7 +40,10 @@ export function LocationPicker() {
 
         setSelectedLocation(
           location ?? {
-            name: t('location.myLocationName'),
+            name: formatCoordinateName(
+              geolocation.coords!.lat,
+              geolocation.coords!.lon,
+            ),
             lat: geolocation.coords!.lat,
             lon: geolocation.coords!.lon,
           },
@@ -55,7 +59,10 @@ export function LocationPicker() {
         // Reverse geocoding failed, but we already have a valid fix — use it
         // rather than discarding the location the user just granted.
         setSelectedLocation({
-          name: t('location.myLocationName'),
+          name: formatCoordinateName(
+            geolocation.coords!.lat,
+            geolocation.coords!.lon,
+          ),
           lat: geolocation.coords!.lat,
           lon: geolocation.coords!.lon,
         });

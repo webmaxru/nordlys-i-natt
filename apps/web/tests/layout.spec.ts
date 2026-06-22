@@ -160,6 +160,28 @@ test.describe('mobile layout (iPhone)', () => {
     expect(await page.locator('.search-results__item').count()).toBeGreaterThan(0);
   });
 
+  test('geolocation with no nearby place names the location by coordinates', async ({
+    page,
+    context,
+  }) => {
+    await context.grantPermissions(['geolocation']);
+    await context.setGeolocation({ latitude: 71.05, longitude: 25.78 });
+    await mockApp(page, { seedLocation: false });
+    // Reverse geocoding (/punkt) finds no nearby place → the location must be
+    // named by coordinates, not the old generic "My location". Registered after
+    // mockApp's catch-all so this more specific route wins.
+    await page.route(/ws\.geonorge\.no\/stedsnavn\/v1\/punkt/, (route) =>
+      route.fulfill({ json: { navn: [] } }),
+    );
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    await page.getByRole('button', { name: /use my location/i }).click();
+
+    await expect(page.locator('.location-picker')).toContainText(
+      /\d+(\.\d+)?°[NS],\s*\d+(\.\d+)?°[EW]/,
+    );
+  });
+
   test('iOS browser tab starts with Subscribe, then shows Add to Home Screen', async ({
     page,
   }) => {

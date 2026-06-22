@@ -39,7 +39,6 @@
     "geoUnavailable": "Klarte ikke å finne posisjonen. Prøv igjen, eller velg et sted nedenfor.",
     "geoUnsupported": "Nettleseren din kan ikke dele posisjon. Velg et sted nedenfor.",
     "geoInsecure": "Posisjon krever en sikker (https) tilkobling.",
-    "myLocationName": "Min posisjon",
     "searchLabel": "Søk etter sted",
     "searchPlaceholder": "Søk etter Tromsø, Alta, Oslo …",
     "searching": "Søker …",
