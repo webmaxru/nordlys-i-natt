@@ -35,7 +35,7 @@
     "resolving": "Finner nærmeste sted …",
     "geoError": "Vi klarte ikke å hente posisjonen din.",
     "geoDenied": "Posisjon er blokkert. Tillat posisjon for dette nettstedet i nettleserinnstillingene og prøv igjen – eller velg et sted nedenfor.",
-    "geoDeniedIos": "Posisjon er blokkert. På iPhone/iPad: Innstillinger → Personvern og sikkerhet → Stedstjenester → slå den på for Safari, og last siden på nytt – eller velg et sted nedenfor.",
+    "geoDeniedIos": "Posisjon er blokkert for dette nettstedet. I Safari: trykk «aA» i adressefeltet → Innstillinger for nettsted → Posisjon → Tillat, og last siden på nytt – eller velg et sted nedenfor.",
     "geoUnavailable": "Klarte ikke å finne posisjonen. Prøv igjen, eller velg et sted nedenfor.",
     "geoUnsupported": "Nettleseren din kan ikke dele posisjon. Velg et sted nedenfor.",
     "geoInsecure": "Posisjon krever en sikker (https) tilkobling.",

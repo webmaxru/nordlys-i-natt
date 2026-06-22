@@ -35,7 +35,7 @@
     "resolving": "Finding nearest place …",
     "geoError": "We could not get your location.",
     "geoDenied": "Location is blocked. Allow location for this site in your browser settings, then try again — or pick a place below.",
-    "geoDeniedIos": "Location is blocked. On iPhone/iPad: Settings → Privacy & Security → Location Services → turn it on for Safari, then reload — or just pick a place below.",
+    "geoDeniedIos": "Location is blocked for this site. In Safari, tap ‘aA’ in the address bar → Website Settings → Location → Allow, then reload — or just pick a place below.",
     "geoUnavailable": "Couldn’t get a location fix. Try again, or pick a place below.",
     "geoUnsupported": "Your browser can’t share location. Pick a place below.",
     "geoInsecure": "Location needs a secure (https) connection.",
