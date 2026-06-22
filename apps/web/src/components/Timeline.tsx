@@ -155,16 +155,31 @@ export function Timeline() {
       ? `${cloudLine} L ${clouds[clouds.length - 1].x.toFixed(1)} ${chart.bottom} L ${clouds[0].x.toFixed(1)} ${chart.bottom} Z`
       : '';
 
-    const dayTicks: { key: string; x: number; label: string }[] = [];
-    const firstMidnight = new Date(start);
-    firstMidnight.setHours(24, 0, 0, 0);
-
-    for (let time = firstMidnight.getTime(); time < end; time += 24 * hourMs) {
-      dayTicks.push({
-        key: String(time),
-        x: xForTime(time, start, end),
-        label: formatWeekday(new Date(time), i18n.resolvedLanguage),
+    const axisTicks: {
+      key: string;
+      x: number;
+      label: string;
+      isDay: boolean;
+    }[] = [];
+    const tickCursor = new Date(start);
+    tickCursor.setMinutes(0, 0, 0);
+    // Step on local 6-hour marks (00/06/12/18). Using setHours keeps the ticks
+    // on the local clock across a DST change rather than drifting by fixed ms.
+    while (tickCursor.getHours() % 6 !== 0) {
+      tickCursor.setHours(tickCursor.getHours() + 1);
+    }
+    while (tickCursor.getTime() < end) {
+      const hour = tickCursor.getHours();
+      axisTicks.push({
+        key: String(tickCursor.getTime()),
+        x: xForTime(tickCursor.getTime(), start, end),
+        label:
+          hour === 0
+            ? formatWeekday(new Date(tickCursor), i18n.resolvedLanguage)
+            : String(hour).padStart(2, '0'),
+        isDay: hour === 0,
       });
+      tickCursor.setHours(tickCursor.getHours() + 6);
     }
 
     return {
@@ -173,7 +188,7 @@ export function Timeline() {
       cloudLine,
       clouds,
       darknessBands,
-      dayTicks,
+      axisTicks,
       nowX: xForTime(now, start, end),
       requiredKp,
       requiredKpY: yForKp(requiredKp),
@@ -272,16 +287,31 @@ export function Timeline() {
             </g>
           ))}
 
-          {timeline.dayTicks.map((tick) => (
+          {timeline.axisTicks.map((tick) => (
             <g key={tick.key}>
-              <line
-                className="timeline__day-line"
-                x1={tick.x}
-                x2={tick.x}
-                y1={chart.top}
-                y2={chart.bottom}
-              />
-              <text className="timeline__day-label" x={tick.x + 6} y={chart.bottom + 32}>
+              {tick.isDay ? (
+                <line
+                  className="timeline__day-line"
+                  x1={tick.x}
+                  x2={tick.x}
+                  y1={chart.top}
+                  y2={chart.bottom}
+                />
+              ) : (
+                <line
+                  className="timeline__hour-tick"
+                  x1={tick.x}
+                  x2={tick.x}
+                  y1={chart.bottom}
+                  y2={chart.bottom + 6}
+                />
+              )}
+              <text
+                className={tick.isDay ? 'timeline__day-label' : 'timeline__time-label'}
+                x={tick.x}
+                y={chart.bottom + 22}
+                textAnchor="middle"
+              >
                 {tick.label}
               </text>
             </g>
