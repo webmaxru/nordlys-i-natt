@@ -40,11 +40,12 @@ container serves.
 |---|---|
 | `Layout`, `LanguageToggle`, `AttributionFooter` | shell, nb/en toggle, data credits + privacy link |
 | `LocationPicker` | "Use my location" + Kartverket search + preset city chips |
-| `VerdictGauge` | the hero GO/MAYBE/NO indicator, reason, best hour, `Kp x / needs Kp y`; loading/error/empty states |
+| `VerdictGauge` | the hero GO/MAYBE/NO indicator, reason, best hour, `Kp x / needs Kp y`; error/empty states |
+| `GaugeLoading` | the gauge loading state — rotating, on-brand status lines (cold-start friendly); pauses under reduced-motion |
 | `Timeline` | 72h SVG: Kp bars + cloud area + darkness bands + required-Kp line + weekday ticks |
 | `AuroraMap` | react-leaflet + Kartverket grayscale tiles + OVATION oval overlay + user marker |
 | `ShareCard` | renders the verdict to a PNG (`html-to-image`) → Web Share / download |
-| `NotifyButton` | push opt-in (permission + subscribe) |
+| `NotifyButton` | soft-prompt push opt-in (permission + subscribe), surfaced prominently right under the verdict |
 | `PrivacyPolicy` | privacy view (toggled via `#personvern` hash); **no cookie banner** — analytics are server-side |
 
 `data/presetLocations.ts` seeds the preset chips (Tromsø … Kristiansand). **Note:** this lives

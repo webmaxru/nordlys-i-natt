@@ -48,12 +48,13 @@ nor-api/
 │     ├─ main.tsx App.tsx styles.css
 │     ├─ api/{client,forecast,kartverket,push}.ts
 │     ├─ hooks/{useForecast,useOvationGrid,usePlaceSearch,useGeolocation}.ts
-│     ├─ state/{AppStateContext.tsx,consent.ts}
+│     ├─ state/AppStateContext.tsx
 │     ├─ components/*.tsx (+ co-located .css)
-│     ├─ lib/{format,analytics}.ts
+│     ├─ lib/format.ts
 │     ├─ data/presetLocations.ts
 │     └─ i18n/{index.ts,locales/{nb,en}.json}
-├─ infra/                  # main.bicep + modules/{monitoring,storage,registry,containerapp,job}.bicep
+├─ infra/                  # main.bicep + modules/{monitoring,storage,containerapp,job}.bicep (+ analytics-dashboard.json)
+├─ scripts/                # subscriptions.ps1, analytics.ps1 (operational PowerShell tools)
 ├─ .github/workflows/      # ci.yml, deploy.yml
 ├─ Dockerfile .dockerignore
 └─ pnpm-workspace.yaml package.json tsconfig.base.json
