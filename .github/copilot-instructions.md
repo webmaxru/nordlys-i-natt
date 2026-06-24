@@ -114,3 +114,20 @@ Load the relevant doc when working in that area:
 - [docs/registry-ghcr.md](../docs/registry-ghcr.md) — private GHCR migration, PAT setup, image pruning, rollback
 - [docs/local-development.md](../docs/local-development.md) — setup, env vars, run, test
 - [docs/troubleshooting.md](../docs/troubleshooting.md) — **top challenges & solutions** (full detail)
+
+## Design context (impeccable)
+
+The web app's design system is documented for the [impeccable](https://impeccable.style) skill in
+`apps/web/`:
+
+- [apps/web/PRODUCT.md](../apps/web/PRODUCT.md) — strategic context: register (**product**), users,
+  purpose, brand personality (*clear, honest, northern*), anti-references, and the WCAG 2.2 AA +
+  outdoor/low-light accessibility bar.
+- [apps/web/DESIGN.md](../apps/web/DESIGN.md) — the visual system (Stitch format): the dark
+  "Night-Sky Oracle" theme, semantic verdict palette (GO `#38d39f` / MAYBE `#f5c451` / NO `#ef5f6b`),
+  system-font typography, glass-slab panels, and the verdict-gauge hero. `.impeccable/design.json` is
+  its machine-readable sidecar.
+
+When changing UI in `apps/web`, keep edits on-brand with these. Core doctrine: **the verdict is the
+brightest, largest thing on screen**; color means state (always paired with the JA/KANSKJE/NEI word);
+one system font; no nested cards; no gradient text. Run impeccable from the `apps/web` directory.

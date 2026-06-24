@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-24T15:10:22+02:00",
+  "title": "Design System: Nordlys i natt?",
+  "extensions": {
+    "colorMeta": {
+      "aurora-go": { "role": "primary", "displayName": "Aurora Go Green", "canonical": "oklch(0.78 0.13 165)", "tonalRamp": ["oklch(0.16 0.05 165)", "oklch(0.27 0.07 165)", "oklch(0.38 0.09 165)", "oklch(0.49 0.11 165)", "oklch(0.60 0.12 165)", "oklch(0.71 0.13 165)", "oklch(0.82 0.10 165)", "oklch(0.93 0.06 165)"] },
+      "aurora-maybe": { "role": "secondary", "displayName": "Aurora Maybe Amber", "canonical": "oklch(0.83 0.12 85)", "tonalRamp": ["oklch(0.16 0.04 85)", "oklch(0.27 0.06 85)", "oklch(0.38 0.08 85)", "oklch(0.49 0.10 85)", "oklch(0.60 0.11 85)", "oklch(0.71 0.12 85)", "oklch(0.83 0.12 85)", "oklch(0.93 0.07 85)"] },
+      "aurora-no": { "role": "secondary", "displayName": "Aurora No Coral", "canonical": "oklch(0.68 0.17 18)", "tonalRamp": ["oklch(0.16 0.06 18)", "oklch(0.27 0.09 18)", "oklch(0.38 0.12 18)", "oklch(0.49 0.15 18)", "oklch(0.60 0.17 18)", "oklch(0.68 0.17 18)", "oklch(0.80 0.13 18)", "oklch(0.92 0.06 18)"] },
+      "sky-accent": { "role": "tertiary", "displayName": "Sky Accent Blue", "canonical": "oklch(0.72 0.13 260)", "tonalRamp": ["oklch(0.16 0.05 260)", "oklch(0.27 0.07 260)", "oklch(0.38 0.09 260)", "oklch(0.49 0.11 260)", "oklch(0.60 0.12 260)", "oklch(0.72 0.13 260)", "oklch(0.83 0.10 260)", "oklch(0.93 0.05 260)"] },
+      "aurora-mint": { "role": "tertiary", "displayName": "Aurora Mint", "canonical": "oklch(0.89 0.13 165)", "tonalRamp": ["oklch(0.18 0.05 165)", "oklch(0.29 0.07 165)", "oklch(0.40 0.09 165)", "oklch(0.52 0.11 165)", "oklch(0.64 0.12 165)", "oklch(0.76 0.13 165)", "oklch(0.89 0.13 165)", "oklch(0.95 0.06 165)"] },
+      "night-base": { "role": "neutral", "displayName": "Night Base", "canonical": "oklch(0.16 0.04 265)", "tonalRamp": ["oklch(0.13 0.04 265)", "oklch(0.16 0.04 265)", "oklch(0.22 0.04 265)", "oklch(0.32 0.04 265)", "oklch(0.45 0.03 265)", "oklch(0.60 0.03 265)", "oklch(0.78 0.02 265)", "oklch(0.93 0.01 265)"] },
+      "night-deep": { "role": "neutral", "displayName": "Night Deep", "canonical": "oklch(0.13 0.04 265)", "tonalRamp": ["oklch(0.11 0.04 265)", "oklch(0.13 0.04 265)", "oklch(0.18 0.04 265)", "oklch(0.28 0.04 265)", "oklch(0.42 0.03 265)", "oklch(0.58 0.03 265)", "oklch(0.76 0.02 265)", "oklch(0.92 0.01 265)"] },
+      "night-elevated": { "role": "neutral", "displayName": "Night Elevated", "canonical": "oklch(0.22 0.04 265)", "tonalRamp": ["oklch(0.14 0.04 265)", "oklch(0.18 0.04 265)", "oklch(0.22 0.04 265)", "oklch(0.32 0.04 265)", "oklch(0.45 0.03 265)", "oklch(0.60 0.03 265)", "oklch(0.78 0.02 265)", "oklch(0.93 0.01 265)"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "oklch(0.93 0.01 265)", "tonalRamp": ["oklch(0.22 0.02 265)", "oklch(0.34 0.02 265)", "oklch(0.46 0.02 265)", "oklch(0.58 0.02 265)", "oklch(0.70 0.02 265)", "oklch(0.81 0.01 265)", "oklch(0.88 0.01 265)", "oklch(0.93 0.01 265)"] },
+      "ink-muted": { "role": "neutral", "displayName": "Ink Muted", "canonical": "oklch(0.70 0.03 265)", "tonalRamp": ["oklch(0.22 0.03 265)", "oklch(0.34 0.03 265)", "oklch(0.46 0.03 265)", "oklch(0.58 0.03 265)", "oklch(0.70 0.03 265)", "oklch(0.80 0.02 265)", "oklch(0.88 0.02 265)", "oklch(0.94 0.01 265)"] }
+    },
+    "typographyMeta": {
+      "verdict": { "displayName": "Verdict", "purpose": "The GO/MAYBE/NO word in the gauge badge. The single largest, heaviest element on screen." },
+      "display": { "displayName": "Display", "purpose": "The app title in the header (desktop scale; truncates on mobile)." },
+      "headline": { "displayName": "Headline", "purpose": "The verdict's plain-language subtitle beside the gauge." },
+      "title": { "displayName": "Title", "purpose": "Section headings (Timeline, Map, location). Fixed rem, not fluid." },
+      "body": { "displayName": "Body", "purpose": "Reasons, helper text, descriptions. Cap prose at 65-75ch." },
+      "label": { "displayName": "Label", "purpose": "Accent-colored uppercase eyebrow / small kicker. Used sparingly." }
+    },
+    "shadows": [
+      { "name": "panel-float", "value": "0 24px 80px rgba(0,0,0,0.35)", "purpose": "Default ambient shadow under every panel, card, and footer — seats the glass slab in the dark." },
+      { "name": "popover-lift", "value": "0 18px 50px rgba(0,0,0,0.55)", "purpose": "Transient overlays (search dropdown) — darker and tighter so they read above the panel below." },
+      { "name": "focus-ring-accent", "value": "0 0 0 3px rgba(110,168,254,0.18)", "purpose": "Soft accent glow on focused inputs; pairs with the accent border shift." },
+      { "name": "gauge-glow", "value": "blur(30px) on a verdict-tinted disc", "purpose": "Blurred color bloom behind the verdict gauge in the live verdict color — the product's one intentional light." }
+    ],
+    "motion": [
+      { "name": "ease-state", "value": "ease, 160ms", "purpose": "Default transition for button/chip/result hover (transform, border-color, background)." },
+      { "name": "controls-in", "value": "ease-out, 180ms", "purpose": "Location controls reveal — a 0.25rem rise + fade when the picker expands." },
+      { "name": "gauge-loading-fade", "value": "ease, 450ms", "purpose": "Verdict loading state fades/rises in so the answer never pops harshly." },
+      { "name": "shimmer", "value": "linear, 1400ms infinite", "purpose": "Skeleton loading sweep on the gauge badge and lines." },
+      { "name": "reduced-motion", "value": "@media (prefers-reduced-motion: reduce) → durations 1ms, no hover transforms", "purpose": "Mandatory reduced-motion fallback across the whole app." }
+    ],
+    "breakpoints": [
+      { "name": "notify-row", "value": "640px" },
+      { "name": "desktop", "value": "680px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single most important action on a surface (Subscribe, Use my location, Retry).",
+      "html": "<button class=\"ds-btn-primary\">Bruk min posisjon</button>",
+      "css": ".ds-btn-primary { display:inline-flex; align-items:center; justify-content:center; min-height:2.75rem; padding:0 1rem; border:0; border-radius:999px; color:#06131a; background:linear-gradient(135deg, #38d39f, #6ea8fe); font:inherit; font-weight:900; cursor:pointer; transition:transform 160ms ease, border-color 160ms ease, background 160ms ease; } .ds-btn-primary:hover { transform:translateY(-1px); } .ds-btn-primary:focus-visible { outline:2px solid #6ea8fe; outline-offset:3px; } .ds-btn-primary:active { transform:translateY(0); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Lower-priority actions (Change location, Not now, Dismiss).",
+      "html": "<button class=\"ds-btn-secondary\">Bytt sted</button>",
+      "css": ".ds-btn-secondary { display:inline-flex; align-items:center; justify-content:center; min-height:2.75rem; padding:0 1rem; border:1px solid rgba(255,255,255,0.12); border-radius:999px; color:#e7ecf5; background:rgba(255,255,255,0.06); font:inherit; font-weight:800; cursor:pointer; transition:transform 160ms ease, border-color 160ms ease, background 160ms ease; } .ds-btn-secondary:hover { transform:translateY(-1px); border-color:rgba(255,255,255,0.28); } .ds-btn-secondary:focus-visible { outline:2px solid #6ea8fe; outline-offset:3px; }"
+    },
+    {
+      "name": "Location Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Quick-pick location pill in a horizontally scrolling row (Tromso, Alta, Oslo).",
+      "html": "<button class=\"ds-chip\">Troms&oslash;</button>",
+      "css": ".ds-chip { flex:0 0 auto; display:inline-flex; align-items:center; min-height:2.75rem; padding:0 0.85rem; border:1px solid rgba(255,255,255,0.12); border-radius:999px; color:#e7ecf5; background:rgba(255,255,255,0.06); font:inherit; font-weight:700; cursor:pointer; transition:transform 160ms ease, border-color 160ms ease, background 160ms ease; } .ds-chip:hover { transform:translateY(-1px); border-color:rgba(255,255,255,0.28); } .ds-chip:focus-visible { outline:2px solid #6ea8fe; outline-offset:3px; }"
+    },
+    {
+      "name": "Glass Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "The universal floating surface for every section. Never nested.",
+      "html": "<section class=\"ds-panel\"><h2 class=\"ds-panel__h\">Neste 3 d&oslash;gn</h2><p class=\"ds-panel__p\">H&oslash;yere s&oslash;yler betyr sterkere nordlys.</p></section>",
+      "css": ".ds-panel { padding:1.35rem; border:1px solid rgba(255,255,255,0.12); border-radius:1.5rem; background:linear-gradient(145deg, rgba(20,26,46,0.88), rgba(14,19,35,0.86)); box-shadow:0 24px 80px rgba(0,0,0,0.35); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); } .ds-panel__h { margin:0 0 0.4rem; color:#e7ecf5; font:inherit; font-size:1.3rem; font-weight:700; letter-spacing:-0.04em; } .ds-panel__p { margin:0; color:#9aa6c0; font:inherit; font-size:1rem; line-height:1.45; }"
+    },
+    {
+      "name": "Search Input",
+      "kind": "input",
+      "refersTo": "input-search",
+      "description": "Place search field with a calm accent focus ring (no movement).",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"S&oslash;k etter Troms&oslash;, Alta, Oslo \u2026\" />",
+      "css": ".ds-input { width:100%; min-height:2.75rem; padding:0 1rem; border:1px solid rgba(255,255,255,0.12); border-radius:1rem; color:#e7ecf5; background:rgba(5,9,18,0.65); font:inherit; outline:none; } .ds-input::placeholder { color:#9aa6c0; } .ds-input:focus-visible { border-color:#6ea8fe; box-shadow:0 0 0 3px rgba(110,168,254,0.18); }"
+    },
+    {
+      "name": "Verdict Gauge",
+      "kind": "custom",
+      "refersTo": "gauge-badge",
+      "description": "The hero. Circular badge ringed in the live verdict color, holding the GO/MAYBE/NO word at weight 950, lit by a blurred bloom behind it.",
+      "html": "<div class=\"ds-gauge\"><div class=\"ds-gauge__badge\"><span>JA</span></div></div>",
+      "css": ".ds-gauge { position:relative; display:grid; place-items:center; padding:1.35rem; } .ds-gauge::before { content:''; position:absolute; width:11rem; height:11rem; border-radius:999px; background:#38d39f; opacity:0.35; filter:blur(30px); pointer-events:none; } .ds-gauge__badge { position:relative; display:grid; place-items:center; width:13rem; aspect-ratio:1; border:0.35rem solid #38d39f; border-radius:999px; background:radial-gradient(circle, rgba(56,211,159,0.22), transparent 62%), rgba(255,255,255,0.04); } .ds-gauge__badge span { color:#38d39f; font:inherit; font-size:clamp(3rem, 18vw, 5.7rem); font-weight:950; letter-spacing:-0.08em; line-height:1; }"
+    },
+    {
+      "name": "Notify CTA",
+      "kind": "custom",
+      "refersTo": "notify-cta",
+      "description": "Slim opt-in row directly under the verdict. The one deliberate accent left-edge in the system; stays a single compact row on mobile.",
+      "html": "<div class=\"ds-notify-cta\"><span class=\"ds-notify-cta__icon\">\ud83d\udd14</span><div class=\"ds-notify-cta__content\"><strong>Gratis nordlysvarsler</strong><div class=\"ds-notify-cta__detail\">\u00d8yeblikkelig push n\u00e5r nordlyset trolig er over deg.</div></div><button class=\"ds-btn-primary ds-notify-cta__cta\">Abonner</button></div>",
+      "css": ".ds-notify-cta { display:flex; align-items:center; gap:0.7rem; padding:0.6rem 0.7rem; border:1px solid rgba(110,168,254,0.35); border-left:3px solid #6ea8fe; border-radius:1rem; background:radial-gradient(circle at top left, rgba(110,168,254,0.16), transparent 60%), #141a2e; } .ds-notify-cta__icon { flex:none; display:grid; place-items:center; width:2.1rem; height:2.1rem; border-radius:999px; background:rgba(110,168,254,0.18); font-size:1.1rem; line-height:1; } .ds-notify-cta__content { flex:1 1 auto; min-width:0; } .ds-notify-cta strong { display:block; color:#e7ecf5; font:inherit; font-size:0.95rem; font-weight:800; line-height:1.2; } .ds-notify-cta__detail { margin-top:0.12rem; overflow:hidden; color:#9aa6c0; font:inherit; font-size:0.8rem; line-height:1.25; text-overflow:ellipsis; white-space:nowrap; } .ds-notify-cta__cta { flex:0 0 auto; min-height:2.4rem; padding-inline:1.15rem; white-space:nowrap; }"
+    },
+    {
+      "name": "Language Toggle",
+      "kind": "nav",
+      "refersTo": "language-toggle",
+      "description": "The only persistent navigation: a pill NB / EN switch; the active language inverts to an Ink fill.",
+      "html": "<div class=\"ds-langtoggle\"><button class=\"ds-langtoggle__btn\" aria-pressed=\"true\">NB</button><button class=\"ds-langtoggle__btn\" aria-pressed=\"false\">EN</button></div>",
+      "css": ".ds-langtoggle { display:inline-flex; gap:0.25rem; padding:0.25rem; border:1px solid rgba(255,255,255,0.12); border-radius:999px; background:rgba(20,26,46,0.7); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); } .ds-langtoggle__btn { min-width:2.5rem; min-height:2.5rem; padding:0.45rem 0.65rem; border:1px solid rgba(255,255,255,0.12); border-radius:999px; color:#e7ecf5; background:rgba(255,255,255,0.06); font:inherit; font-weight:800; cursor:pointer; } .ds-langtoggle__btn[aria-pressed=\"true\"] { background:#e7ecf5; color:#0b1020; border-color:transparent; } .ds-langtoggle__btn:focus-visible { outline:2px solid #6ea8fe; outline-offset:3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Night-Sky Oracle",
+    "overview": "The interface behaves like a calm, knowing oracle of the night sky: it does the hard reading - solar wind, Kp, cloud, darkness - and hands back a single, confident verdict. The whole surface is the deep blue-black of a clear Arctic night, and from that darkness one luminous answer rises: GO / MAYBE / NO (JA / KANSKJE / NEI), glowing in its own aurora color. Everything else is supporting evidence, dimmer and quieter, arranged so the eye lands on the verdict first and only then drifts to the why. Density is low and the rhythm is unhurried; the one bright moment is the verdict gauge, ringed and back-lit in green, amber, or coral. The voice is clear, honest, northern: a knowledgeable friend, not a weather bureau and not a hype machine.",
+    "keyCharacteristics": [
+      "Dark-only, single-theme: a deep navy night sky (#0b1020) is the canvas, always.",
+      "One luminous focal point per screen - the verdict gauge - in a semantic aurora color.",
+      "Glassy, soft-cornered floating panels (1.5rem radius, big diffuse shadow, backdrop blur).",
+      "Plain-language, warm, lightly playful voice; delight only in small moments.",
+      "Built for the field: high contrast, >=44px targets, glare-resilient, reduced-motion aware."
+    ],
+    "rules": [
+      { "name": "The One Bright Thing Rule", "body": "On any given screen, exactly one element is allowed to glow at full aurora saturation: the verdict gauge. Everything else stays in the blue-black neutral range or uses the muted accent. If two things are competing to be the brightest, one is wrong.", "section": "colors" },
+      { "name": "The Color-Means-State Rule", "body": "Green, amber, and coral are semantic, never decorative. A green chip means 'go,' not 'this is a nice green chip.' Never paint an inactive or neutral element in a verdict color.", "section": "colors" },
+      { "name": "The System-Font Rule", "body": "No web-font download, ever. The stack is system-ui first. A go/no-go tool must paint its verdict instantly on a cold phone over flaky data; a font swap that delays or shifts the answer is forbidden.", "section": "typography" },
+      { "name": "The Weight-Not-Face Rule", "body": "Hierarchy is built from weight (400 -> 800 -> 950) and tracking, not from adding typefaces. Never introduce a second family for display flavor.", "section": "typography" },
+      { "name": "The Glass-Slab Rule", "body": "A panel is always the trio together: #141a2e elevated surface + 1px rgba(255,255,255,0.12) hairline + 0 24px 80px rgba(0,0,0,0.35) shadow + 18px blur. Don't ship a panel missing one leg of that - a borderless or shadowless panel dissolves into the night.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the verdict the brightest, largest thing on screen - answer first, evidence second.",
+      "Do use green/amber/coral only to mean go/maybe/no. Pair color with the word (JA/KANSKJE/NEI) so the verdict never relies on hue alone (color-blind + outdoor glare safe).",
+      "Do build every panel as the full glass slab: #141a2e + 1px rgba(255,255,255,0.12) + 0 24px 80px rgba(0,0,0,0.35) + 18px blur.",
+      "Do keep body and muted text at AA on the dark surfaces - #9aa6c0 is the floor; bump toward #e7ecf5 if a context dips below 4.5:1.",
+      "Do keep tap targets >=2.75rem and honor prefers-reduced-motion on every animation.",
+      "Do let personality live in copy (loading lines, plain-language reasons), not in decoration."
+    ],
+    "donts": [
+      "Don't build a cluttered, ad-heavy weather dashboard where widgets compete with the verdict.",
+      "Don't add 'AI-slop' decoration: gratuitous gradients, gradient text (background-clip: text), fake metric tiles, or identical icon-card grids.",
+      "Don't lead with raw data (Kp tables, charts) - evidence supports the verdict, never replaces it.",
+      "Don't make 'MAYBE' look confident; uncertainty must read as honest, not as a softer 'yes.'",
+      "Don't introduce a second typeface or any web-font download; weight and tracking carry hierarchy.",
+      "Don't nest cards, and don't add a colored border-left stripe as a generic accent. The single accent left-edge on the notify CTA is a deliberate, contained exception - don't spread it to other cards.",
+      "Don't paint inactive or neutral elements in a verdict color."
+    ]
+  }
+}
