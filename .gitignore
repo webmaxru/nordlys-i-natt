@@ -19,6 +19,10 @@ build/
 *.sqlite3
 apps/api/data/
 
+# impeccable (design skill): ignore the machine-local hook cache only —
+# DESIGN.md, PRODUCT.md, and apps/web/.impeccable/{design.json,live/config.json} are committed.
+**/.impeccable/hook.cache.json
+
 # Logs
 *.log
 npm-debug.log*
