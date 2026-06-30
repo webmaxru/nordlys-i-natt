@@ -394,12 +394,10 @@ button:active:not(:disabled) {
 .gauge::before {
   content: '';
   position: absolute;
-  inset: -35% -20% auto auto;
-  width: 14rem;
-  height: 14rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--verdict-color, var(--accent)) 35%, transparent);
-  filter: blur(30px);
+  inset: -36% -22% auto auto;
+  width: 16rem;
+  height: 16rem;
+  background: radial-gradient(circle, color-mix(in srgb, var(--verdict-color, var(--accent)) 44%, transparent) 0%, transparent 62%);
   pointer-events: none;
 }
 
