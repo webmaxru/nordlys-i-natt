@@ -120,8 +120,8 @@ button:disabled {
 }
 
 .language-toggle__button {
-  min-width: 2.5rem;
-  min-height: 2.5rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   padding: 0.35rem 0.55rem;
   border-radius: 999px;
   font-weight: 800;
