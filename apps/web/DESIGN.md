@@ -169,8 +169,8 @@ blue accent for wayfinding.
 ### Neutral
 - **Night Base** (`#0b1020`): The body background and `theme-color`. The deepest, most
   common surface — the night itself.
-- **Night Deep** (`#08101f`): The darkest layer — map canvas, input wells, the bottom of
-  the body gradient, the share card's base.
+- **Night Deep** (`#08101f`, `--bg-deep`): The darkest layer — map canvas, input wells, the
+  bottom of the body gradient, the share card's base.
 - **Night Elevated** (`#141a2e`): Every floating panel, card, search dropdown, and
   language toggle. The "lifted out of the dark" surface.
 - **Ink** (`#e7ecf5`): Primary text and the verdict word's high-contrast default.

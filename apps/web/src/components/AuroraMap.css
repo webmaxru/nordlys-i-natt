@@ -37,13 +37,13 @@
   height: 320px;
   border: 1px solid var(--border);
   border-radius: 1.25rem;
-  background: #08101f;
+  background: var(--bg-deep);
 }
 
 .aurora-map__leaflet {
   width: 100%;
   height: 100%;
-  background: #08101f;
+  background: var(--bg-deep);
 }
 
 .aurora-map__leaflet .leaflet-control-attribution {
@@ -82,7 +82,7 @@
 .aurora-map__scale {
   height: 0.6rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(56, 211, 159, 0.2), var(--go), #8fea74, var(--maybe));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--go) 20%, transparent), var(--go), #8fea74, var(--maybe));
 }
 
 @media (min-width: 680px) {

@@ -2,6 +2,7 @@
   color-scheme: dark;
   --bg: #0b1020;
   --bg-elev: #141a2e;
+  --bg-deep: #08101f;
   --fg: #e7ecf5;
   --muted: #9aa6c0;
   --go: #38d39f;
@@ -28,7 +29,7 @@ body {
   background:
     radial-gradient(900px 420px at 15% 0%, rgba(56, 211, 159, 0.25), transparent 55%),
     radial-gradient(800px 520px at 85% 10%, rgba(110, 168, 254, 0.22), transparent 60%),
-    linear-gradient(180deg, #08101f 0%, var(--bg) 56%, #070a13 100%);
+    linear-gradient(180deg, var(--bg-deep) 0%, var(--bg) 56%, #070a13 100%);
   color: var(--fg);
   min-width: 320px;
 }
