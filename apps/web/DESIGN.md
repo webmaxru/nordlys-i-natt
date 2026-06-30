@@ -7,6 +7,7 @@ colors:
   aurora-no: "#ef5f6b"
   sky-accent: "#6ea8fe"
   aurora-mint: "#84f7c8"
+  aurora-spectrum: "#8fea74"
   night-base: "#0b1020"
   night-elevated: "#141a2e"
   night-deep: "#08101f"
@@ -14,6 +15,10 @@ colors:
   ink-muted: "#9aa6c0"
   border-hairline: "#ffffff1f"
   verdict-ink: "#06131a"
+  share-ink: "#f8fbff"
+  share-muted: "#9bb7d8"
+  share-glow-aurora: "rgba(83, 245, 166, 0.45)"
+  share-glow-twilight: "rgba(124, 92, 255, 0.5)"
 typography:
   display:
     fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
@@ -53,9 +58,11 @@ typography:
     letterSpacing: "0.14em"
 rounded:
   pill: "999px"
+  xl: "2rem"
   lg: "1.5rem"
   md: "1rem"
   sm: "0.9rem"
+  xs: "2px"
 spacing:
   xs: "0.35rem"
   sm: "0.75rem"
