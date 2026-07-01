@@ -39,9 +39,9 @@
   background:
     radial-gradient(circle at 20% 20%, rgba(83, 245, 166, 0.45), transparent 26%),
     radial-gradient(circle at 85% 18%, rgba(124, 92, 255, 0.5), transparent 30%),
-    linear-gradient(160deg, #071022 0%, #0b1020 52%, #102640 100%);
+    linear-gradient(160deg, #071022 0%, var(--bg) 52%, #102640 100%);
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 32px;
+  border-radius: 2rem;
   box-shadow: inset 0 0 72px rgba(255, 255, 255, 0.08);
   color: #f8fbff;
   display: flex;
@@ -92,7 +92,7 @@
 .share-card-image__meta div {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 22px;
+  border-radius: 1.5rem;
   padding: 1.2rem;
 }
 

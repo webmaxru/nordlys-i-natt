@@ -63,8 +63,7 @@
   align-items: center;
   gap: 0.7rem;
   padding: 0.6rem 0.7rem;
-  border-color: rgb(110 168 254 / 35%);
-  border-left: 3px solid var(--accent);
+  border-color: rgb(110 168 254 / 45%);
   background:
     radial-gradient(circle at top left, rgb(110 168 254 / 16%), transparent 60%),
     var(--bg-elev);
@@ -108,7 +107,7 @@
 
 .notify-button--cta .notify-button__actions .primary-button {
   width: auto;
-  min-height: 2.4rem;
+  min-height: 2.75rem;
   padding-inline: 1.15rem;
   white-space: nowrap;
 }

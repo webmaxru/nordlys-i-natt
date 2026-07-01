@@ -7,6 +7,7 @@ colors:
   aurora-no: "#ef5f6b"
   sky-accent: "#6ea8fe"
   aurora-mint: "#84f7c8"
+  aurora-spectrum: "#8fea74"
   night-base: "#0b1020"
   night-elevated: "#141a2e"
   night-deep: "#08101f"
@@ -14,6 +15,10 @@ colors:
   ink-muted: "#9aa6c0"
   border-hairline: "#ffffff1f"
   verdict-ink: "#06131a"
+  share-ink: "#f8fbff"
+  share-muted: "#9bb7d8"
+  share-glow-aurora: "rgba(83, 245, 166, 0.45)"
+  share-glow-twilight: "rgba(124, 92, 255, 0.5)"
 typography:
   display:
     fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
@@ -53,9 +58,11 @@ typography:
     letterSpacing: "0.14em"
 rounded:
   pill: "999px"
+  xl: "2rem"
   lg: "1.5rem"
   md: "1rem"
   sm: "0.9rem"
+  xs: "2px"
 spacing:
   xs: "0.35rem"
   sm: "0.75rem"
@@ -169,8 +176,8 @@ blue accent for wayfinding.
 ### Neutral
 - **Night Base** (`#0b1020`): The body background and `theme-color`. The deepest, most
   common surface — the night itself.
-- **Night Deep** (`#08101f`): The darkest layer — map canvas, input wells, the bottom of
-  the body gradient, the share card's base.
+- **Night Deep** (`#08101f`, `--bg-deep`): The darkest layer — map canvas, input wells, the
+  bottom of the body gradient, the share card's base.
 - **Night Elevated** (`#141a2e`): Every floating panel, card, search dropdown, and
   language toggle. The "lifted out of the dark" surface.
 - **Ink** (`#e7ecf5`): Primary text and the verdict word's high-contrast default.
@@ -321,7 +328,7 @@ plus explicit empty ("Velg et sted …") and error ("Vi klarte ikke …" + retry
 - **Don't** lead with raw data (Kp tables, charts) — evidence supports the verdict, never replaces it.
 - **Don't** make "MAYBE" look confident; uncertainty must read as honest, not as a softer "yes."
 - **Don't** introduce a second typeface or any web-font download; weight and tracking carry hierarchy.
-- **Don't** nest cards, and don't add a colored `border-left` stripe as a generic accent. The single
-  accent left-edge on the notify CTA is a deliberate, contained exception — don't spread it to other
-  cards.
+- **Don't** nest cards, and don't add a colored `border-left` stripe as a generic accent — the
+  side-edge stripe is the most recognizable AI tell, so it's banned everywhere, including the notify
+  CTA. Carry accent emphasis with a full tinted border, a background wash, or a leading icon instead.
 - **Don't** paint inactive or neutral elements in a verdict color.
