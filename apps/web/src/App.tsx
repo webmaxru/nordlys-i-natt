@@ -9,10 +9,12 @@ import { PwaReloadPrompt } from './components/PwaReloadPrompt';
 import { ShareCard } from './components/ShareCard';
 import { Timeline } from './components/Timeline';
 import { VerdictGauge } from './components/VerdictGauge';
+import { WebMcpBridge } from './components/WebMcpBridge';
 
 export default function App() {
   return (
     <AppStateProvider>
+      <WebMcpBridge />
       <Layout footer={<AttributionFooter />}>
         <LocationPicker />
         <VerdictGauge />
