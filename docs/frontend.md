@@ -51,6 +51,30 @@ container serves.
 `data/presetLocations.ts` seeds the preset chips (Tromsø … Kristiansand). **Note:** this lives
 under `src/data/` — keep `data` out of broad ignore globs (see [troubleshooting.md](./troubleshooting.md)).
 
+## Agent tools (WebMCP)
+
+The app exposes browser [WebMCP](https://github.com/webmachinelearning/webmcp) tools so an AI agent
+can drive it directly (imperative API via `document.modelContext`, with a `navigator.modelContext`
+fallback for older Chrome previews). WebMCP is unavailable in shipping browsers today, so
+registration is **best-effort** — the app is unaffected when no model context exists.
+
+- `lib/webmcp.ts` — typed wrapper + `registerWebMcpTools(tools)`. Registers each tool under one
+  `AbortController` (concurrent, per-tool try/catch), returns `{ ready, dispose }`; `dispose()`
+  calls `unregisterTool?.()` then aborts.
+- `lib/auroraTools.ts` — the two tool definitions. Each declares an `inputSchema` **and an explicit
+  `outputSchema` (result schema)** so the agent knows the exact return shape:
+  - **`get_aurora_verdict`** (`readOnlyHint`) — returns the current verdict for the selected
+    location (`verdict`, `reason`, `requiredKp`, `currentKp`, `bestHour`, `location`, `generatedAt`).
+  - **`set_aurora_location`** — resolves a place `name` (presets → Kartverket search) or `lat`/`lon`,
+    updates the on-screen location, and returns `{ location, source, verdict }`.
+- `components/WebMcpBridge.tsx` — a render-nothing component mounted inside `AppStateProvider`;
+  registers the tools once and reads live state via a ref, so `execute` always sees the current
+  selection. Tools reuse the `forecastQueryKey` cache entry (`api/forecastQuery.ts`) so they never
+  diverge from `VerdictGauge` or double-fetch.
+
+Validated hermetically in `tests/webmcp.spec.ts`, which injects a fake `document.modelContext`
+harness and exercises the register → describe → invoke lifecycle.
+
 ## i18n
 
 `i18n/index.ts` (i18next + browser language detector, persisted) with `locales/nb.json` (default)

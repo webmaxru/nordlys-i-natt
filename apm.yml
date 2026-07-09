@@ -5,6 +5,7 @@ author: Maxim Salnikov
 dependencies:
   apm:
   - rysweet/amplihack-rs/amplifier-bundle/skills/storytelling-synthesizer
+  - webmaxru/web-ai-agent-skills/skills/webmcp
   mcp: []
 includes: auto
 scripts: {}
