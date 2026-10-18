@@ -72,7 +72,9 @@ az containerapp job update  -n nordlys-job-eeyobitljk4fq -g $RG --image "${Image
 - **Required secrets:** `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID` (OIDC
   federated credential), `GHCR_PULL_TOKEN` (classic PAT, `read:packages`), `MET_USER_AGENT`,
   `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`. **Vars:** `AZURE_RESOURCE_GROUP`,
-  `CUSTOM_DOMAIN` (optional host to keep bound, e.g. `nordlys.isainative.dev`). See `infra/README.md`.
+  `CUSTOM_DOMAIN` (optional, comma-separated hosts to keep bound, e.g. `nordlys.salnikov.no,nordlys.isainative.dev`),
+  `CANONICAL_HOST` + `LEGACY_HOSTS` (optional; 301 old host → new host). See `infra/README.md` and
+  [CUSTOM-DOMAIN.md](./CUSTOM-DOMAIN.md).
 - **One-time setup gotchas (each caused a real deploy failure):**
   1. **`deploy.yml` must be valid YAML** — an unquoted inline `run: echo "...: https://..."` (colon-space)
      makes GitHub fail the whole file at parse time → every run is a 0s `startup_failure`. Keep such

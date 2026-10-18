@@ -4,7 +4,7 @@ Aurora go/no-go for Norway. The app answers one question for the user's location
 **"Can I see the northern lights tonight?"** — by combining aurora strength (NOAA),
 cloud cover (MET Norway), and darkness (computed sun elevation).
 
-> Live: **https://nordlys.isainative.dev** (Azure Container App, scale-to-zero, Azure managed TLS). Repo: private `webmaxru/nordlys-i-natt`.
+> Live: **https://nordlys.isainative.dev**, moving to **https://nordlys.salnikov.no** (see [CUSTOM-DOMAIN.md](./CUSTOM-DOMAIN.md)). Azure Container App, scale-to-zero, Azure managed TLS. Repo: `webmaxru/nordlys-i-natt`.
 
 ## Documentation index
 
@@ -21,6 +21,9 @@ cloud cover (MET Norway), and darkness (computed sun elevation).
 | [registry-ghcr.md](./registry-ghcr.md) | Container registry: private GitHub Container Registry (GHCR), PAT pull secret, build/push/deploy, pruning |
 | [subscriptions-admin.md](./subscriptions-admin.md) | Subscription administration and operational scripts |
 | [local-development.md](./local-development.md) | Setup, run, test, environment variables |
+| [CONTENT.md](./CONTENT.md) | Static guides + info pages: Markdown format, URLs, build, checks, structured data |
+| [ADSENSE-READINESS.md](./ADSENSE-READINESS.md) | Google AdSense gap analysis, consent (CMP) plan, ads.txt, how to switch ads on |
+| [CUSTOM-DOMAIN.md](./CUSTOM-DOMAIN.md) | Moving to nordlys.salnikov.no: Cloudflare records, Azure binding, redirects |
 | [troubleshooting.md](./troubleshooting.md) | **Top challenges & solutions** (the bugs that cost the most time) |
 
 ## TL;DR
@@ -53,9 +56,11 @@ nor-api/
 │     ├─ lib/format.ts
 │     ├─ data/presetLocations.ts
 │     └─ i18n/{index.ts,locales/{nb,en}.json}
+│  ├─ content/{articles,pages}/{nb,en}/*.md   # static guides + info pages (docs/CONTENT.md)
+│  └─ scripts/content/{site,build}.mjs, scripts/check-links.mjs
 ├─ infra/                  # main.bicep + modules/{monitoring,storage,containerapp,job}.bicep (+ analytics-dashboard.json)
 ├─ scripts/                # subscriptions.ps1, analytics.ps1 (operational PowerShell tools)
-├─ .github/workflows/      # ci.yml, deploy.yml
+├─ .github/workflows/      # ci.yml, deploy.yml, custom-domain.yml
 ├─ Dockerfile .dockerignore
 └─ pnpm-workspace.yaml package.json tsconfig.base.json
 ```
