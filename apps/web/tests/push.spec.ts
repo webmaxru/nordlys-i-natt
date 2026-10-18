@@ -41,6 +41,8 @@ async function mockApp(
   page: Page,
   onSubscriptionPost?: () => void,
 ) {
+  // Hermetic: no third-party scripts (agentprose.cloud) in layout/push tests.
+  await page.route('https://agentprose.cloud/**', (route) => route.abort());
   await page.route('**/api/forecast**', (route) =>
     route.fulfill({ path: forecastFixture }),
   );

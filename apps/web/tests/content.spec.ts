@@ -97,3 +97,20 @@ test('the app home page links to the guides without JavaScript', async ({ browse
   await expect(page.locator('.home-guides li a')).toHaveCount(6);
   await context.close();
 });
+
+test('every page carries the agentprose snippet exactly once in <head>', async ({ request }) => {
+  const snippet =
+    '<script src="https://agentprose.cloud/v/0/agentprose.min.js" data-key="pk_WEUJLvFOv75ICLN_" defer></script>';
+  for (const path of [
+    '/',
+    '/artikler/',
+    '/artikler/kp-indeksen/',
+    '/en/guides/kp-index/',
+    '/om/',
+    '/en/privacy/',
+  ]) {
+    const html = await (await request.get(path)).text();
+    const head = html.slice(0, html.indexOf('</head>'));
+    expect(head.split(snippet).length - 1, path).toBe(1);
+  }
+});

@@ -11,7 +11,7 @@ Nordlys i natt? er laget for å samle så lite data om deg som mulig. Her forkla
 ## Kort fortalt
 
 - Ingen innlogging og ingen brukerkontoer.
-- Vi bruker ikke informasjonskapsler (cookies) eller sporingsskript fra tredjeparter i dag.
+- Vi bruker ikke informasjonskapsler (cookies) og ingen sporing på tvers av nettsteder.
 - Posisjonen din brukes til å beregne varselet og lagres ikke på serveren – med mindre du selv slår på nordlysvarsler.
 - Besøk telles samlet på vår egen server, uten informasjonskapsler.
 - Det vises ingen annonser i dag. Hvis vi tar inn annonser fra Google, blir du spurt om samtykke først der loven krever det (se under).
@@ -44,6 +44,7 @@ Noen funksjoner henter data direkte fra offentlige kilder. Da ser disse kildene 
 
 - **Kartverket** – stedsnavnsøk (ws.geonorge.no) og kartfliser (cache.kartverket.no).
 - **Microsoft Azure** (Norge øst) – drift av nettstedet og lagring.
+- **agentprose.cloud** – et lite skript på alle sider som gjør innholdet lesbart og brukbart for KI-assistenter og nettleseragenter (WebMCP). Det setter ingen informasjonskapsler og sporer deg ikke på tvers av nettsteder. Ifølge leverandøren registreres bare anonym bruksstatistikk med en tilfeldig ID per sidevisning, og IP-adresser lagres ikke.
 
 ## Annonser og informasjonskapsler fra Google
 

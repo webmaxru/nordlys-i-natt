@@ -69,6 +69,9 @@ declare global {
 }
 
 async function mockApp(page: Page) {
+  // Hermetic: the third-party agentprose script registers its own WebMCP tools (content
+  // tools such as get_site_info); these tests cover only the app's own aurora tools.
+  await page.route('https://agentprose.cloud/**', (route) => route.abort());
   await page.route('**/api/forecast**', (route) =>
     route.fulfill({ path: forecastFixture }),
   );

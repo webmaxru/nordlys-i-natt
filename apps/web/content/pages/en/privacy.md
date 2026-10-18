@@ -11,7 +11,7 @@ Nordlys i natt? is built to collect as little data about you as possible. This p
 ## In short
 
 - No sign-in and no user accounts.
-- We do not use cookies or third-party tracking scripts today.
+- We use no cookies and no cross-site tracking.
 - Your location is used to calculate the forecast and is not stored on the server – unless you turn on aurora alerts yourself.
 - Visits are counted in aggregate on our own server, without cookies.
 - No ads are shown today. If we introduce ads from Google, you will be asked for consent first where the law requires it (see below).
@@ -44,6 +44,7 @@ Some features fetch data directly from public sources. These sources see your IP
 
 - **Kartverket** (Norwegian Mapping Authority) – place-name search (ws.geonorge.no) and map tiles (cache.kartverket.no).
 - **Microsoft Azure** (Norway East) – hosting and storage.
+- **agentprose.cloud** – a small script on every page that makes the content readable and usable for AI assistants and browser agents (WebMCP). It sets no cookies and does not track you across sites. According to the provider, it records only anonymous usage statistics with a random ID per page view and does not store IP addresses.
 
 ## Ads and Google cookies
 

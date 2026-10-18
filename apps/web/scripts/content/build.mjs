@@ -33,12 +33,18 @@ import {
 const here = dirname(fileURLToPath(import.meta.url));
 export const CONTENT_DIR = resolve(here, '../../content');
 
-/** Extra tags injected into every generated page's <head> (and the SPA's index.html). */
-export const EXTRA_HEAD = [];
+/**
+ * Extra tags injected into every generated page's <head>. The SPA's index.html carries the
+ * same agentprose tag literally (keep them identical).
+ */
+export const EXTRA_HEAD = [
+  // agentprose: makes the pages readable/usable for AI agents (WebMCP). Public key.
+  '<script src="https://agentprose.cloud/v/0/agentprose.min.js" data-key="pk_WEUJLvFOv75ICLN_" defer></script>',
+];
 
 /** Tags for <head> that depend on site settings (AdSense, when configured). */
-export function headTags() {
-  const tags = [...EXTRA_HEAD];
+export function headTags({ includeExtra = true } = {}) {
+  const tags = includeExtra ? [...EXTRA_HEAD] : [];
   if (ADSENSE_CLIENT) {
     if (!/^ca-pub-\d{10,20}$/.test(ADSENSE_CLIENT)) {
       throw new Error(

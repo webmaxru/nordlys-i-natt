@@ -57,6 +57,8 @@ async function mockApp(
   page: Page,
   { seedLocation = true, lang = 'en' }: { seedLocation?: boolean; lang?: string } = {},
 ) {
+  // Hermetic: no third-party scripts (agentprose.cloud) in layout tests.
+  await page.route('https://agentprose.cloud/**', (route) => route.abort());
   await page.route('**/api/forecast**', (route) =>
     route.fulfill({ path: forecastFixture }),
   );

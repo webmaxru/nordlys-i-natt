@@ -23,7 +23,7 @@ function contentHtmlPlugin(): Plugin {
       return html
         .replaceAll('__SITE_URL__', SITE_URL)
         .replace('<!--home-guides-->', homeLinksHtml(articles))
-        .replace('</head>', `${headTags().map((t) => `    ${t}`).join('\n')}\n  </head>`);
+        .replace('</head>', `${headTags({ includeExtra: false }).map((t) => `    ${t}`).join('\n')}\n  </head>`);
     },
   };
 }

@@ -89,3 +89,18 @@ Each guide: `Article` (headline, dates, editor, publisher, citations), `Breadcru
 | `EDITOR` | Name + profile link in bylines and `Article.editor` |
 | `CONTACT_EMAIL` | Shown on the contact page when set (empty = GitHub + LinkedIn only) |
 | `ADSENSE_CLIENT` | Empty = no ads. See [ADSENSE-READINESS.md](./ADSENSE-READINESS.md) |
+
+## Third-party script: agentprose
+
+Every page (the app's `index.html` and all generated pages via `EXTRA_HEAD` in `build.mjs`) loads
+
+```html
+<script src="https://agentprose.cloud/v/0/agentprose.min.js" data-key="pk_WEUJLvFOv75ICLN_" defer></script>
+```
+
+It exposes the site's content to AI agents as WebMCP tools (`get_site_info`, `search_posts`, …),
+next to the app's own `get_aurora_verdict` / `set_aurora_location`. The key is public. The site has
+no Content-Security-Policy today; if one is added, allow `https://agentprose.cloud` in `script-src`
+and `connect-src`. The Playwright layout/push/WebMCP suites block agentprose.cloud to stay hermetic;
+`content.spec.ts` asserts the tag is present exactly once in every page's `<head>`. It is disclosed
+on the privacy pages.
