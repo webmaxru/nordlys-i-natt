@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="no">
+<html lang="nb">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -17,8 +17,8 @@
     <meta name="author" content="Nordlys i natt?" />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#0b1020" />
-    <!-- TODO: update the absolute domain below to the production URL after deploy -->
-    <link rel="canonical" href="https://nordlys.isainative.dev/" />
+    <!-- __SITE_URL__ is filled from apps/web/scripts/content/site.mjs at build time -->
+    <link rel="canonical" href="__SITE_URL__/" />
 
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
@@ -37,9 +37,9 @@
       property="og:description"
       content="Et enkelt JA / KANSKJE / NEI på om du kan se nordlyset i natt der du er – basert på Kp-varsel, skydekke og mørke."
     />
-    <meta property="og:url" content="https://nordlys.isainative.dev/" />
-    <meta property="og:image" content="https://nordlys.isainative.dev/og-image.png" />
-    <meta property="og:image:secure_url" content="https://nordlys.isainative.dev/og-image.png" />
+    <meta property="og:url" content="__SITE_URL__/" />
+    <meta property="og:image" content="__SITE_URL__/og-image.png" />
+    <meta property="og:image:secure_url" content="__SITE_URL__/og-image.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -54,7 +54,7 @@
       name="twitter:description"
       content="Et enkelt JA / KANSKJE / NEI på om du kan se nordlyset i natt der du er."
     />
-    <meta name="twitter:image" content="https://nordlys.isainative.dev/og-image.png" />
+    <meta name="twitter:image" content="__SITE_URL__/og-image.png" />
     <meta name="twitter:image:alt" content="Nordlys i natt? – nordlysvarsel for Norge" />
 
     <!-- Structured data -->
@@ -63,7 +63,7 @@
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "Nordlys i natt?",
-        "url": "https://nordlys.isainative.dev/",
+        "url": "__SITE_URL__/",
         "description": "Aurora go/no-go for Norge: kan du se nordlyset i natt der du er?",
         "applicationCategory": "TravelApplication",
         "operatingSystem": "Web",
@@ -74,6 +74,8 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Static, crawlable links to the guides (filled at build time; see docs/CONTENT.md) -->
+    <!--home-guides-->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

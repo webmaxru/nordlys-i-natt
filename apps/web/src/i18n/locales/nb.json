@@ -65,7 +65,12 @@
     "attribution": "Data: MET Norway · NOAA SWPC · Kartverket",
     "madeBy": "Laget i Norge av",
     "github": "Kildekode på GitHub",
-    "privacy": "Personvern"
+    "privacy": "Personvern",
+    "guides": "Artikler om nordlyset",
+    "about": "Om",
+    "contact": "Kontakt",
+    "terms": "Vilkår",
+    "privacyPage": "Personvern"
   },
   "pwa": {
     "updateAvailable": "En ny versjon er tilgjengelig",
@@ -136,11 +141,19 @@
     "whatWeUse": "Det vi bruker",
     "whatWeUseBody": "Posisjon (kun i nettleseren din for å hente varsel) og valgt språk lagres lokalt på enheten din. Hvis du slår på nordlysvarsler, lagrer vi push-abonnementet og en grov posisjon for å kunne sende varselet.",
     "whatWeDont": "Det vi ikke gjør",
-    "whatWeDontBody": "Ingen informasjonskapsler, ingen reklame, ingen sporing på tvers av nettsteder, ingen deling med tredjeparter.",
+    "whatWeDontBody": "Ingen sporing på tvers av nettsteder og ingen salg av data. Det vises ingen annonser i dag; hvis det kommer annonser, blir du spurt om samtykke først der loven krever det.",
     "retention": "Lagring",
     "retentionBody": "Du kan skru av varsler når som helst, da slettes abonnementet ditt.",
     "analyticsHeading": "Statistikk",
     "analyticsBody": "Vi teller besøk samlet på vår egen server — uten informasjonskapsler og uten å spore deg på tvers av nettsteder — så det finnes ingen samtykkebanner å klikke på.",
-    "back": "Tilbake"
+    "back": "Tilbake",
+    "fullPolicy": "Les hele personvernerklæringen"
+  },
+  "nav": {
+    "guidesHref": "/artikler/",
+    "aboutHref": "/om/",
+    "contactHref": "/kontakt/",
+    "privacyHref": "/personvern/",
+    "termsHref": "/vilkar/"
   }
 }

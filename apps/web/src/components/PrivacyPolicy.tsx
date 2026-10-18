@@ -64,6 +64,10 @@ export function PrivacyPolicy() {
 
         <h3>{t('privacy.retention')}</h3>
         <p>{t('privacy.retentionBody')}</p>
+
+        <p>
+          <a href={t('nav.privacyHref')}>{t('privacy.fullPolicy')}</a>
+        </p>
       </section>
     </div>
   );

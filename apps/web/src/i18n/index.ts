@@ -16,7 +16,9 @@ void i18n
     supportedLngs: ['nb', 'en'],
     interpolation: { escapeValue: false },
     detection: {
-      order: ['localStorage', 'navigator'],
+      // `?lang=en` (used by links from the English guides) wins, then the saved choice.
+      order: ['querystring', 'localStorage', 'navigator'],
+      lookupQuerystring: 'lang',
       caches: ['localStorage'],
     },
   });

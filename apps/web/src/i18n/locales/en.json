@@ -65,7 +65,12 @@
     "attribution": "Data: MET Norway · NOAA SWPC · Kartverket",
     "madeBy": "Made in Norway by",
     "github": "Source on GitHub",
-    "privacy": "Privacy"
+    "privacy": "Privacy",
+    "guides": "Aurora guides",
+    "about": "About",
+    "contact": "Contact",
+    "terms": "Terms",
+    "privacyPage": "Privacy"
   },
   "pwa": {
     "updateAvailable": "A new version is available",
@@ -136,11 +141,19 @@
     "whatWeUse": "What we use",
     "whatWeUseBody": "Your location (only in your browser, to fetch the forecast) and chosen language are stored locally on your device. If you enable aurora alerts, we store your push subscription and a coarse location to send the alert.",
     "whatWeDont": "What we don’t do",
-    "whatWeDontBody": "No cookies, no ads, no cross-site tracking, no sharing with third parties.",
+    "whatWeDontBody": "No cross-site tracking and no selling of data. No ads are shown today; if ads are introduced, you will be asked for consent first where the law requires it.",
     "retention": "Retention",
     "retentionBody": "You can turn off alerts at any time, which deletes your subscription.",
     "analyticsHeading": "Analytics",
     "analyticsBody": "We count visits on our own server in aggregate — without cookies and without tracking you across sites — so there is no consent banner to click.",
-    "back": "Back"
+    "back": "Back",
+    "fullPolicy": "Read the full privacy policy"
+  },
+  "nav": {
+    "guidesHref": "/en/guides/",
+    "aboutHref": "/en/about/",
+    "contactHref": "/en/contact/",
+    "privacyHref": "/en/privacy/",
+    "termsHref": "/en/terms/"
   }
 }

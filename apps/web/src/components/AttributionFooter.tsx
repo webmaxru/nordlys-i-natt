@@ -5,6 +5,13 @@ export function AttributionFooter() {
 
   return (
     <div className="attribution-footer">
+      <nav className="attribution-footer__nav" aria-label={t('footer.guides')}>
+        <a href={t('nav.guidesHref')}>{t('footer.guides')}</a>
+        <a href={t('nav.aboutHref')}>{t('footer.about')}</a>
+        <a href={t('nav.contactHref')}>{t('footer.contact')}</a>
+        <a href={t('nav.privacyHref')}>{t('footer.privacy')}</a>
+        <a href={t('nav.termsHref')}>{t('footer.terms')}</a>
+      </nav>
       <span>{t('footer.attribution')}</span>
       <span className="attribution-footer__credit">
         <span>{t('footer.madeBy')}</span>
@@ -25,7 +32,6 @@ export function AttributionFooter() {
       >
         {t('footer.github')}
       </a>
-      <a href="#personvern">{t('footer.privacy')}</a>
     </div>
   );
 }

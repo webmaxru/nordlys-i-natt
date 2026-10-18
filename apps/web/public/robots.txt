@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://nordlys.isainative.dev/sitemap.xml

@@ -524,6 +524,49 @@ button:active:not(:disabled) {
   font-size: 0.9rem;
 }
 
+.attribution-footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.9rem;
+  width: 100%;
+}
+
+.attribution-footer__nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+/* Static, crawlable guide links rendered below the app (index.html, filled at build time). */
+.home-guides {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 max(0.875rem, env(safe-area-inset-left)) calc(3rem + env(safe-area-inset-bottom));
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.home-guides h2 {
+  margin: 0 0 0.4rem;
+  color: var(--fg);
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+}
+
+.home-guides ul {
+  margin: 0.6rem 0;
+  padding-left: 1.2rem;
+}
+
+.home-guides li {
+  margin: 0.3rem 0;
+}
+
+.home-guides a {
+  color: var(--fg);
+  text-underline-offset: 0.2em;
+}
+
 .attribution-footer__credit {
   display: inline-flex;
   flex-wrap: wrap;
