@@ -1,0 +1,111 @@
+# Adds a custom hostname to the Container App with a free Azure managed certificate,
+# or (mode=info) just prints the DNS records the hostname needs. Read-only in info mode.
+# Full walkthrough: docs/CUSTOM-DOMAIN.md.
+#
+# Typical use for nordlys.salnikov.no:
+#   1. Run with mode=info            -> copy the CNAME target and the asuid TXT value.
+#   2. Create both records in Cloudflare (DNS only / grey cloud).
+#   3. Run with mode=bind            -> adds the hostname, issues the cert, binds it.
+#   4. Add the hostname to the CUSTOM_DOMAIN variable so every deploy keeps it bound.
+
+name: Custom domain
+
+on:
+  workflow_dispatch:
+    inputs:
+      hostname:
+        description: Hostname to add (e.g. nordlys.salnikov.no)
+        required: true
+        default: nordlys.salnikov.no
+      mode:
+        description: "info = print the DNS records to create; bind = add hostname + managed certificate"
+        required: true
+        default: info
+        type: choice
+        options:
+          - info
+          - bind
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP || 'rg-nordlys' }}
+
+jobs:
+  custom-domain:
+    name: Custom domain (${{ inputs.mode }})
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Show the DNS records this hostname needs
+        id: info
+        env:
+          HOSTNAME_INPUT: ${{ inputs.hostname }}
+        run: |
+          host="$(echo "$HOSTNAME_INPUT" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')"
+          appName="$(az containerapp list -g "$AZURE_RESOURCE_GROUP" --query "[0].name" -o tsv)"
+          fqdn="$(az containerapp show -n "$appName" -g "$AZURE_RESOURCE_GROUP" --query properties.configuration.ingress.fqdn -o tsv)"
+          verification="$(az containerapp show -n "$appName" -g "$AZURE_RESOURCE_GROUP" --query properties.customDomainVerificationId -o tsv)"
+          label="${host%%.*}"
+          {
+            echo "### DNS records for \`$host\`"
+            echo ""
+            echo "| Type | Name | Content | Proxy |"
+            echo "|---|---|---|---|"
+            echo "| CNAME | \`$label\` | \`$fqdn\` | DNS only (grey cloud) |"
+            echo "| TXT | \`asuid.$label\` | \`$verification\` | - |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "CNAME  $label  ->  $fqdn"
+          echo "TXT    asuid.$label  =  $verification"
+          {
+            echo "host=$host"
+            echo "app=$appName"
+            echo "fqdn=$fqdn"
+            echo "verification=$verification"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Check DNS
+        if: inputs.mode == 'bind'
+        env:
+          HOST: ${{ steps.info.outputs.host }}
+          FQDN: ${{ steps.info.outputs.fqdn }}
+          VERIFICATION: ${{ steps.info.outputs.verification }}
+        run: |
+          cname="$(dig +short CNAME "$HOST" @1.1.1.1 | sed 's/\.$//')"
+          txt="$(dig +short TXT "asuid.$HOST" @1.1.1.1 | tr -d '"')"
+          echo "CNAME $HOST -> ${cname:-<none>} (want $FQDN)"
+          echo "TXT asuid.$HOST = ${txt:-<none>}"
+          if [ "$txt" != "$VERIFICATION" ]; then
+            echo "::error::TXT asuid.$HOST is missing or wrong. Create it first (see the info table above)."
+            exit 1
+          fi
+          if [ "$cname" != "$FQDN" ]; then
+            echo "::error::CNAME for $HOST does not point at $FQDN. If Cloudflare shows an orange cloud, switch the record to 'DNS only'."
+            exit 1
+          fi
+
+      - name: Add hostname and managed certificate
+        if: inputs.mode == 'bind'
+        env:
+          HOST: ${{ steps.info.outputs.host }}
+          APP: ${{ steps.info.outputs.app }}
+        run: |
+          envName="$(az containerapp env list -g "$AZURE_RESOURCE_GROUP" --query "[0].name" -o tsv)"
+          if ! az containerapp hostname list -n "$APP" -g "$AZURE_RESOURCE_GROUP" --query "[].name" -o tsv | grep -qx "$HOST"; then
+            az containerapp hostname add -n "$APP" -g "$AZURE_RESOURCE_GROUP" --hostname "$HOST"
+          fi
+          # Creates (or reuses) a free managed certificate validated via the CNAME, then binds it.
+          az containerapp hostname bind -n "$APP" -g "$AZURE_RESOURCE_GROUP" \
+            --hostname "$HOST" --environment "$envName" --validation-method CNAME
+          {
+            echo "Bound https://$HOST"
+            echo "Next: add $HOST to the CUSTOM_DOMAIN repository variable (comma-separated) so deploys keep it bound."
+          } >> "$GITHUB_STEP_SUMMARY"
