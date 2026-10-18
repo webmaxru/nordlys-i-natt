@@ -36,8 +36,11 @@ jobs:
       - name: Test shared and API packages
         run: pnpm --filter @nordlys/shared --filter @nordlys/api test
 
-      - name: Build web app
+      - name: Build web app (includes the static guides)
         run: pnpm --filter @nordlys/web build
+
+      - name: Check links, anchors and structured data in the built site
+        run: pnpm --filter @nordlys/web check:links
 
       - name: Install Playwright browser
         run: pnpm --filter @nordlys/web exec playwright install --with-deps chromium

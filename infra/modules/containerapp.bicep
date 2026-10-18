@@ -24,6 +24,8 @@ param vapidPublicKey string
 param vapidPrivateKey string
 @secure()
 param vapidSubject string
+param canonicalHost string = ''
+param legacyHosts string = ''
 
 resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: environmentName
@@ -119,6 +121,14 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
             {
               name: 'WEB_DIST_PATH'
               value: '/app/apps/web/dist'
+            }
+            {
+              name: 'CANONICAL_HOST'
+              value: canonicalHost
+            }
+            {
+              name: 'LEGACY_HOSTS'
+              value: legacyHosts
             }
             {
               name: 'AZURE_TABLE_CONNECTION_STRING'

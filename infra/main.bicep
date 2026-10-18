@@ -50,6 +50,12 @@ param vapidPrivateKey string
 @secure()
 param vapidSubject string
 
+@description('Primary public hostname, e.g. nordlys.salnikov.no. Empty disables legacy-host redirects.')
+param canonicalHost string = ''
+
+@description('Comma-separated old hostnames whose page requests 301 to canonicalHost, e.g. nordlys.isainative.dev.')
+param legacyHosts string = ''
+
 var suffix = uniqueString(resourceGroup().id)
 var safePrefix = toLower(replace(namePrefix, '-', ''))
 var workspaceName = '${namePrefix}-law-${suffix}'
@@ -100,6 +106,8 @@ module containerApp 'modules/containerapp.bicep' = {
     vapidPublicKey: vapidPublicKey
     vapidPrivateKey: vapidPrivateKey
     vapidSubject: vapidSubject
+    canonicalHost: canonicalHost
+    legacyHosts: legacyHosts
   }
 }
 

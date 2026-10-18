@@ -12,6 +12,11 @@
 # Optional GitHub variables:
 # - LOCATION: Azure region; defaults to norwayeast.
 # - NAME_PREFIX: Bicep namePrefix; defaults to nordlys.
+# - CUSTOM_DOMAIN: comma-separated custom hostnames to keep bound after each deploy
+#   (e.g. "nordlys.salnikov.no,nordlys.isainative.dev"). See docs/CUSTOM-DOMAIN.md.
+# - CANONICAL_HOST: primary hostname (e.g. nordlys.salnikov.no). Together with LEGACY_HOSTS it
+#   turns on 301 redirects from the old hostnames. Leave unset until the new domain works.
+# - LEGACY_HOSTS: comma-separated old hostnames to redirect (e.g. nordlys.isainative.dev).
 
 name: Deploy
 
@@ -75,8 +80,15 @@ jobs:
 
       - name: Deploy Azure infrastructure
         id: deploy
+        env:
+          CANONICAL_HOST: ${{ vars.CANONICAL_HOST }}
+          LEGACY_HOSTS: ${{ vars.LEGACY_HOSTS }}
         run: |
           deployment_name="nordlys-${GITHUB_RUN_ID}"
+          # Optional host-redirect settings are only passed when set (empty = Bicep default '').
+          extra_params=()
+          if [ -n "$CANONICAL_HOST" ]; then extra_params+=("canonicalHost=$CANONICAL_HOST"); fi
+          if [ -n "$LEGACY_HOSTS" ]; then extra_params+=("legacyHosts=$LEGACY_HOSTS"); fi
           az deployment group create \
             --name "$deployment_name" \
             --resource-group "$AZURE_RESOURCE_GROUP" \
@@ -91,7 +103,8 @@ jobs:
               metUserAgent="${{ secrets.MET_USER_AGENT }}" \
               vapidPublicKey="${{ secrets.VAPID_PUBLIC_KEY }}" \
               vapidPrivateKey="${{ secrets.VAPID_PRIVATE_KEY }}" \
-              vapidSubject="${{ secrets.VAPID_SUBJECT }}"
+              vapidSubject="${{ secrets.VAPID_SUBJECT }}" \
+              "${extra_params[@]}"
           fqdn="$(az deployment group show \
             --name "$deployment_name" \
             --resource-group "$AZURE_RESOURCE_GROUP" \
@@ -103,25 +116,31 @@ jobs:
         run: |
           echo "Container App FQDN: https://${{ steps.deploy.outputs.fqdn }}"
 
-      - name: Re-bind custom domain
+      - name: Re-bind custom domains
         # A resource-group Bicep deploy resets ingress.customDomains, which drops
         # any manually-added custom domain (e.g. nordlys.isainative.dev). The
-        # managed certificate survives at the environment level, so re-bind it
-        # here. No-op when CUSTOM_DOMAIN is unset or its managed cert isn't issued
-        # yet (add the hostname + cert once, then this keeps it bound every deploy).
+        # managed certificates survive at the environment level, so re-bind them
+        # here. CUSTOM_DOMAIN may list several hostnames, comma-separated. A host
+        # whose managed cert isn't issued yet is skipped (add it once with the
+        # "Custom domain" workflow, then this keeps it bound on every deploy).
         if: vars.CUSTOM_DOMAIN != ''
         env:
           CUSTOM_DOMAIN: ${{ vars.CUSTOM_DOMAIN }}
         run: |
           appName="$(az containerapp list -g "$AZURE_RESOURCE_GROUP" --query "[0].name" -o tsv)"
           envName="$(az containerapp env list -g "$AZURE_RESOURCE_GROUP" --query "[0].name" -o tsv)"
-          cert="$(az containerapp env certificate list -n "$envName" -g "$AZURE_RESOURCE_GROUP" \
-            --managed-certificates-only \
-            --query "[?properties.subjectName=='$CUSTOM_DOMAIN'].id | [0]" -o tsv)"
-          if [ -z "$cert" ]; then
-            echo "No managed certificate for $CUSTOM_DOMAIN yet — skipping re-bind."
-            exit 0
-          fi
-          az containerapp hostname bind -n "$appName" -g "$AZURE_RESOURCE_GROUP" \
-            --hostname "$CUSTOM_DOMAIN" --environment "$envName" --certificate "$cert"
-          echo "Re-bound https://$CUSTOM_DOMAIN"
+          IFS=',' read -ra hosts <<< "$CUSTOM_DOMAIN"
+          for raw in "${hosts[@]}"; do
+            host="$(echo "$raw" | tr -d '[:space:]')"
+            [ -z "$host" ] && continue
+            cert="$(az containerapp env certificate list -n "$envName" -g "$AZURE_RESOURCE_GROUP" \
+              --managed-certificates-only \
+              --query "[?properties.subjectName=='$host'].id | [0]" -o tsv)"
+            if [ -z "$cert" ]; then
+              echo "No managed certificate for $host yet - skipping re-bind."
+              continue
+            fi
+            az containerapp hostname bind -n "$appName" -g "$AZURE_RESOURCE_GROUP" \
+              --hostname "$host" --environment "$envName" --certificate "$cert"
+            echo "Re-bound https://$host"
+          done
