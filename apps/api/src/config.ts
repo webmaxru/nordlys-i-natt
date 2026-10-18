@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { parseHostList } from './hosting';
 
 /** Centralised runtime configuration (read once at startup). */
 export const config = {
@@ -38,6 +39,13 @@ export const config = {
   },
 
   appInsightsConnectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING ?? '',
+
+  hosting: {
+    /** Primary public hostname (e.g. nordlys.salnikov.no). Empty = no host redirects. */
+    canonicalHost: process.env.CANONICAL_HOST ?? '',
+    /** Comma-separated old hostnames whose page requests 301 to canonicalHost. */
+    legacyHosts: parseHostList(process.env.LEGACY_HOSTS),
+  },
 
   /** Absolute path to the built web app to serve; empty = auto-detect. */
   webDistPath: process.env.WEB_DIST_PATH ?? '',

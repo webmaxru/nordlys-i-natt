@@ -6,6 +6,7 @@ import cors from '@fastify/cors';
 import autoload from '@fastify/autoload';
 import fastifyStatic from '@fastify/static';
 import { config } from './config';
+import { legacyRedirectTarget } from './hosting';
 import { initTelemetry, trackEvent } from './telemetry';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -39,6 +40,16 @@ export async function buildServer(): Promise<FastifyInstance> {
     logger: { level: process.env.LOG_LEVEL ?? 'info' },
   });
 
+  // Old domain -> new domain (only when CANONICAL_HOST + LEGACY_HOSTS are set; see
+  // docs/CUSTOM-DOMAIN.md). Runs before everything else so the redirect is cheap.
+  app.addHook('onRequest', async (req, reply) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') return;
+    const target = legacyRedirectTarget(req.headers.host, req.raw.url, config.hosting);
+    if (target) {
+      return reply.redirect(target, 301);
+    }
+  });
+
   await app.register(cors, { origin: true });
   await app.register(autoload, { dir: join(here, 'routes') });
 
@@ -59,12 +70,31 @@ export async function buildServer(): Promise<FastifyInstance> {
   const webDist = config.webDistPath || resolve(here, '../../web/dist');
   if (existsSync(webDist)) {
     await app.register(fastifyStatic, { root: webDist, wildcard: false });
+    const has404Page = existsSync(join(webDist, '404.html'));
     app.setNotFoundHandler((req, reply) => {
-      if (req.raw.url?.startsWith('/api')) {
+      const url = req.raw.url ?? '/';
+      const [path, query] = url.split('?');
+      if (path.startsWith('/api')) {
         reply.code(404).send({ error: 'Not found' });
         return;
       }
-      reply.sendFile('index.html'); // SPA fallback
+      // "/artikler/kp-indeksen" -> "/artikler/kp-indeksen/" for the generated content pages.
+      if (
+        !path.endsWith('/') &&
+        !path.includes('..') &&
+        !/\.[a-z0-9]+$/i.test(path) &&
+        existsSync(join(webDist, path, 'index.html'))
+      ) {
+        reply.redirect(`${path}/${query !== undefined ? `?${query}` : ''}`, 301);
+        return;
+      }
+      // The app has no client-side routes besides "/", so anything else is a real 404
+      // (a soft 404 that returns the app shell with 200 hurts search and ad review).
+      if (has404Page) {
+        reply.code(404).type('text/html; charset=utf-8').sendFile('404.html');
+        return;
+      }
+      reply.sendFile('index.html');
     });
   }
 
