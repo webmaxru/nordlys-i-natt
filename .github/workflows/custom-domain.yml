@@ -99,13 +99,38 @@ jobs:
           APP: ${{ steps.info.outputs.app }}
         run: |
           envName="$(az containerapp env list -g "$AZURE_RESOURCE_GROUP" --query "[0].name" -o tsv)"
+          # Run an az command; on failure surface its last output as an annotation (logs can be long).
+          run_az() {
+            local out
+            if ! out="$("$@" 2>&1)"; then
+              echo "$out"
+              echo "::error title=$2 $3 failed::$(echo "$out" | grep -v '^\s*$' | tail -n 8 | tr '\n' ' ' | cut -c1-1500)"
+              return 1
+            fi
+            echo "$out"
+          }
           if ! az containerapp hostname list -n "$APP" -g "$AZURE_RESOURCE_GROUP" --query "[].name" -o tsv | grep -qx "$HOST"; then
-            az containerapp hostname add -n "$APP" -g "$AZURE_RESOURCE_GROUP" --hostname "$HOST"
+            run_az az containerapp hostname add -n "$APP" -g "$AZURE_RESOURCE_GROUP" --hostname "$HOST"
           fi
           # Creates (or reuses) a free managed certificate validated via the CNAME, then binds it.
-          az containerapp hostname bind -n "$APP" -g "$AZURE_RESOURCE_GROUP" \
+          run_az az containerapp hostname bind -n "$APP" -g "$AZURE_RESOURCE_GROUP" \
             --hostname "$HOST" --environment "$envName" --validation-method CNAME
           {
             echo "Bound https://$HOST"
             echo "Next: add $HOST to the CUSTOM_DOMAIN repository variable (comma-separated) so deploys keep it bound."
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Show hostname and certificate state
+        if: always() && inputs.mode == 'bind'
+        env:
+          HOST: ${{ steps.info.outputs.host }}
+          APP: ${{ steps.info.outputs.app }}
+        run: |
+          envName="$(az containerapp env list -g "$AZURE_RESOURCE_GROUP" --query "[0].name" -o tsv)"
+          hosts="$(az containerapp hostname list -n "$APP" -g "$AZURE_RESOURCE_GROUP" \
+            --query "[].[name, bindingType]" -o tsv | tr '\t' ':' | tr '\n' ' ')"
+          certs="$(az containerapp env certificate list -n "$envName" -g "$AZURE_RESOURCE_GROUP" \
+            --managed-certificates-only --query "[].[properties.subjectName, properties.provisioningState]" -o tsv \
+            | tr '\t' ':' | tr '\n' ' ')"
+          echo "::notice title=Hostnames::${hosts:-none}"
+          echo "::notice title=Managed certificates::${certs:-none}"
