@@ -103,31 +103,20 @@ iOS tab users to the Add-to-Home-Screen step instead of showing the native permi
 
 ## Backend cadence
 
-Notification evaluation is implemented in `apps/api/src/scheduler/evaluate.ts` and runs from the
-Container Apps cron Job. The infrastructure default schedule is every 20 minutes:
-
-```text
-*/20 * * * *
-```
-
-For each stored subscription, the job:
-
-1. builds a fresh forecast with the shared verdict engine;
-2. sends a push only when the current verdict is `GO`;
-3. de-duplicates with `shouldNotify()` to at most once per 6 hours while the verdict remains `GO`;
-4. suppresses sends during Europe/Oslo quiet hours `[start, end)`, default `02:00–06:00`, via
-   `config.quietHours` (`QUIET_HOURS_START` / `QUIET_HOURS_END`) and `isInQuietWindow()`;
-5. prunes expired subscriptions when the push service reports `410` or `404`.
-
-Quiet hours are start-inclusive and end-exclusive. Setting start and end to the same value disables
-the quiet window.
+Alerts follow the shared day-before rule described in [ALERTS.md](./ALERTS.md): a Container Apps
+cron Job (`*/20 * * * *`) runs `apps/api/src/scheduler/evaluate.ts`, which asks the rule in
+`packages/shared/src/alerts.ts` about every subscription and sends at most one day-before alert per
+night (15:00–21:00 Europe/Oslo) and, if opted in, one "happening now" alert per night (never
+02:00–06:00). Pushes carry a TTL (12 h / 1 h), an urgency and a topic, so a phone that was offline
+never gets a stale alert days later. Subscriptions the push service reports as gone (404/410) are
+deleted.
 
 ## Subscription lifecycle and VAPID
 
 Frontend subscription helpers live in `apps/web/src/api/push.ts`:
 
 - `subscribeToPush(location, lang)` waits for the service worker, calls `pushManager.subscribe()`,
-  `POST`s `{ subscription, location, lang }` to `/api/subscriptions`, and stores the returned id in
+  `POST`s `{ subscription, location, lang, prefs }` to `/api/subscriptions`, and stores the returned id in
   `localStorage['nordlys.push.id']`.
 - `unsubscribeFromPush()` deletes `/api/subscriptions/:id`, unsubscribes the active
   `PushSubscription`, and removes the local id.

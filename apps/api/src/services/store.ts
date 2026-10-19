@@ -18,6 +18,13 @@ export type Sub = {
   createdAt: string;
   lastNotifiedAt?: string;
   lastVerdict?: string;
+  /** Alert preferences. Missing on subscriptions made before the day-before rework (Oct 2026). */
+  alertDayBefore?: boolean;
+  alertNow?: boolean;
+  minChance?: 'good' | 'high';
+  /** nightOf of the last day-before / "now" alert (see packages/shared/src/alerts.ts). */
+  lastDayBeforeNight?: string;
+  lastNowNight?: string;
 };
 
 export interface SubscriptionStore {
@@ -93,6 +100,11 @@ type TableSubEntity = {
   createdAt: string;
   lastNotifiedAt?: string;
   lastVerdict?: string;
+  alertDayBefore?: boolean;
+  alertNow?: boolean;
+  minChance?: 'good' | 'high';
+  lastDayBeforeNight?: string;
+  lastNowNight?: string;
 };
 
 const partitionKey = 'subscription';
@@ -137,9 +149,7 @@ export class TableStore implements SubscriptionStore {
   async get(id: string): Promise<Sub | null> {
     await this.ensureTable();
     try {
-      return fromTableEntity(
-        await this.client.getEntity<TableSubEntity>(partitionKey, id),
-      );
+      return fromTableEntity(await this.client.getEntity<TableSubEntity>(partitionKey, id));
     } catch (err) {
       if (isStatusError(err, 404)) {
         return null;
@@ -177,6 +187,11 @@ function toTableEntity(sub: Sub): TableSubEntity {
     createdAt: sub.createdAt,
     lastNotifiedAt: sub.lastNotifiedAt,
     lastVerdict: sub.lastVerdict,
+    alertDayBefore: sub.alertDayBefore,
+    alertNow: sub.alertNow,
+    minChance: sub.minChance,
+    lastDayBeforeNight: sub.lastDayBeforeNight,
+    lastNowNight: sub.lastNowNight,
   };
 }
 
@@ -195,6 +210,11 @@ function fromTableEntity(entity: TableSubEntity): Sub {
     createdAt: entity.createdAt,
     lastNotifiedAt: entity.lastNotifiedAt,
     lastVerdict: entity.lastVerdict,
+    alertDayBefore: entity.alertDayBefore,
+    alertNow: entity.alertNow,
+    minChance: entity.minChance,
+    lastDayBeforeNight: entity.lastDayBeforeNight,
+    lastNowNight: entity.lastNowNight,
   };
 }
 

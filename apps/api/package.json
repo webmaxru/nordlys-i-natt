@@ -13,9 +13,11 @@
     "lint": "eslint src"
   },
   "dependencies": {
+    "@azure/communication-email": "^1.1.0",
     "@azure/data-tables": "^13.3.0",
-    "@fastify/autoload": "^6.0.3",
     "@fastify/cors": "^10.0.1",
+    "@fastify/formbody": "^8",
+    "@fastify/rate-limit": "^11",
     "@fastify/static": "^8.0.3",
     "@nordlys/shared": "workspace:*",
     "applicationinsights": "^3.4.0",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isInQuietWindow } from './evaluate';
+import { isInQuietWindow } from '../scheduler/evaluate';
 
 describe('isInQuietWindow', () => {
   it('matches a normal window [2,6)', () => {

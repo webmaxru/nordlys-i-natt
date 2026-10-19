@@ -1,125 +1,164 @@
-import { buildForecast } from '../services/forecast';
-import { sendPush } from '../services/push';
-import { createStore, type Sub } from '../services/store';
+import { inHourWindow } from '@nordlys/shared';
 import { config } from '../config';
+import { getCloudForecast } from '../services/met';
+import { getKpForecast } from '../services/noaa';
+import { sendPush, vapidConfigured } from '../services/push';
+import { createStore, type Sub } from '../services/store';
+import {
+  emailSubs,
+  links,
+  listUnsubscribeHeaders,
+  prunePending,
+  type EmailSub,
+} from '../services/email/subscribers';
+import { emailTransport } from '../services/email/transport';
+import { alertEmail } from '../services/email/templates';
+import {
+  apnsConfigured,
+  devices,
+  fcmConfigured,
+  sendNative,
+  type Device,
+} from '../services/nativePush';
 import { initTelemetry, trackEvent } from '../telemetry';
-
-type EvaluateResult = {
-  checked: number;
-  sent: number;
-  removed: number;
-};
-
-const sixHoursMs = 6 * 60 * 60 * 1000;
-
-const messages = {
-  nb: {
-    title: 'Nordlys i natt? 🌌',
-    body: (name: string, kp: number | null) =>
-      `${name}: gode forhold nå${kp === null ? '' : ` (Kp ${kp})`}`,
-  },
-  en: {
-    title: 'Aurora tonight? 🌌',
-    body: (name: string, kp: number | null) =>
-      `${name}: good conditions now${kp === null ? '' : ` (Kp ${kp})`}`,
-  },
-} satisfies Record<
-  Sub['lang'],
-  { title: string; body: (name: string, kp: number | null) => string }
->;
-
-export async function evaluateAndNotify(): Promise<EvaluateResult> {
-  initTelemetry();
-
-  const store = createStore();
-  const subs = await store.list();
-  const result: EvaluateResult = { checked: 0, sent: 0, removed: 0 };
-
-  for (const sub of subs) {
-    result.checked += 1;
-
-    try {
-      const forecast = await buildForecast({
-        name: sub.name,
-        lat: sub.lat,
-        lon: sub.lon,
-      });
-      const verdict = forecast.verdict.verdict;
-      const updatedSub: Sub = { ...sub, lastVerdict: verdict };
-
-      if (verdict !== 'GO' || !shouldNotify(sub) || inQuietHours()) {
-        await store.upsert(updatedSub);
-        continue;
-      }
-
-      const bestKp = forecast.verdict.bestHour?.kp ?? null;
-      const localized = messages[sub.lang];
-      const pushResult = await sendPush(sub, {
-        title: localized.title,
-        body: localized.body(sub.name, bestKp),
-        url: '/',
-      });
-
-      if (pushResult === 'expired') {
-        await store.remove(sub.id);
-        result.removed += 1;
-        continue;
-      }
-
-      if (pushResult === 'ok') {
-        updatedSub.lastNotifiedAt = new Date().toISOString();
-        result.sent += 1;
-      }
-
-      await store.upsert(updatedSub);
-    } catch (err) {
-      console.error('[evaluate] subscription failed', { id: sub.id, err });
-    }
-  }
-
-  if (result.sent > 0) {
-    trackEvent('push_sent', { count: result.sent });
-  }
-
-  return result;
-}
-
-function shouldNotify(sub: Sub): boolean {
-  if (sub.lastVerdict !== 'GO') {
-    return true;
-  }
-
-  if (!sub.lastNotifiedAt) {
-    return true;
-  }
-
-  const lastNotified = Date.parse(sub.lastNotifiedAt);
-  return (
-    !Number.isFinite(lastNotified) ||
-    Date.now() - lastNotified > sixHoursMs
-  );
-}
+import { runAlerts, type ChannelAdapter, type RunStats } from './alerts';
 
 /**
- * True when `hour` (0–23) falls inside the quiet window [start, end).
- * Supports windows that wrap past midnight (start > end). Disabled when start === end.
- * Pure + exported for testing.
+ * Kept for compatibility with older tests/docs: true when `hour` is inside [start, end).
+ * The rule itself lives in packages/shared/src/alerts.ts (inHourWindow).
  */
-export function isInQuietWindow(hour: number, start: number, end: number): boolean {
-  if (!Number.isFinite(start) || !Number.isFinite(end) || start === end) {
-    return false;
-  }
-  return start < end ? hour >= start && hour < end : hour >= start || hour < end;
+export const isInQuietWindow = inHourWindow;
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const abs = (path: string) => `${config.publicBaseUrl}${path}`;
+
+export function webPushAdapter(store = createStore()): ChannelAdapter<Sub> {
+  return {
+    channel: 'web',
+    enabled: () => vapidConfigured,
+    list: () => store.list(),
+    toRecipient: (s) => ({
+      id: s.id,
+      lat: s.lat,
+      lon: s.lon,
+      name: s.name,
+      lang: s.lang,
+      // Subscriptions made before the October 2026 rework signed up for "instant" alerts,
+      // so they keep the short-notice alert and also get the new day-before heads-up.
+      prefs: {
+        dayBefore: s.alertDayBefore ?? true,
+        now: s.alertNow ?? s.alertDayBefore === undefined,
+        minChance: s.minChance ?? 'good',
+      },
+      state: { lastDayBeforeNight: s.lastDayBeforeNight, lastNowNight: s.lastNowNight },
+    }),
+    send: async (s, d, m) =>
+      sendPush(
+        s,
+        { title: m.title, body: m.body, url: m.path, tag: d.dedupeKey },
+        { ttlSeconds: d.ttlSeconds, urgency: d.kind === 'now' ? 'high' : 'normal', topic: d.kind },
+      ),
+    save: (s, st) => store.upsert({ ...s, ...st, lastNotifiedAt: new Date().toISOString() }),
+    remove: (s) => store.remove(s.id),
+  };
 }
 
-/** Whether the current Europe/Oslo time is within the configured quiet hours. */
-function inQuietHours(now: Date = new Date()): boolean {
-  const hour = Number(
-    new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'Europe/Oslo',
-      hour: 'numeric',
-      hourCycle: 'h23',
-    }).format(now),
-  );
-  return isInQuietWindow(hour, config.quietHours.start, config.quietHours.end);
+export function emailAdapter(): ChannelAdapter<EmailSub> {
+  const store = emailSubs();
+  const transport = emailTransport();
+  let sentThisRun = 0;
+  let throttledUntil = 0;
+  return {
+    channel: 'email',
+    enabled: () => transport !== null,
+    list: () => store.list(),
+    toRecipient: (s) =>
+      s.status !== 'active'
+        ? null
+        : {
+            id: s.id,
+            lat: s.lat,
+            lon: s.lon,
+            name: s.name,
+            lang: s.lang,
+            prefs: { dayBefore: s.alertDayBefore, now: s.alertNow, minChance: s.minChance },
+            state: { lastDayBeforeNight: s.lastDayBeforeNight, lastNowNight: s.lastNowNight },
+          },
+    send: async (s, _d, m) => {
+      if (!transport) return 'error';
+      // Stay under the ACS quota (default 30/min and 100/h for a custom domain): the rest is
+      // picked up by the next run, still inside the send window.
+      if (sentThisRun >= config.email.maxPerRun || Date.now() < throttledUntil) return 'deferred';
+      if (sentThisRun > 0) await sleep(config.email.sendIntervalMs);
+      const l = links(s);
+      const mail = alertEmail(s.lang, s.name, m, { ...l, open: abs(m.path) });
+      const res = await transport.send({
+        to: s.email,
+        ...mail,
+        headers: listUnsubscribeHeaders(s),
+      });
+      if (res.ok) {
+        sentThisRun += 1;
+        return 'ok';
+      }
+      if (res.retryAfterMs) {
+        throttledUntil = Date.now() + res.retryAfterMs;
+        return 'deferred';
+      }
+      console.error('[email] send failed', res.error);
+      return 'error';
+    },
+    save: (s, st) => store.upsert({ ...s, ...st, lastSentAt: new Date().toISOString() }),
+    remove: (s) => store.remove(s.id),
+  };
+}
+
+export function nativeAdapter(): ChannelAdapter<Device> {
+  const store = devices();
+  return {
+    channel: 'app',
+    enabled: () => fcmConfigured() || apnsConfigured(),
+    list: () => store.list(),
+    toRecipient: (d) => ({
+      id: d.id,
+      lat: d.lat,
+      lon: d.lon,
+      name: d.name,
+      lang: d.lang,
+      prefs: { dayBefore: d.alertDayBefore, now: d.alertNow, minChance: d.minChance },
+      state: { lastDayBeforeNight: d.lastDayBeforeNight, lastNowNight: d.lastNowNight },
+    }),
+    send: async (d, dec, m) => {
+      const r = await sendNative(d, {
+        title: m.title,
+        body: m.body,
+        url: m.path,
+        ttlSeconds: dec.ttlSeconds,
+        collapseKey: dec.dedupeKey,
+      });
+      return r === 'disabled' ? 'deferred' : r;
+    },
+    save: (d, st) => store.upsert({ ...d, ...st, lastSentAt: new Date().toISOString() }),
+    remove: (d) => store.remove(d.id),
+  };
+}
+
+export async function evaluateAndNotify(
+  now = new Date(),
+): Promise<RunStats & { prunedPending: number }> {
+  initTelemetry();
+  const stats = await runAlerts({
+    now,
+    adapters: [webPushAdapter(), emailAdapter(), nativeAdapter()],
+    getKpForecast,
+    getCloudForecast,
+    rule: { quietHours: config.quietHours, dayBeforeWindow: config.dayBeforeWindow },
+    log: (msg, data) => console.warn('[alerts]', msg, data ?? ''),
+  });
+  const prunedPending = emailTransport() ? await prunePending(now).catch(() => 0) : 0;
+  for (const ch of ['web', 'email', 'app'] as const) {
+    if (stats[ch].sent > 0) trackEvent('alert_sent', { channel: ch, count: stats[ch].sent });
+  }
+  if (stats.web.sent > 0) trackEvent('push_sent', { count: stats.web.sent });
+  return { ...stats, prunedPending };
 }

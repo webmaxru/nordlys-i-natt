@@ -18,10 +18,53 @@ export const config = {
     cacheTtlSeconds: Number(process.env.NOAA_CACHE_TTL_SECONDS ?? 600),
   },
 
-  /** Suppress push during these Europe/Oslo hours [start, end). Set start === end to disable. */
+  /** Suppress "happening now" alerts during these Europe/Oslo hours [start, end). start === end disables. */
   quietHours: {
     start: Number(process.env.QUIET_HOURS_START ?? 2),
     end: Number(process.env.QUIET_HOURS_END ?? 6),
+  },
+
+  /** Local hours [start, end) in which the day-before heads-up may go out (see packages/shared/src/alerts.ts). */
+  dayBeforeWindow: {
+    start: Number(process.env.DAY_BEFORE_START ?? 15),
+    end: Number(process.env.DAY_BEFORE_END ?? 21),
+  },
+
+  /** Public origin used in links inside e-mails and notifications. */
+  publicBaseUrl: (
+    process.env.PUBLIC_BASE_URL ||
+    (process.env.CANONICAL_HOST
+      ? `https://${process.env.CANONICAL_HOST}`
+      : 'https://nordlys.salnikov.no')
+  ).replace(/\/+$/, ''),
+
+  /**
+   * E-mail alerts (Azure Communication Services Email). Off unless EMAIL_ENABLED=true AND a
+   * transport is configured. EMAIL_TRANSPORT: "acs" (default in Azure) or "outbox" (writes JSON
+   * files to EMAIL_OUTBOX_DIR; local dev and tests).
+   */
+  email: {
+    enabled: process.env.EMAIL_ENABLED === 'true',
+    transport: (process.env.EMAIL_TRANSPORT ?? 'acs') as 'acs' | 'outbox',
+    acsConnectionString: process.env.ACS_CONNECTION_STRING ?? '',
+    sender: process.env.EMAIL_SENDER ?? '',
+    senderName: process.env.EMAIL_SENDER_NAME ?? 'Nordlys i natt',
+    replyTo: process.env.EMAIL_REPLY_TO ?? '',
+    outboxDir: process.env.EMAIL_OUTBOX_DIR ?? './data/outbox',
+    /** Pause between sends; ACS's default custom-domain quota is 30/min and 100/h. */
+    sendIntervalMs: Number(process.env.EMAIL_SEND_INTERVAL_MS ?? 2100),
+    maxPerRun: Number(process.env.EMAIL_MAX_PER_RUN ?? 90),
+    maxPlacesPerAddress: 5,
+  },
+
+  /** Native push for the iOS/Android apps: FCM HTTP v1 (Android) + APNs token auth (iOS). */
+  nativePush: {
+    fcmServiceAccountJson: process.env.FCM_SERVICE_ACCOUNT_JSON ?? '',
+    apnsKeyP8: process.env.APNS_KEY_P8 ?? '',
+    apnsKeyId: process.env.APNS_KEY_ID ?? '',
+    apnsTeamId: process.env.APNS_TEAM_ID ?? '',
+    apnsBundleId: process.env.APNS_BUNDLE_ID ?? 'no.salnikov.nordlys',
+    apnsProduction: process.env.APNS_PRODUCTION !== 'false',
   },
 
   vapid: {
@@ -36,6 +79,8 @@ export const config = {
     filePath: process.env.STORE_FILE_PATH ?? './data/subscriptions.json',
     tableConnectionString: process.env.AZURE_TABLE_CONNECTION_STRING ?? '',
     tableName: process.env.AZURE_TABLE_NAME ?? 'subscriptions',
+    /** Directory for the "file" driver's other collections (e-mail subscribers, devices). */
+    fileDir: process.env.STORE_FILE_DIR ?? './data',
   },
 
   appInsightsConnectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING ?? '',
