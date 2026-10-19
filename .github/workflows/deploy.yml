@@ -17,6 +17,14 @@
 # - CANONICAL_HOST: primary hostname (e.g. nordlys.salnikov.no). Together with LEGACY_HOSTS it
 #   turns on 301 redirects from the old hostnames. Leave unset until the new domain works.
 # - LEGACY_HOSTS: comma-separated old hostnames to redirect (e.g. nordlys.isainative.dev).
+# - EMAIL_DOMAIN: sending domain for e-mail alerts (e.g. varsel.salnikov.no). Creates Azure
+#   Communication Services Email + the domain; e-mail switches on by itself once the DNS records
+#   are verified (checked on every deploy). See docs/INFRA.md.
+# - EMAIL_REPLY_TO: optional Reply-To address for alert e-mails.
+# - APNS_KEY_ID, APNS_TEAM_ID, APNS_BUNDLE_ID: iOS push (with the APNS_KEY_P8 secret).
+# Optional GitHub secrets (native push in the mobile apps; see docs/MOBILE-RELEASE.md):
+# - FCM_SERVICE_ACCOUNT_JSON: Firebase service account JSON (Android push via FCM HTTP v1).
+# - APNS_KEY_P8: APNs auth key, the .p8 file contents (iOS push).
 
 name: Deploy
 
@@ -78,17 +86,70 @@ jobs:
       - name: Ensure resource group
         run: az group create --name "$AZURE_RESOURCE_GROUP" --location "$LOCATION"
 
+      - name: E-mail domain state
+        # Creates nothing by itself: reads whether the ACS e-mail domain is verified, and asks
+        # Azure to (re)check any record that is not verified yet. Verified = e-mail goes live.
+        id: email
+        if: vars.EMAIL_DOMAIN != ''
+        env:
+          EMAIL_DOMAIN: ${{ vars.EMAIL_DOMAIN }}
+        run: |
+          az provider register --namespace Microsoft.Communication --wait \
+            || echo "::warning::Could not register the Microsoft.Communication provider. Run once: az provider register --namespace Microsoft.Communication"
+          verified=false
+          svc="$(az resource list -g "$AZURE_RESOURCE_GROUP" --resource-type Microsoft.Communication/emailServices --query '[0].name' -o tsv)"
+          if [ -n "$svc" ]; then
+            sub="$(az account show --query id -o tsv)"
+            url="https://management.azure.com/subscriptions/$sub/resourceGroups/$AZURE_RESOURCE_GROUP/providers/Microsoft.Communication/emailServices/$svc/domains/$EMAIL_DOMAIN"
+            states="$(az rest --method get --url "$url?api-version=2023-04-01" --query properties.verificationStates -o json 2>/dev/null || echo '{}')"
+            verified=true
+            for t in Domain SPF DKIM DKIM2; do
+              s="$(echo "$states" | jq -r --arg t "$t" '.[$t].status // "NotStarted"')"
+              echo "$EMAIL_DOMAIN $t: $s"
+              if [ "$s" != "Verified" ]; then
+                verified=false
+                if [ "$s" != "VerificationRequested" ] && [ "$s" != "VerificationInProgress" ]; then
+                  az rest --method post --url "$url/initiateVerification?api-version=2023-04-01" \
+                    --body "{\"verificationType\":\"$t\"}" > /dev/null 2>&1 \
+                    && echo "Asked Azure to verify $t" \
+                    || echo "::notice::$EMAIL_DOMAIN $t could not be checked yet (DNS record missing?)"
+                fi
+              fi
+            done
+          fi
+          echo "E-mail domain verified: $verified"
+          echo "verified=$verified" >> "$GITHUB_OUTPUT"
+
       - name: Deploy Azure infrastructure
         id: deploy
         env:
           CANONICAL_HOST: ${{ vars.CANONICAL_HOST }}
           LEGACY_HOSTS: ${{ vars.LEGACY_HOSTS }}
+          EMAIL_DOMAIN: ${{ vars.EMAIL_DOMAIN }}
+          EMAIL_VERIFIED: ${{ steps.email.outputs.verified }}
+          EMAIL_REPLY_TO: ${{ vars.EMAIL_REPLY_TO }}
+          FCM_SERVICE_ACCOUNT_JSON: ${{ secrets.FCM_SERVICE_ACCOUNT_JSON }}
+          APNS_KEY_P8: ${{ secrets.APNS_KEY_P8 }}
+          APNS_KEY_ID: ${{ vars.APNS_KEY_ID }}
+          APNS_TEAM_ID: ${{ vars.APNS_TEAM_ID }}
+          APNS_BUNDLE_ID: ${{ vars.APNS_BUNDLE_ID }}
         run: |
           deployment_name="nordlys-${GITHUB_RUN_ID}"
           # Optional host-redirect settings are only passed when set (empty = Bicep default '').
           extra_params=()
           if [ -n "$CANONICAL_HOST" ]; then extra_params+=("canonicalHost=$CANONICAL_HOST"); fi
           if [ -n "$LEGACY_HOSTS" ]; then extra_params+=("legacyHosts=$LEGACY_HOSTS"); fi
+          if [ -n "$EMAIL_DOMAIN" ]; then
+            extra_params+=("emailDomain=$EMAIL_DOMAIN" "emailDomainVerified=${EMAIL_VERIFIED:-false}")
+            if [ -n "$EMAIL_REPLY_TO" ]; then extra_params+=("emailReplyTo=$EMAIL_REPLY_TO"); fi
+          fi
+          if [ -n "$APNS_KEY_ID" ]; then extra_params+=("apnsKeyId=$APNS_KEY_ID"); fi
+          if [ -n "$APNS_TEAM_ID" ]; then extra_params+=("apnsTeamId=$APNS_TEAM_ID"); fi
+          if [ -n "$APNS_BUNDLE_ID" ]; then extra_params+=("apnsBundleId=$APNS_BUNDLE_ID"); fi
+          # Multi-line secrets (JSON, PEM) go through a parameters file so the CLI does not parse them.
+          jq -n --arg fcm "$FCM_SERVICE_ACCOUNT_JSON" --arg apns "$APNS_KEY_P8" \
+            '{"$schema":"https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#","contentVersion":"1.0.0.0","parameters":{"fcmServiceAccountJson":{"value":$fcm},"apnsKeyP8":{"value":$apns}}}' \
+            > "$RUNNER_TEMP/push.parameters.json"
           az deployment group create \
             --name "$deployment_name" \
             --resource-group "$AZURE_RESOURCE_GROUP" \
@@ -111,6 +172,24 @@ jobs:
             --query properties.outputs.containerAppFqdn.value \
             --output tsv)"
           echo "fqdn=$fqdn" >> "$GITHUB_OUTPUT"
+          rm -f "$RUNNER_TEMP/push.parameters.json"
+          if [ -n "$EMAIL_DOMAIN" ]; then
+            outputs="$(az deployment group show --name "$deployment_name" --resource-group "$AZURE_RESOURCE_GROUP" \
+              --query properties.outputs -o json)"
+            live="$(echo "$outputs" | jq -r '.emailLive.value')"
+            sender="$(echo "$outputs" | jq -r '.emailSenderAddress.value')"
+            {
+              echo "### E-mail alerts: $sender (live: $live)"
+              echo ""
+              echo "DNS records for $EMAIL_DOMAIN (name relative to $EMAIL_DOMAIN; @ = $EMAIL_DOMAIN itself):"
+              echo ""
+              echo "| Record | Type | Name | Value | TTL |"
+              echo "|---|---|---|---|---|"
+              echo "$outputs" | jq -r '.emailVerificationRecords.value | to_entries[] | "| \(.key) | \(.value.type) | \(.value.name) | \(.value.value) | \(.value.ttl) |"'
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "$outputs" | jq -r '.emailVerificationRecords.value | to_entries[] | "::notice title=E-mail DNS \(.key)::\(.value.type) \(.value.name) -> \(.value.value) (TTL \(.value.ttl))"'
+            echo "::notice title=E-mail alerts::$sender live=$live"
+          fi
 
       - name: Output Container App FQDN
         run: |

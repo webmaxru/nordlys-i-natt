@@ -21,6 +21,13 @@ param vapidPrivateKey string
 @secure()
 param vapidSubject string
 
+@description('Optional feature secrets (e-mail, native push): [{ name, value }]. Empty values are left out by main.bicep.')
+@secure()
+param extraSecrets object = {}
+
+@description('Optional feature environment variables: [{ name, value } | { name, secretRef }].')
+param extraEnv array = []
+
 resource job 'Microsoft.App/jobs@2024-03-01' = {
   name: jobName
   location: location
@@ -45,7 +52,7 @@ resource job 'Microsoft.App/jobs@2024-03-01' = {
           passwordSecretRef: 'registry-password'
         }
       ]
-      secrets: [
+      secrets: concat([
         {
           name: 'registry-password'
           value: registryPassword
@@ -70,7 +77,7 @@ resource job 'Microsoft.App/jobs@2024-03-01' = {
           name: 'vapid-subject'
           value: vapidSubject
         }
-      ]
+      ], extraSecrets.?items ?? [])
     }
     template: {
       containers: [
@@ -83,7 +90,7 @@ resource job 'Microsoft.App/jobs@2024-03-01' = {
             '@nordlys/api'
             'job'
           ]
-          env: [
+          env: concat([
             {
               name: 'PORT'
               value: '8080'
@@ -124,7 +131,7 @@ resource job 'Microsoft.App/jobs@2024-03-01' = {
               name: 'VAPID_SUBJECT'
               secretRef: 'vapid-subject'
             }
-          ]
+          ], extraEnv)
           resources: {
             cpu: json(cpu)
             memory: memory

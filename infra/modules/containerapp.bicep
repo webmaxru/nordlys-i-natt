@@ -24,6 +24,13 @@ param vapidPublicKey string
 param vapidPrivateKey string
 @secure()
 param vapidSubject string
+
+@description('Optional feature secrets (e-mail, native push): [{ name, value }]. Empty values are left out by main.bicep.')
+@secure()
+param extraSecrets object = {}
+
+@description('Optional feature environment variables: [{ name, value } | { name, secretRef }].')
+param extraEnv array = []
 param canonicalHost string = ''
 param legacyHosts string = ''
 
@@ -69,7 +76,7 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
           passwordSecretRef: 'registry-password'
         }
       ]
-      secrets: [
+      secrets: concat([
         {
           name: 'registry-password'
           value: registryPassword
@@ -94,14 +101,14 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
           name: 'vapid-subject'
           value: vapidSubject
         }
-      ]
+      ], extraSecrets.?items ?? [])
     }
     template: {
       containers: [
         {
           name: 'api'
           image: containerImage
-          env: [
+          env: concat([
             {
               name: 'PORT'
               value: '8080'
@@ -150,7 +157,7 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
               name: 'VAPID_SUBJECT'
               secretRef: 'vapid-subject'
             }
-          ]
+          ], extraEnv)
           resources: {
             cpu: json(cpu)
             memory: memory
