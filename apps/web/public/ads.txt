@@ -1,12 +1,7 @@
 # ads.txt for nordlys.salnikov.no
 #
-# PLACEHOLDER - no ad seller is authorised yet.
-# After AdSense gives you your publisher ID, replace the comment line below with
-# (keep it on ONE line, exactly this format):
-#
-#   google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
-#
-# where pub-XXXXXXXXXXXXXXXX is your own publisher ID (AdSense > Account > Settings).
-# IMPORTANT: Google reads ads.txt from the ROOT domain (https://salnikov.no/ads.txt).
-# Put the same line there too; this subdomain file is only used when the root file
-# references it with "subdomain=nordlys.salnikov.no". See docs/ADSENSE-READINESS.md.
+# Same seller line as the root domain's file (https://salnikov.no/ads.txt), which is the
+# one Google reads; this copy keeps the subdomain consistent. Publisher ID added 20 Oct 2026.
+# When ADSENSE_CLIENT is set in apps/web/scripts/content/site.mjs, the build writes this
+# line itself from that setting.
+google.com, pub-6118980043742623, DIRECT, f08c47fec0942fa0
