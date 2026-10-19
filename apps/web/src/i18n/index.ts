@@ -23,4 +23,13 @@ void i18n
     },
   });
 
+// Keep <html lang> in step with the UI language (screen readers, hyphenation, translation
+// prompts and search engines all read it). index.html ships lang="nb".
+function syncHtmlLang(lng: string | undefined) {
+  if (typeof document === 'undefined') return;
+  document.documentElement.lang = lng?.toLowerCase().startsWith('en') ? 'en' : 'nb';
+}
+syncHtmlLang(i18n.resolvedLanguage ?? i18n.language);
+i18n.on('languageChanged', syncHtmlLang);
+
 export default i18n;
