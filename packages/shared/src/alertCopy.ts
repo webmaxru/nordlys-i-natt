@@ -47,14 +47,15 @@ export function placePath(
   place: { lat: number; lon: number; name: string },
   channel: AlertChannel,
 ): string {
-  const q = new URLSearchParams({
-    lat: place.lat.toFixed(4),
-    lon: place.lon.toFixed(4),
-    name: place.name,
-    utm_source: 'alert',
-    utm_medium: channel,
-  });
-  return `/?${q.toString()}`;
+  // Built by hand: this package compiles without DOM/Node lib typings (no URLSearchParams).
+  const q: Array<[string, string]> = [
+    ['lat', place.lat.toFixed(4)],
+    ['lon', place.lon.toFixed(4)],
+    ['name', place.name],
+    ['utm_source', 'alert'],
+    ['utm_medium', channel],
+  ];
+  return `/?${q.map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&')}`;
 }
 
 /**
