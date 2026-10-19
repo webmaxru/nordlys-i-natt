@@ -49,6 +49,16 @@ Container Apps environment as a certificate, bind it to the hostname, and add a 
 **Configuration Rule** (hostname equals `nordlys.salnikov.no` → SSL: Full (strict)). That's more
 moving parts for no real gain on a site this size, so the recommendation is grey cloud.
 
+## Status (19 Oct 2026, 23:00 UTC): done
+
+- Both DNS records exist (CNAME DNS-only, `asuid.nordlys` TXT added ~22:42 UTC).
+- `nordlys.salnikov.no` is bound to the Container App with a free managed certificate
+  (GeoTrust/DigiCert, valid to Apr 2027, renewed by Azure).
+- Repository variables: `CUSTOM_DOMAIN=nordlys.salnikov.no,nordlys.isainative.dev`,
+  `CANONICAL_HOST=nordlys.salnikov.no`, `LEGACY_HOSTS=nordlys.isainative.dev`.
+- The old host 301s page requests to the new one; `/api/*` and the PWA files are not redirected.
+- Remaining: Search Console (step 7).
+
 ## Step by step
 
 ### 1. Cloudflare: add the records (Maxim)

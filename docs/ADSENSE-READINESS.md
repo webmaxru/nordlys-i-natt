@@ -10,13 +10,13 @@ Checked against Google's own help pages on **18 October 2026** (links at the end
 |---|---|---|---|
 | Original, useful content | One app screen; almost no crawlable text | 23 sourced guides × 2 languages (nb + en), 900–1,500 words each, dated, with sources | Read through before applying |
 | Clear navigation | No menu; no internal links | Header nav, breadcrumbs, topic pages, related guides, footer links on every page; the app links to the guides | – |
-| About / Contact / Privacy / Terms | Privacy modal only | Full pages in nb + en | Choose a public contact e-mail (optional) |
+| About / Contact / Privacy / Terms | Privacy modal only | Full pages in nb + en; contact e-mail `salnikov@gmail.com` (20 Oct 2026) | – |
 | Ad-cookie disclosure in privacy policy | Missing ("no ads") | Google's required wording + opt-out links | Update the date when ads go live |
 | EU/EEA/UK/CH consent (certified CMP) | None | Plan documented below | Create Google's consent message in AdSense |
-| ads.txt | Missing | Placeholder at `/ads.txt`; auto-generated once the publisher ID is set | **Put the line on `salnikov.no/ads.txt` (root domain)** |
+| ads.txt | Missing | Placeholder at `/ads.txt`; auto-generated once the publisher ID is set. Root-domain file proposed in [webmaxru.github.io#1](https://github.com/webmaxru/webmaxru.github.io/pull/1) | **Merge that PR, then swap in the publisher ID** |
 | sitemap.xml / robots.txt | Home page only, old domain | Generated: every page, hreflang alternates, new domain | Submit sitemap in Search Console |
 | Custom 404 | Every unknown URL returned the app with **200** (soft 404) | Real **404** status with a helpful page; `/x` → `/x/` redirects | – |
-| Own domain | `nordlys.isainative.dev` | Repo ready for `nordlys.salnikov.no` | DNS + bind ([CUSTOM-DOMAIN.md](./CUSTOM-DOMAIN.md)) |
+| Own domain | `nordlys.isainative.dev` | Live on `nordlys.salnikov.no` (managed cert); old host 301s (19 Oct 2026) | Search Console |
 | Mobile, speed, broken links | App only | Content pages are JS-free static HTML (~10 KB + one shared CSS); link checker and mobile Playwright tests in CI | – |
 | Structured data | WebApplication only | Article, BreadcrumbList, FAQPage, CollectionPage/ItemList, AboutPage/ContactPage | – |
 | AdSense code | – | **Not added** (by design). One setting turns it on: see "Switching ads on" | Apply, then set the ID |
@@ -102,9 +102,13 @@ So, for `nordlys.salnikov.no`:
    ```
    google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
    ```
-   Today `https://salnikov.no/ads.txt` returns an HTML page (checked 18 Oct 2026), so this needs
-   fixing wherever salnikov.no is hosted.
-2. **This repo:** `apps/web/public/ads.txt` is a comment-only placeholder. When `ADSENSE_CLIENT` is
+   `salnikov.no` is the GitHub Pages site of `webmaxru/webmaxru.github.io` (Pages custom domain
+   `salnikov.no`; `www` 301s to the apex). Pull request
+   [webmaxru.github.io#1](https://github.com/webmaxru/webmaxru.github.io/pull/1) adds `ads.txt` to
+   that site's build; it was merged on 19 Oct 2026 with the real line
+   `google.com, pub-6118980043742623, DIRECT, f08c47fec0942fa0`. GitHub Pages serves it as
+   `text/plain`.
+2. **This repo:** `apps/web/public/ads.txt` carries the same seller line (20 Oct 2026). When `ADSENSE_CLIENT` is
    set (below), the build writes the real line to `https://nordlys.salnikov.no/ads.txt`
    automatically. Only needed if you add `subdomain=nordlys.salnikov.no` to the root file.
 
@@ -142,12 +146,16 @@ Never invent the publisher ID; copy it from AdSense → Account → Settings →
 
 ## Owner checklist
 
-- [ ] DNS + bind `nordlys.salnikov.no` ([CUSTOM-DOMAIN.md](./CUSTOM-DOMAIN.md)), then turn on the redirect.
+- [x] DNS + bind `nordlys.salnikov.no` ([CUSTOM-DOMAIN.md](./CUSTOM-DOMAIN.md)), redirect from the old host on.
 - [ ] Read the guides; correct anything you disagree with.
-- [ ] Decide on a public contact e-mail (`CONTACT_EMAIL` in `site.mjs`) or keep GitHub + LinkedIn.
+- [x] Public contact e-mail: `salnikov@gmail.com` (`CONTACT_EMAIL` in `site.mjs`).
+- [x] Byline "Ansvarlig redaktør: Maxim Salnikov" confirmed.
 - [ ] Search Console: verify, submit the sitemap, change of address from the old domain.
-- [ ] AdSense account (18+), add site `salnikov.no`, get the publisher ID.
-- [ ] `https://salnikov.no/ads.txt` with the Google line.
+- [ ] AdSense: add site `salnikov.no` (publisher ID exists: `pub-6118980043742623`).
+- [x] Merge [webmaxru.github.io#1](https://github.com/webmaxru/webmaxru.github.io/pull/1) with the publisher ID (`pub-6118980043742623`). Check that `https://salnikov.no/ads.txt` serves it once the portfolio's Pages deploy is green.
+- [x] Same seller line in this site's own `/ads.txt`.
+- [ ] salnikov.no Pages settings: tick **Enforce HTTPS** (off today; the certificate is already issued).
+- [ ] Optional: the portfolio's canonical/sitemap URLs say `https://webmaxru.github.io/`, which 301s to `http://salnikov.no/`; switching its `site.url` to `https://salnikov.no/` keeps Google's view of the root domain consistent.
 - [ ] Privacy & messaging → European regulations message (nb + en) → publish.
 - [ ] Set `ADSENSE_CLIENT`, update the privacy pages, deploy, request review.
 - [ ] Optional but helpful: let the new domain collect some organic traffic before applying.
