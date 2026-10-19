@@ -235,8 +235,14 @@ function renderMarkdown(md, lang, articles) {
     },
   });
   let html = marked.parse(md);
+  let tableNo = 0;
   html = html
-    .replace(/<table>/g, '<div class="table-wrap"><table>')
+    // Focusable + labelled so keyboard users can scroll wide tables (axe: scrollable-region-focusable).
+    .replace(/<table>/g, () => {
+      tableNo += 1;
+      const label = lang === 'en' ? `Table ${tableNo}` : `Tabell ${tableNo}`;
+      return `<div class="table-wrap" tabindex="0" role="region" aria-label="${label}"><table>`;
+    })
     .replace(/<\/table>/g, '</table></div>');
   return { html, headings };
 }

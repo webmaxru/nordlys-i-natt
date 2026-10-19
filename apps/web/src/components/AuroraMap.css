@@ -53,6 +53,8 @@
 
 .aurora-map__leaflet .leaflet-control-attribution a {
   color: var(--fg);
+  /* Distinguishable from the surrounding text without relying on colour (WCAG 1.4.1). */
+  text-decoration: underline;
 }
 
 .aurora-map__leaflet .leaflet-tile {
@@ -82,7 +84,13 @@
 .aurora-map__scale {
   height: 0.6rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--go) 20%, transparent), var(--go), #8fea74, var(--maybe));
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--go) 20%, transparent),
+    var(--go),
+    #8fea74,
+    var(--maybe)
+  );
 }
 
 @media (min-width: 680px) {
