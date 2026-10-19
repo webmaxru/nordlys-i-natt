@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { computeVerdict } from './verdict';
 import { requiredKpForLatitude } from './thresholds';
 import type { CloudPoint, KpForecastPoint, NamedLocation } from './types';
+import noaa from './__fixtures__/noaa-kp-2026-10-19.json';
+import metTromso from './__fixtures__/met-cloud-tromso-2026-10-19.json';
 
 const TROMSO: NamedLocation = { name: 'Tromsø', lat: 69.6492, lon: 18.9553 };
 const OSLO: NamedLocation = { name: 'Oslo', lat: 59.9139, lon: 10.7522 };
@@ -116,5 +118,32 @@ describe('computeVerdict', () => {
     expect(v.hours).toHaveLength(12);
     expect(v.hours[0]).toHaveProperty('score');
     expect(v.hours[0]).toHaveProperty('darkness');
+  });
+});
+
+describe('"tonight" means this night, not tomorrow evening', () => {
+  const kpForecast = noaa.points as KpForecastPoint[];
+  const cloudForecast = metTromso.points as CloudPoint[];
+  it('at 01:20 in an overcast Tromsø night, a clear tomorrow evening does not make tonight GO', () => {
+    const v = computeVerdict({
+      location: TROMSO,
+      kpForecast,
+      cloudForecast,
+      now: new Date('2026-10-19T23:20:00Z'),
+    });
+    expect(v.nightOf).toBe('2026-10-19');
+    expect(v.verdict).not.toBe('GO');
+    expect(v.reason).toBe('too_cloudy');
+    expect(v.hours).toHaveLength(24); // the full horizon is still there for charts
+  });
+  it('the next afternoon, tonight is the clear night', () => {
+    const v = computeVerdict({
+      location: TROMSO,
+      kpForecast,
+      cloudForecast,
+      now: new Date('2026-10-20T12:00:00Z'),
+    });
+    expect(v.nightOf).toBe('2026-10-20');
+    expect(v.verdict).toBe('GO');
   });
 });

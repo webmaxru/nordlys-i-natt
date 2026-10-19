@@ -68,6 +68,8 @@ export interface AuroraVerdict {
   hours: HourlyAssessment[];
   /** ISO-8601 UTC timestamp the verdict was generated. */
   generatedAt: string;
+  /** Local date (YYYY-MM-DD, Europe/Oslo) of the evening of the night the verdict is about. */
+  nightOf?: string;
 }
 
 export interface VerdictThresholds {
@@ -89,4 +91,6 @@ export interface VerdictInputs {
   /** Defaults to the current time. */
   now?: Date;
   thresholds?: Partial<VerdictThresholds>;
+  /** Time zone that defines "tonight" (default Europe/Oslo). */
+  timeZone?: string;
 }

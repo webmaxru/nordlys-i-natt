@@ -10,6 +10,7 @@ import type {
 } from './types';
 import { DEFAULT_THRESHOLDS, requiredKpForLatitude } from './thresholds';
 import { classifyDarkness, sunElevationDeg } from './darkness';
+import { nightOf, tonightOf } from './alerts';
 
 const HOUR_MS = 3_600_000;
 
@@ -106,7 +107,13 @@ export function computeVerdict(inputs: VerdictInputs): AuroraVerdict {
     });
   }
 
-  const darkHours = hours.filter((h) => h.isDark);
+  // "Tonight" = the night the user is in (if it is still dark) or the coming one, using the same
+  // night boundaries as the alerts (local noon to noon). Hours beyond it stay in `hours` for
+  // charts, but don't decide tonight's verdict; tomorrow evening is not "tonight".
+  const timeZone = inputs.timeZone ?? 'Europe/Oslo';
+  const tonight = tonightOf(now, lat, lon, timeZone, t.civilDarkDeg);
+  const tonightHours = hours.filter((h) => nightOf(new Date(h.time), timeZone) === tonight);
+  const darkHours = tonightHours.filter((h) => h.isDark);
   const visibleHours = darkHours.filter((h) => h.visible);
 
   let verdict: Verdict;
@@ -142,6 +149,7 @@ export function computeVerdict(inputs: VerdictInputs): AuroraVerdict {
     bestHour,
     hours,
     generatedAt: now.toISOString(),
+    nightOf: tonight,
   };
 }
 
