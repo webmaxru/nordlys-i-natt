@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Nordlys i natt?",
-    "tagline": "Kan du se nordlyset i natt?"
+    "tagline": "Varsel dagen før din beste sjanse til å se nordlyset"
   },
   "verdict": {
     "GO": {
@@ -113,11 +113,11 @@
     "enable": "Abonner",
     "disable": "Si opp",
     "enabled": "Varsler er på",
-    "prompt": "Få et tips når nordlyset trolig er over deg.",
-    "ctaTitle": "Gratis nordlysvarsler",
-    "ctaDetail": "Øyeblikkelig push når nordlyset trolig er over deg.",
-    "description": "Maks ett varsel per mørk natt, aldri 02:00–06:00.",
-    "explain": "Nettleseren spør deg nå om tillatelse. Du får maks ett varsel per mørk natt når sjansen er god — aldri 02:00–06:00. Du kan når som helst si opp her.",
+    "prompt": "Få varsel i nettleseren dagen før en god sjanse.",
+    "ctaTitle": "Varsel i nettleseren",
+    "ctaDetail": "Et push-varsel ettermiddagen før en god nordlysnatt der du er. Gratis, høyst ett per natt.",
+    "description": "Høyst ett varsel per natt, sendt mellom kl. 15 og 21 dagen før.",
+    "explain": "Nettleseren spør deg nå om tillatelse. Du får et varsel ettermiddagen før en god nordlysnatt – høyst ett per natt. Du kan si opp her når som helst.",
     "allow": "Tillat varsler",
     "notNow": "Ikke nå",
     "blocked": "Varsler er blokkert",
@@ -132,8 +132,8 @@
     "dismissedTitle": "Tillatelse ble ikke gitt",
     "dismissedHint": "Nettleseren fullførte ikke forespørselen — Microsoft Edge og Chrome holder noen ganger varselforespørsler stille. Se etter et bjelle-ikon i adressefeltet, eller åpne «Innstillinger for nettstedet» → Varsler → Tillat, og prøv igjen.",
     "tryAgain": "Prøv igjen",
-    "subscribedDetail": "Vi varsler deg om nordlys ved {{place}}. Si opp under når som helst.",
-    "subscribedCadence": "Maks ett varsel per mørk natt, aldri 02:00–06:00."
+    "subscribedDetail": "Vi varsler deg dagen før en god sjanse for nordlys ved {{place}}. Si opp under når som helst.",
+    "subscribedCadence": "Høyst ett varsel per natt, mellom kl. 15 og 21 dagen før."
   },
   "privacy": {
     "title": "Personvern",
@@ -155,5 +155,53 @@
     "contactHref": "/kontakt/",
     "privacyHref": "/personvern/",
     "termsHref": "/vilkar/"
+  },
+  "hero": {
+    "title": "Få varsel dagen før din beste sjanse til å se nordlyset",
+    "lead": "Vi følger nordlysvarselet (Kp fra NOAA) og skyvarselet fra MET for stedet ditt. Når neste natt ser god ut, får du beskjed ettermiddagen før – så du rekker å planlegge.",
+    "step1": "Velg stedet ditt",
+    "step2": "Velg varsel: nettleser, e-post eller app",
+    "step3": "Få beskjed ettermiddagen før en god natt",
+    "cta": "Få nordlysvarsel",
+    "free": "Gratis. Høyst ett varsel per natt. Si opp med ett klikk."
+  },
+  "alerts": {
+    "title": "Nordlysvarsel",
+    "forPlace": "For {{place}}",
+    "pickPlace": "Velg et sted over først – søk, trykk på kartet eller bruk posisjonen din.",
+    "channels": "Hvordan vil du få varsel?",
+    "browser": "Nettleser",
+    "email": "E-post",
+    "app": "App",
+    "nowOption": "Også «det skjer nå»-varsel når det er mørkt, klart og aktivt (høyst ett per natt, ikke 02–06)",
+    "highOnly": "Bare når sjansen er stor",
+    "nightsTitle": "De neste nettene",
+    "tonight": "I natt",
+    "tomorrow": "I morgen kveld",
+    "bestAt": "best rundt {{time}}",
+    "nightsNote": "Varselet sendes ettermiddagen før en natt med god eller stor sjanse.",
+    "rule": "Slik fungerer det: Hver natt får en sjanse (liten, god, stor) ut fra hvor mange mørke timer som har Kp høyt nok for breddegraden din og under 40 % skydekke. Er neste natt god eller stor, sender vi ett varsel mellom kl. 15 og 21 dagen før.",
+    "thisEvening": "I kveld"
+  },
+  "email": {
+    "label": "E-postadresse",
+    "placeholder": "navn@eksempel.no",
+    "submit": "Send meg varsel på e-post",
+    "consent": "Vi bruker adressen bare til nordlysvarsel for dette stedet. Du bekrefter med en lenke vi sender, og kan avslutte med ett klikk i hver e-post. Les {{privacy}}.",
+    "privacy": "personvernerklæringen",
+    "checkInbox": "Sjekk innboksen din. Trykk på lenken i e-posten fra oss for å starte varslene. (Kom den ikke? Se i søppelpost.)",
+    "tooMany": "Denne adressen har allerede varsel for fem steder. Avslutt ett av dem først.",
+    "disabled": "E-postvarsel kommer snart. Bruk nettleservarsel i mellomtiden.",
+    "invalid": "Sjekk e-postadressen.",
+    "rateLimited": "For mange forsøk. Prøv igjen om en stund.",
+    "error": "Noe gikk galt. Prøv igjen.",
+    "sending": "Sender …"
+  },
+  "appChannel": {
+    "title": "Nordlys i natt – appen",
+    "body": "Appen for iPhone og Android gir varsel dagen før rett på telefonen, uten nettleser.",
+    "soon": "Appene kommer snart i App Store og Google Play.",
+    "appStore": "Last ned i App Store",
+    "playStore": "Last ned på Google Play"
   }
 }

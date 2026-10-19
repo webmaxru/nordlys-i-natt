@@ -3,7 +3,8 @@ import { AttributionFooter } from './components/AttributionFooter';
 import { AuroraMap } from './components/AuroraMap';
 import { Layout } from './components/Layout';
 import { LocationPicker } from './components/LocationPicker';
-import { NotifyButton } from './components/NotifyButton';
+import { AlertsPanel } from './components/AlertsPanel';
+import { Hero } from './components/Hero';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { PwaReloadPrompt } from './components/PwaReloadPrompt';
 import { ShareCard } from './components/ShareCard';
@@ -16,9 +17,10 @@ export default function App() {
     <AppStateProvider>
       <WebMcpBridge />
       <Layout footer={<AttributionFooter />}>
+        <Hero />
         <LocationPicker />
         <VerdictGauge />
-        <NotifyButton />
+        <AlertsPanel />
         <Timeline />
         <AuroraMap />
         <ShareCard />

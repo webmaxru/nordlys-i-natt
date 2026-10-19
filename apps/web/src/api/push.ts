@@ -60,6 +60,7 @@ export function getLocalSubscriptionId(): string | null {
 export async function subscribeToPush(
   location: NamedLocation,
   lang: string,
+  prefs?: { dayBefore: boolean; now: boolean; minChance: 'good' | 'high' },
 ): Promise<{ id: string }> {
   // Must only be called from an explicit user gesture after notification permission is requested.
   const key = await getPublicKey();
@@ -80,6 +81,7 @@ export async function subscribeToPush(
         name: location.name,
       },
       lang: lang.startsWith('nb') ? 'nb' : 'en',
+      ...(prefs ? { prefs } : {}),
     }),
   });
 

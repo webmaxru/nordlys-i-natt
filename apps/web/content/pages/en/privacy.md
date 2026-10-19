@@ -28,7 +28,13 @@ Your browser stores the chosen place, language and the latest forecast locally (
 
 ### Aurora alerts (optional)
 
-If you turn on push alerts, we store your browser’s push subscription and a coarse location (rounded to two decimals, about one kilometre) in Azure Table Storage in Norway so we can notify you when conditions are good. Turning alerts off deletes the subscription. Legal basis: your consent.
+You can get a heads-up the day before a good chance of aurora in three ways. For all three we store the place you chose (rounded to two decimals, about one kilometre), its name, your language, your alert settings and when we last sent an alert, in Azure Table Storage in Norway. The legal basis is your consent (GDPR Art. 6(1)(a)), which you can withdraw at any time.
+
+- **Browser (push):** your browser's push subscription. Alerts are delivered through your browser vendor's push service (for example Google, Mozilla or Apple). Turning alerts off deletes the subscription.
+- **E-mail:** your e-mail address. We first send an e-mail with a confirmation link (double opt-in); without confirmation nothing more is sent, and unconfirmed addresses are deleted after seven days. E-mail is sent with Microsoft's Azure Communication Services, with data stored in Norway/the EU. We do not track opens or clicks. Every e-mail has a one-click unsubscribe link and a link to your settings; unsubscribing deletes the address immediately. One address can have alerts for up to five places.
+- **App (iPhone/Android):** a push token for your phone. Alerts are delivered through Apple Push Notification service or Google Firebase Cloud Messaging. Turning alerts off in the app deletes the token.
+
+We only use this to send aurora alerts, never share it and never use it for advertising. The sign-up form has simple bot protection (a limit on attempts and a hidden field), with no cookies.
 
 ### Visit statistics
 
@@ -60,7 +66,7 @@ This page will be updated, with a new date, before ads are switched on.
 
 ## Your rights
 
-You have the right to access, rectify, erase, restrict and object to processing, and the right to complain to the Norwegian Data Protection Authority ([Datatilsynet](https://www.datatilsynet.no/en/)). Because there are no user accounts, we usually cannot link data to you. You delete your push subscription yourself by turning off alerts. [Contact us](page:contact) with any questions.
+You have the right to access, rectify, erase, restrict and object to processing, and the right to complain to the Norwegian Data Protection Authority ([Datatilsynet](https://www.datatilsynet.no/en/)). Because there are no user accounts, we usually cannot link data to you. You delete alerts yourself: turn off push in the browser or the app, or use the unsubscribe link in any e-mail. [Contact us](page:contact) with any questions.
 
 ## Changes
 

@@ -1,0 +1,86 @@
+.hero {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.25rem 1.1rem;
+  border: 1px solid rgb(56 211 159 / 28%);
+  border-radius: 1rem;
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgb(56 211 159 / 18%), transparent 55%),
+    radial-gradient(120% 140% at 100% 0%, rgb(110 168 254 / 16%), transparent 55%), var(--bg-elev);
+}
+
+.hero__title {
+  margin: 0;
+  font-size: clamp(1.3rem, 4.6vw, 1.85rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+
+.hero__lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.5;
+  max-width: 60ch;
+}
+
+.hero__steps {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.hero__steps li {
+  counter-increment: step;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--fg);
+  font-size: 0.95rem;
+}
+
+.hero__steps li::before {
+  content: counter(step);
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 999px;
+  background: rgb(56 211 159 / 18%);
+  color: var(--go);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+  margin-top: 0.35rem;
+}
+
+.hero__cta .primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.3rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.hero__free {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+@media (min-width: 720px) {
+  .hero__steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

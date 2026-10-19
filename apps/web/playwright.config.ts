@@ -13,6 +13,10 @@ export default defineConfig({
   use: {
     baseURL,
     trace: 'on-first-retry',
+    // Optional: a locally installed Chromium (CI installs Playwright's own).
+    ...(process.env.PW_CHROMIUM_PATH
+      ? { launchOptions: { executablePath: process.env.PW_CHROMIUM_PATH } }
+      : {}),
   },
   // Build the production bundle and serve it the way it ships (static dist).
   // All backend/3rd-party calls are mocked in the tests, so this is hermetic.

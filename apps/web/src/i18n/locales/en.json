@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Aurora tonight?",
-    "tagline": "Can you see the northern lights tonight?"
+    "tagline": "A heads-up the day before your best chance to see the aurora"
   },
   "verdict": {
     "GO": {
@@ -113,11 +113,11 @@
     "enable": "Subscribe",
     "disable": "Unsubscribe",
     "enabled": "Alerts are on",
-    "prompt": "Get a heads-up when the aurora is likely overhead.",
-    "ctaTitle": "Free aurora alerts",
-    "ctaDetail": "Instant push the moment the lights are likely overhead.",
-    "description": "At most one alert per dark night, never 02:00–06:00.",
-    "explain": "Your browser will now ask for permission. You'll get at most one alert per dark night when the lights are likely — never 02:00–06:00. Unsubscribe anytime here.",
+    "prompt": "Get a browser alert the day before a good chance.",
+    "ctaTitle": "Browser alerts",
+    "ctaDetail": "A push notification the afternoon before a good aurora night where you are. Free, at most one per night.",
+    "description": "At most one alert per night, sent between 15:00 and 21:00 the day before.",
+    "explain": "Your browser will now ask for permission. You'll get an alert the afternoon before a good aurora night – at most one per night. Unsubscribe here anytime.",
     "allow": "Allow notifications",
     "notNow": "Not now",
     "blocked": "Notifications are blocked",
@@ -132,8 +132,8 @@
     "dismissedTitle": "Permission wasn’t granted",
     "dismissedHint": "Your browser didn’t complete the request — Microsoft Edge and Chrome sometimes hold notification prompts quietly. Look for a bell icon in the address bar, or open Site settings → Notifications → Allow, then try again.",
     "tryAgain": "Try again",
-    "subscribedDetail": "We'll alert you about aurora near {{place}}. Unsubscribe below anytime.",
-    "subscribedCadence": "At most one alert per dark night, never 02:00–06:00."
+    "subscribedDetail": "We'll alert you the day before a good chance of aurora near {{place}}. Unsubscribe below anytime.",
+    "subscribedCadence": "At most one alert per night, between 15:00 and 21:00 the day before."
   },
   "privacy": {
     "title": "Privacy",
@@ -155,5 +155,53 @@
     "contactHref": "/en/contact/",
     "privacyHref": "/en/privacy/",
     "termsHref": "/en/terms/"
+  },
+  "hero": {
+    "title": "Get notified the day before your best chance to see the northern lights",
+    "lead": "We watch the aurora forecast (Kp from NOAA) and MET Norway's cloud forecast for your place. When the next night looks good, you hear about it the afternoon before – so you have time to plan.",
+    "step1": "Pick your place",
+    "step2": "Choose how: browser, e-mail or app",
+    "step3": "Get a heads-up the afternoon before a good night",
+    "cta": "Get aurora alerts",
+    "free": "Free. At most one alert per night. Unsubscribe in one click."
+  },
+  "alerts": {
+    "title": "Aurora alerts",
+    "forPlace": "For {{place}}",
+    "pickPlace": "Pick a place above first – search, tap the map or use your location.",
+    "channels": "How do you want to be alerted?",
+    "browser": "Browser",
+    "email": "E-mail",
+    "app": "App",
+    "nowOption": "Also a “happening now” alert when it's dark, clear and active (at most one per night, not 02–06)",
+    "highOnly": "Only when the chance is high",
+    "nightsTitle": "The next nights",
+    "tonight": "Tonight",
+    "tomorrow": "Tomorrow night",
+    "bestAt": "best around {{time}}",
+    "nightsNote": "The alert goes out the afternoon before a night with a good or high chance.",
+    "rule": "How it works: each night gets a chance (low, good, high) from how many dark hours have a Kp high enough for your latitude and under 40% cloud. If the next night is good or high, we send one alert between 15:00 and 21:00 the day before.",
+    "thisEvening": "This evening"
+  },
+  "email": {
+    "label": "E-mail address",
+    "placeholder": "name@example.com",
+    "submit": "E-mail me alerts",
+    "consent": "We only use the address for aurora alerts for this place. You confirm with a link we send, and can stop with one click in every e-mail. Read the {{privacy}}.",
+    "privacy": "privacy policy",
+    "checkInbox": "Check your inbox. Press the link in our e-mail to start the alerts. (Not there? Check spam.)",
+    "tooMany": "This address already has alerts for five places. Stop one of them first.",
+    "disabled": "E-mail alerts are coming soon. Use browser alerts in the meantime.",
+    "invalid": "Please check the e-mail address.",
+    "rateLimited": "Too many attempts. Try again in a while.",
+    "error": "Something went wrong. Please try again.",
+    "sending": "Sending …"
+  },
+  "appChannel": {
+    "title": "The Nordlys i natt app",
+    "body": "The iPhone and Android app sends the day-before alert straight to your phone, no browser needed.",
+    "soon": "The apps are coming soon to the App Store and Google Play.",
+    "appStore": "Download on the App Store",
+    "playStore": "Get it on Google Play"
   }
 }

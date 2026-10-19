@@ -28,7 +28,13 @@ Nettleseren lagrer valgt sted, valgt språk og siste varsel lokalt (localStorage
 
 ### Nordlysvarsler (frivillig)
 
-Slår du på push-varsler, lagrer vi push-abonnementet fra nettleseren din og en grov posisjon (avrundet til to desimaler, omtrent én kilometer) i Azure Table Storage i Norge, slik at vi kan sende varsel når det er gode forhold. Slår du av varslene, slettes abonnementet. Grunnlag: ditt samtykke.
+Du kan få varsel dagen før en god sjanse for nordlys på tre måter. For alle tre lagrer vi stedet du valgte (avrundet til to desimaler, omtrent én kilometer), stedsnavnet, språk, varselinnstillingene dine og når vi sist sendte varsel, i Azure Table Storage i Norge. Grunnlaget er ditt samtykke (personvernforordningen art. 6 nr. 1 bokstav a), og du kan trekke det tilbake når som helst.
+
+- **Nettleser (push):** push-abonnementet fra nettleseren din. Varselet leveres via nettleserleverandørens push-tjeneste (for eksempel Google, Mozilla eller Apple). Slår du av varslene, slettes abonnementet.
+- **E-post:** e-postadressen din. Vi sender først en e-post med en bekreftelseslenke (dobbel bekreftelse); uten bekreftelse sender vi ingenting mer, og ubekreftede adresser slettes etter sju dager. E-post sendes med Azure Communication Services fra Microsoft, med data lagret i Norge/EU. Vi måler ikke åpninger eller klikk. Hver e-post har en lenke for å avslutte med ett klikk og en lenke til innstillingene dine; avslutter du, slettes adressen med en gang. Én adresse kan ha varsel for inntil fem steder.
+- **App (iPhone/Android):** en push-token for telefonen. Varselet leveres via Apple Push Notification service eller Google Firebase Cloud Messaging. Slår du av varsler i appen, slettes tokenet.
+
+Vi bruker opplysningene bare til å sende nordlysvarsler, deler dem ikke med andre og bruker dem ikke til reklame. Påmeldingsskjemaet har enkel beskyttelse mot roboter (begrensning av antall forsøk og et skjult felt), uten informasjonskapsler.
 
 ### Besøksstatistikk
 
@@ -60,7 +66,7 @@ Denne siden oppdateres med dato før annonser tas i bruk.
 
 ## Dine rettigheter
 
-Du har rett til innsyn, retting, sletting, begrensning og å protestere mot behandling, og rett til å klage til [Datatilsynet](https://www.datatilsynet.no/). Fordi vi ikke har brukerkontoer, kan vi som regel ikke knytte data til deg. Push-abonnementet sletter du selv ved å slå av varsler. Ta [kontakt](page:contact) hvis du har spørsmål.
+Du har rett til innsyn, retting, sletting, begrensning og å protestere mot behandling, og rett til å klage til [Datatilsynet](https://www.datatilsynet.no/). Fordi vi ikke har brukerkontoer, kan vi som regel ikke knytte data til deg. Varsler sletter du selv: slå av push i nettleseren eller appen, eller bruk avmeldingslenken i e-posten. Ta [kontakt](page:contact) hvis du har spørsmål.
 
 ## Endringer
 

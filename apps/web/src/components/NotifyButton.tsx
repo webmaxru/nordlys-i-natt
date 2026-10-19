@@ -14,7 +14,9 @@ import './NotifyButton.css';
 
 type NotifyStep = 'idle' | 'explain' | 'install' | 'unsupported' | 'dismissed';
 
-export function NotifyButton() {
+type AlertPrefs = { dayBefore: boolean; now: boolean; minChance: 'good' | 'high' };
+
+export function NotifyButton({ prefs }: { prefs?: AlertPrefs } = {}) {
   const { i18n, t } = useTranslation();
   const { selectedLocation } = useAppState();
 
@@ -83,7 +85,7 @@ export function NotifyButton() {
       setPermission(result);
 
       if (result === 'granted') {
-        await subscribeToPush(selectedLocation, i18n.resolvedLanguage ?? i18n.language);
+        await subscribeToPush(selectedLocation, i18n.resolvedLanguage ?? i18n.language, prefs);
         setEnabled(true);
         setStep('idle');
         setFeedback(t('notify.success', { place: selectedLocation.name }));

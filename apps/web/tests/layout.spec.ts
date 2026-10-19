@@ -8,9 +8,7 @@ import { fileURLToPath } from 'node:url';
  * and never depends on MET Norway, NOAA or Kartverket being reachable from CI.
  */
 
-const forecastFixture = fileURLToPath(
-  new URL('./fixtures/forecast.json', import.meta.url),
-);
+const forecastFixture = fileURLToPath(new URL('./fixtures/forecast.json', import.meta.url));
 
 const TROMSO = JSON.stringify({
   name: 'Tromsø',
@@ -24,31 +22,31 @@ const SEARCH_FIXTURE = {
   metadata: { totaltAntallTreff: 3, treffPerSide: 8, side: 1 },
   navn: [
     {
-      'skrivemåte': 'Tromsø',
+      skrivemåte: 'Tromsø',
       navnestatus: 'hovednavn',
-      'språk': 'Norsk',
+      språk: 'Norsk',
       stedstatus: 'aktiv',
       kommuner: [{ kommunenavn: 'Tromsø' }],
       fylker: [{ fylkesnavn: 'Troms' }],
-      representasjonspunkt: { nord: 69.6492, 'øst': 18.9553 },
+      representasjonspunkt: { nord: 69.6492, øst: 18.9553 },
     },
     {
-      'skrivemåte': 'Tromsø bru',
+      skrivemåte: 'Tromsø bru',
       navnestatus: 'hovednavn',
-      'språk': 'Norsk',
+      språk: 'Norsk',
       stedstatus: 'aktiv',
       kommuner: [{ kommunenavn: 'Tromsø' }],
       fylker: [{ fylkesnavn: 'Troms' }],
-      representasjonspunkt: { nord: 69.652, 'øst': 18.962 },
+      representasjonspunkt: { nord: 69.652, øst: 18.962 },
     },
     {
-      'skrivemåte': 'Tromsøya',
+      skrivemåte: 'Tromsøya',
       navnestatus: 'hovednavn',
-      'språk': 'Norsk',
+      språk: 'Norsk',
       stedstatus: 'aktiv',
       kommuner: [{ kommunenavn: 'Tromsø' }],
       fylker: [{ fylkesnavn: 'Troms' }],
-      representasjonspunkt: { nord: 69.66, 'øst': 18.94 },
+      representasjonspunkt: { nord: 69.66, øst: 18.94 },
     },
   ],
 };
@@ -59,9 +57,7 @@ async function mockApp(
 ) {
   // Hermetic: no third-party scripts (agentprose.cloud) in layout tests.
   await page.route('https://agentprose.cloud/**', (route) => route.abort());
-  await page.route('**/api/forecast**', (route) =>
-    route.fulfill({ path: forecastFixture }),
-  );
+  await page.route('**/api/forecast**', (route) => route.fulfill({ path: forecastFixture }));
   await page.route('**/api/noaa/ovation/grid**', (route) =>
     route.fulfill({ json: { forecastTime: new Date().toISOString(), points: [] } }),
   );
@@ -71,9 +67,7 @@ async function mockApp(
   await page.route('**/api/subscriptions**', (route) =>
     route.fulfill({ json: { id: 'test-subscription' } }),
   );
-  await page.route(/ws\.geonorge\.no/, (route) =>
-    route.fulfill({ json: SEARCH_FIXTURE }),
-  );
+  await page.route(/ws\.geonorge\.no/, (route) => route.fulfill({ json: SEARCH_FIXTURE }));
 
   await page.addInitScript(
     ({ loc, lang, seed }) => {
@@ -86,9 +80,7 @@ async function mockApp(
 
 function hasHorizontalOverflow(page: Page) {
   return page.evaluate(
-    () =>
-      document.documentElement.scrollWidth >
-      document.documentElement.clientWidth + 1,
+    () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
   );
 }
 
@@ -184,9 +176,7 @@ test.describe('mobile layout (iPhone)', () => {
     );
   });
 
-  test('iOS browser tab starts with Subscribe, then shows Add to Home Screen', async ({
-    page,
-  }) => {
+  test('iOS browser tab starts with Subscribe, then shows Add to Home Screen', async ({ page }) => {
     // Simulate an iOS Safari tab where Web Push is unavailable.
     await page.addInitScript(() => {
       // @ts-expect-error - intentionally removing for the simulation
@@ -202,7 +192,7 @@ test.describe('mobile layout (iPhone)', () => {
     await page.waitForSelector('section.gauge .gauge__badge');
     const section = page.locator('section.notify-button');
     await section.scrollIntoViewIfNeeded();
-    await expect(section).toContainText(/free aurora alerts/i);
+    await expect(section).toContainText(/browser alerts/i);
     await expect(section.getByRole('button', { name: /subscribe/i })).toBeVisible();
 
     await section.getByRole('button', { name: /subscribe/i }).click();
@@ -239,9 +229,7 @@ test.describe('mobile layout (iPhone)', () => {
 
     const fits = await page.evaluate(() => {
       const el = document.querySelector('section.notify-button')!;
-      return (
-        el.getBoundingClientRect().right <= document.documentElement.clientWidth + 1
-      );
+      return el.getBoundingClientRect().right <= document.documentElement.clientWidth + 1;
     });
     expect(fits).toBe(true);
   });
