@@ -2,11 +2,11 @@
 key: privacy
 title: "Personvern og informasjonskapsler"
 description: "Hvilke opplysninger Nordlys i natt? behandler, hvorfor, hvor lenge de lagres, hvilke tredjeparter som er involvert, og hvordan annonser og samtykke håndteres."
-updated: 2026-10-18
+updated: 2026-10-20
 ---
 Nordlys i natt? er laget for å samle så lite data om deg som mulig. Her forklarer vi hva som behandles når du bruker nettstedet, hvorfor, og hvilke valg du har.
 
-**Behandlingsansvarlig:** Maxim Salnikov, Norge. Kontakt: se [kontaktsiden](page:contact).
+**Behandlingsansvarlig:** Maxim Salnikov, Norge. Kontakt: <!--email--> (flere muligheter på [kontaktsiden](page:contact)).
 
 ## Kort fortalt
 

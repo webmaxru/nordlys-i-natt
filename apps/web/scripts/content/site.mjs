@@ -11,11 +11,11 @@ export const EDITOR = {
 };
 
 /**
- * Public contact e-mail shown on the contact page. Left empty on purpose: the owner decides
- * which address to publish. While empty, the contact page offers GitHub issues + LinkedIn.
- * TODO(owner): set e.g. 'kontakt@salnikov.no' once that mailbox exists.
+ * Public contact e-mail (contact page, privacy page, Organization structured data).
+ * Chosen by the owner on 20 Oct 2026. Rendered as an entity-encoded mailto link (light
+ * obfuscation against naive scrapers). Set to '' to hide it everywhere.
  */
-export const CONTACT_EMAIL = process.env.CONTACT_EMAIL || '';
+export const CONTACT_EMAIL = process.env.CONTACT_EMAIL ?? 'salnikov@gmail.com';
 
 /**
  * Google AdSense publisher ID, e.g. 'ca-pub-1234567890123456'. EMPTY ON PURPOSE until the

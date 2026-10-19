@@ -114,3 +114,30 @@ test('every page carries the agentprose snippet exactly once in <head>', async (
     expect(head.split(snippet).length - 1, path).toBe(1);
   }
 });
+
+test('the contact page shows the e-mail as a mailto link (nb + en)', async ({ page }) => {
+  for (const path of ['/kontakt/', '/en/contact/']) {
+    await page.goto(path);
+    const link = page.locator('.prose a[href^="mailto:"]').first();
+    await expect(link).toHaveAttribute('href', /^mailto:[^@\s]+@[^@\s]+\.[a-z]+$/);
+    await expect(link).toHaveText(/@/);
+  }
+});
+
+test('<html lang> follows the app language toggle', async ({ page }) => {
+  // Keep the app offline: the language switch does not need any data.
+  await page.route(/\/api\//, (route) => route.fulfill({ status: 503, body: '' }));
+  await page.route(/^https:\/\/(?!localhost)/, (route) => route.abort());
+  await page.addInitScript(() => window.localStorage.setItem('i18nextLng', 'nb'));
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'nb');
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  // The static guide links below the app stay Norwegian and say so.
+  await expect(page.locator('section.home-guides')).toHaveAttribute('lang', 'nb');
+  await page.getByRole('button', { name: 'NO', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'nb');
+  // ?lang=en (links from the English guides) sets it on first load.
+  await page.goto('/?lang=en');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+});

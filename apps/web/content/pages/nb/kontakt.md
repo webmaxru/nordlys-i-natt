@@ -2,7 +2,7 @@
 key: contact
 title: "Kontakt"
 description: "Slik kontakter du Nordlys i natt?: meld feil, foreslå forbedringer eller still spørsmål om nordlysvarselet og artiklene."
-updated: 2026-10-18
+updated: 2026-10-20
 ---
 Vi setter pris på tilbakemeldinger – enten du har funnet en feil i en artikkel, har et spørsmål om varselet eller et forslag til forbedring.
 
@@ -12,7 +12,7 @@ Opprett en sak (issue) på GitHub: [github.com/webmaxru/nordlys-i-natt/issues](h
 
 ## Direkte kontakt
 
-Du kan også kontakte redaktør Maxim Salnikov direkte via [LinkedIn](https://www.linkedin.com/in/webmax/).
+Send en e-post til redaktør Maxim Salnikov, eller kontakt ham via [LinkedIn](https://www.linkedin.com/in/webmax/). Skriv gjerne på norsk eller engelsk.
 
 <!--contact-email-->
 

@@ -241,6 +241,16 @@ function renderMarkdown(md, lang, articles) {
   return { html, headings };
 }
 
+/** Every character as an HTML entity: same link for people, a little less food for scrapers. */
+function entities(str) {
+  return [...str].map((c) => `&#${c.codePointAt(0)};`).join('');
+}
+
+/** mailto link for CONTACT_EMAIL, entity-encoded. */
+function emailLink() {
+  return `<a href="${entities(`mailto:${CONTACT_EMAIL}`)}">${entities(CONTACT_EMAIL)}</a>`;
+}
+
 function jsonLd(obj) {
   // Escape "<" so a string can never close the script element.
   return `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, '\\u003c')}</script>`;
@@ -252,6 +262,17 @@ const ORG = {
   name: SITE_NAME,
   url: `${SITE_URL}/`,
   logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon-512.png`, width: 512, height: 512 },
+  ...(CONTACT_EMAIL
+    ? {
+        email: CONTACT_EMAIL,
+        contactPoint: {
+          '@type': 'ContactPoint',
+          contactType: 'customer support',
+          email: CONTACT_EMAIL,
+          availableLanguage: ['nb', 'en'],
+        },
+      }
+    : {}),
 };
 
 function breadcrumbLd(items) {
@@ -589,12 +610,17 @@ function renderPage(pg, pages, articles) {
   const other = pg.lang === 'nb' ? 'en' : 'nb';
   const alternates = { [pg.lang]: path, [other]: ROUTES[other].page[pg.key] };
   let { html } = renderMarkdown(pg.body, pg.lang, articles);
-  // The contact page shows an e-mail address only once CONTACT_EMAIL is set in site.mjs.
+  // Contact e-mail (CONTACT_EMAIL in site.mjs): `<!--contact-email-->` becomes a paragraph,
+  // `<!--email-->` an inline link. Both vanish (or fall back to the contact page) when it's unset.
   html = html.replace(
     '<!--contact-email-->',
+    CONTACT_EMAIL ? `<p>${pg.lang === 'en' ? 'E-mail' : 'E-post'}: ${emailLink()}</p>` : '',
+  );
+  html = html.replaceAll(
+    '<!--email-->',
     CONTACT_EMAIL
-      ? `<p>${pg.lang === 'en' ? 'E-mail' : 'E-post'}: <a href="mailto:${esc(CONTACT_EMAIL)}">${esc(CONTACT_EMAIL)}</a></p>`
-      : '',
+      ? emailLink()
+      : `<a href="${ROUTES[pg.lang].page.contact}">${pg.lang === 'en' ? 'contact page' : 'kontaktsiden'}</a>`,
   );
   const crumbs = [{ name: ui.home, url: pg.lang === 'en' ? '/?lang=en' : '/' }, { name: pg.title }];
   const type = pg.key === 'about' ? 'AboutPage' : pg.key === 'contact' ? 'ContactPage' : 'WebPage';
@@ -677,7 +703,8 @@ export function homeLinksHtml(articles) {
   ];
   const nb = pick.map((id) => articles.find((a) => a.lang === 'nb' && a.id === id)).filter(Boolean);
   if (!nb.length) return '';
-  return `<section class="home-guides" aria-labelledby="home-guides-h">
+  // lang="nb": the SPA switches <html lang> to "en" with the language toggle; this block stays Norwegian.
+  return `<section class="home-guides" lang="nb" aria-labelledby="home-guides-h">
       <h2 id="home-guides-h">Lær mer om nordlyset</h2>
       <p>Uavhengige guider om hvordan nordlyset oppstår, hvordan du leser varselet og hvor i Norge du bør stå.</p>
       <ul>${nb.map((a) => `<li><a href="${articleUrl(a)}">${esc(a.title)}</a></li>`).join('')}</ul>

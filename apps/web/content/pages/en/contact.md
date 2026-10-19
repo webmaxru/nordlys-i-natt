@@ -2,7 +2,7 @@
 key: contact
 title: "Contact"
 description: "How to contact Nordlys i natt?: report a mistake, suggest an improvement or ask a question about the aurora forecast and the guides."
-updated: 2026-10-18
+updated: 2026-10-20
 ---
 We welcome feedback – whether you found a mistake in a guide, have a question about the forecast or an idea for an improvement.
 
@@ -12,7 +12,7 @@ Open an issue on GitHub: [github.com/webmaxru/nordlys-i-natt/issues](https://git
 
 ## Direct contact
 
-You can also reach the editor, Maxim Salnikov, directly on [LinkedIn](https://www.linkedin.com/in/webmax/).
+E-mail the editor, Maxim Salnikov, or reach him on [LinkedIn](https://www.linkedin.com/in/webmax/). Norwegian or English is fine.
 
 <!--contact-email-->
 

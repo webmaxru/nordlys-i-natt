@@ -42,7 +42,9 @@ for (const file of pages) {
   const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
   const isContent = !here.endsWith('/index.html') && here !== '/' && !here.endsWith('404.html');
   for (const m of html.matchAll(/\s(?:href|src)="([^"]*)"/g)) {
-    const raw = m[1].replace(/&amp;/g, '&');
+    const raw = m[1]
+      .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+      .replace(/&amp;/g, '&');
     if (!raw || /^(https?:|mailto:|tel:|data:|javascript:)/i.test(raw) || raw.startsWith('//'))
       continue;
     links++;

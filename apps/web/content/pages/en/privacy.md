@@ -2,11 +2,11 @@
 key: privacy
 title: "Privacy and cookies"
 description: "What Nordlys i natt? processes, why, how long it is kept, which third parties are involved, and how ads and consent are handled."
-updated: 2026-10-18
+updated: 2026-10-20
 ---
 Nordlys i natt? is built to collect as little data about you as possible. This page explains what is processed when you use the site, why, and what choices you have.
 
-**Controller:** Maxim Salnikov, Norway. Contact: see the [contact page](page:contact).
+**Controller:** Maxim Salnikov, Norway. Contact: <!--email--> (more options on the [contact page](page:contact)).
 
 ## In short
 
