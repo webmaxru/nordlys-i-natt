@@ -64,6 +64,15 @@ No ads are shown on the site today. We are considering Google AdSense to cover r
 
 This page will be updated, with a new date, before ads are switched on.
 
+## The iPhone and Android app
+
+The app shows the same forecast as the site and uses the same data sources. On top of that:
+
+- **Alerts:** if you turn on alerts in the app, we store your phone's push token, the place you chose (rounded to about one kilometre), your language and your alert settings, as described under *Aurora alerts* above. Turning alerts off in the app deletes it.
+- **Ads (Google AdMob):** the app shows a banner at the bottom of the main screen. Ads are served by Google AdMob, which processes your device's advertising ID, IP address and device information to show, measure and protect ads. In the EEA, the UK and Switzerland you are first asked for consent through Google's consent form, and without consent only non-personalised ads are shown. On iPhone, Apple asks whether the app may use the advertising identifier (App Tracking Transparency). You can change your choice at any time under *Ad privacy settings* at the bottom of the app, and reset or delete the advertising ID in your phone's settings. See [Google's privacy policy](https://policies.google.com/privacy) and [how Google uses advertising](https://policies.google.com/technologies/ads). Legal basis: consent (GDPR Art. 6(1)(a)) for personalised ads; legitimate interest in financing a free service (Art. 6(1)(f)) for non-personalised ads.
+
+The app has no account, no in-app purchases, and does not read your contacts, photos or precise location.
+
 ## Your rights
 
 You have the right to access, rectify, erase, restrict and object to processing, and the right to complain to the Norwegian Data Protection Authority ([Datatilsynet](https://www.datatilsynet.no/en/)). Because there are no user accounts, we usually cannot link data to you. You delete alerts yourself: turn off push in the browser or the app, or use the unsubscribe link in any e-mail. [Contact us](page:contact) with any questions.

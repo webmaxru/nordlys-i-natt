@@ -64,6 +64,15 @@ Det vises ingen annonser på nettstedet i dag. Vi vurderer å bruke Google AdSen
 
 Denne siden oppdateres med dato før annonser tas i bruk.
 
+## Appen for iPhone og Android
+
+Appen viser det samme varselet som nettstedet og bruker de samme datakildene. I tillegg:
+
+- **Varsler:** slår du på varsler i appen, lagrer vi telefonens push-token, stedet du valgte (avrundet til omtrent én kilometer), språk og varselinnstillinger, som beskrevet under *Nordlysvarsler* over. Slår du av varsler i appen, slettes det.
+- **Annonser (Google AdMob):** appen viser et annonsebanner nederst på hovedskjermen. Annonsene leveres av Google AdMob, som behandler enhetens annonse-ID, IP-adresse og enhetsinformasjon for å vise, måle og beskytte annonser. I EØS, Storbritannia og Sveits blir du først spurt om samtykke i Googles samtykkeskjema, og uten samtykke vises bare ikke-personlig tilpassede annonser. På iPhone spør Apple om appen kan bruke annonse-identifikatoren (App Tracking Transparency). Du kan endre valget ditt når som helst under *Personvern for annonser* nederst i appen, og nullstille eller slette annonse-ID-en i telefonens innstillinger. Se [Googles personvernerklæring](https://policies.google.com/privacy) og [hvordan Google bruker annonsering](https://policies.google.com/technologies/ads). Behandlingsgrunnlag: samtykke (GDPR art. 6 nr. 1 a) for personlig tilpassede annonser; berettiget interesse i å finansiere en gratis tjeneste (art. 6 nr. 1 f) for ikke-personlig tilpassede annonser.
+
+Appen har ingen konto, ingen kjøp i appen, og leser ikke kontakter, bilder eller presis posisjon.
+
 ## Dine rettigheter
 
 Du har rett til innsyn, retting, sletting, begrensning og å protestere mot behandling, og rett til å klage til [Datatilsynet](https://www.datatilsynet.no/). Fordi vi ikke har brukerkontoer, kan vi som regel ikke knytte data til deg. Varsler sletter du selv: slå av push i nettleseren eller appen, eller bruk avmeldingslenken i e-posten. Ta [kontakt](page:contact) hvis du har spørsmål.

@@ -162,6 +162,7 @@
     "lead": "We watch the aurora forecast (Kp from NOAA) and MET Norway's cloud forecast for your place. When the next night looks good, you hear about it the afternoon before – so you have time to plan.",
     "step1": "Pick your place",
     "step2": "Choose how: browser, e-mail or app",
+    "step2App": "Turn on alerts in the app",
     "step3": "Get a heads-up the afternoon before a good night",
     "cta": "Get aurora alerts",
     "free": "Free. At most one alert per night. Unsubscribe in one click."

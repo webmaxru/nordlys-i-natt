@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { isNativeApp } from '../lib/platform';
 import './Hero.css';
 
 /** The pitch: what the app promises, in three steps, with one call to action. */
@@ -12,7 +13,7 @@ export function Hero() {
       <p className="hero__lead">{t('hero.lead')}</p>
       <ol className="hero__steps">
         <li>{t('hero.step1')}</li>
-        <li>{t('hero.step2')}</li>
+        <li>{t(isNativeApp() ? 'hero.step2App' : 'hero.step2')}</li>
         <li>{t('hero.step3')}</li>
       </ol>
       <div className="hero__cta">

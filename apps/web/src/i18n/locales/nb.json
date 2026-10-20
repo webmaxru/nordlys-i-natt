@@ -162,6 +162,7 @@
     "lead": "Vi følger nordlysvarselet (Kp fra NOAA) og skyvarselet fra MET for stedet ditt. Når neste natt ser god ut, får du beskjed ettermiddagen før – så du rekker å planlegge.",
     "step1": "Velg stedet ditt",
     "step2": "Velg varsel: nettleser, e-post eller app",
+    "step2App": "Slå på varsler i appen",
     "step3": "Få beskjed ettermiddagen før en god natt",
     "cta": "Få nordlysvarsel",
     "free": "Gratis. Høyst ett varsel per natt. Si opp med ett klikk."
