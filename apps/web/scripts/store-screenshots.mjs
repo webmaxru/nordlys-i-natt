@@ -32,7 +32,7 @@ const SCENES = [
   { name: 'alerts', path: '/', scrollTo: '#varsel' },
   { name: 'night', path: '/', scrollTo: '#timeline-title' },
   { name: 'map', path: '/', scrollTo: '#aurora-map-title' },
-  { name: 'guide', path: { nb: '/artikler/', en: '/en/articles/' }, scrollTo: null },
+  { name: 'guide', path: { nb: '/artikler/', en: '/en/guides/' }, scrollTo: null },
 ];
 
 const browser = await chromium.launch(
