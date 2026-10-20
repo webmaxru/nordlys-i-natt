@@ -1,0 +1,37 @@
+# Store screenshots for the iOS/Android apps (docs/STORE-LISTING.md). Manual run; the
+# artifact "store-screenshots" has every App Store / Google Play size in nb and en, the Play
+# feature graphic and the 512 px icon, rendered from the live site in the app layout.
+name: Store screenshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: 'Site to render'
+        default: 'https://nordlys.salnikov.no'
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @nordlys/web exec playwright install --with-deps chromium
+      - name: Render
+        working-directory: apps/web
+        env:
+          SCREENSHOT_BASE: ${{ inputs.base }}
+          OUT_DIR: ${{ github.workspace }}/store-screenshots
+        run: node scripts/store-screenshots.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: store-screenshots
+          path: store-screenshots
+          retention-days: 30

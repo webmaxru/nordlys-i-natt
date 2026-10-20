@@ -9,7 +9,7 @@
     "sync": "pnpm run build:web && cap sync",
     "sync:android": "pnpm run build:web && cap sync android",
     "sync:ios": "pnpm run build:web && cap sync ios",
-    "assets": "npx --yes @capacitor/assets@3.0.5 generate --android --ios --iconBackgroundColor \"#0b1020\" --iconBackgroundColorDark \"#0b1020\" --splashBackgroundColor \"#0b1020\" --splashBackgroundColorDark \"#0b1020\"",
+    "assets": "npx --yes @capacitor/assets@3.0.5 generate --android --ios",
     "open:android": "cap open android",
     "open:ios": "cap open ios",
     "typecheck": "tsc -p tsconfig.json --noEmit"
