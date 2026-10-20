@@ -1,12 +1,19 @@
 # Nordlys i natt? Azure infrastructure
 
+> **Start here: [docs/INFRA.md](../docs/INFRA.md)** — from an empty subscription to a live site,
+> every setting, the e-mail DNS records and costs.
+
 This Bicep deploys:
 
 - Log Analytics + workspace-based Application Insights
 - Storage account with the `subscriptions` table
 - Azure Container Apps managed environment
 - Container App for the web/API
-- Scheduled Container Apps Job for notifications
+- Scheduled Container Apps Job for notifications (web push, e-mail, app push)
+- `emailsubs` and `devices` tables (e-mail alerts, app devices)
+- With `emailDomain` set: Azure Communication Services Email + the custom domain and sender
+  (`modules/email.bicep`); linked once `emailDomainVerified=true`
+- Optional native push secrets (`fcmServiceAccountJson`, `apnsKeyP8` + `apnsKeyId`/`apnsTeamId`/`apnsBundleId`)
 
 ## Deploy
 

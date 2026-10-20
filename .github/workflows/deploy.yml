@@ -94,27 +94,41 @@ jobs:
         env:
           EMAIL_DOMAIN: ${{ vars.EMAIL_DOMAIN }}
         run: |
-          az provider register --namespace Microsoft.Communication --wait \
-            || echo "::warning::Could not register the Microsoft.Communication provider. Run once: az provider register --namespace Microsoft.Communication"
+          state="$(az provider show --namespace Microsoft.Communication --query registrationState -o tsv 2>/dev/null || true)"
+          if [ "$state" != "Registered" ]; then
+            az provider register --namespace Microsoft.Communication --wait \
+              || echo "::warning::Could not register the Microsoft.Communication provider. Run once: az provider register --namespace Microsoft.Communication"
+          fi
           verified=false
           svc="$(az resource list -g "$AZURE_RESOURCE_GROUP" --resource-type Microsoft.Communication/emailServices --query '[0].name' -o tsv)"
           if [ -n "$svc" ]; then
             sub="$(az account show --query id -o tsv)"
             url="https://management.azure.com/subscriptions/$sub/resourceGroups/$AZURE_RESOURCE_GROUP/providers/Microsoft.Communication/emailServices/$svc/domains/$EMAIL_DOMAIN"
-            states="$(az rest --method get --url "$url?api-version=2023-04-01" --query properties.verificationStates -o json 2>/dev/null || echo '{}')"
-            verified=true
-            for t in Domain SPF DKIM DKIM2; do
-              s="$(echo "$states" | jq -r --arg t "$t" '.[$t].status // "NotStarted"')"
-              echo "$EMAIL_DOMAIN $t: $s"
-              if [ "$s" != "Verified" ]; then
+            # Up to ~6 minutes: ask Azure to check each unverified record, then wait for the result,
+            # so one run after the DNS records are added is enough to switch e-mail on.
+            for attempt in $(seq 1 12); do
+              states="$(az rest --method get --url "$url?api-version=2023-04-01" --query properties.verificationStates -o json 2>/dev/null || echo '{}')"
+              verified=true
+              pending=false
+              for t in Domain SPF DKIM DKIM2; do
+                s="$(echo "$states" | jq -r --arg t "$t" '.[$t].status // "NotStarted"')"
+                echo "[$attempt] $EMAIL_DOMAIN $t: $s"
+                [ "$s" = "Verified" ] && continue
                 verified=false
-                if [ "$s" != "VerificationRequested" ] && [ "$s" != "VerificationInProgress" ]; then
-                  az rest --method post --url "$url/initiateVerification?api-version=2023-04-01" \
-                    --body "{\"verificationType\":\"$t\"}" > /dev/null 2>&1 \
-                    && echo "Asked Azure to verify $t" \
-                    || echo "::notice::$EMAIL_DOMAIN $t could not be checked yet (DNS record missing?)"
+                if [ "$s" = "VerificationRequested" ] || [ "$s" = "VerificationInProgress" ]; then
+                  pending=true
+                elif [ "$attempt" = "1" ]; then
+                  if az rest --method post --url "$url/initiateVerification?api-version=2023-04-01" \
+                    --body "{\"verificationType\":\"$t\"}" > /dev/null 2>&1; then
+                    echo "Asked Azure to verify $t"
+                    pending=true
+                  else
+                    echo "::notice::$EMAIL_DOMAIN $t could not be checked yet (DNS record missing?)"
+                  fi
                 fi
-              fi
+              done
+              if [ "$verified" = "true" ] || [ "$pending" = "false" ]; then break; fi
+              sleep 30
             done
           fi
           echo "E-mail domain verified: $verified"

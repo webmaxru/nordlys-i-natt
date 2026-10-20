@@ -55,7 +55,7 @@ alerts never disagree about what "tonight" means.
 | Channel | Where | Sender | Off unless |
 |---|---|---|---|
 | Browser push | `apps/api/src/services/push.ts` | Web Push (VAPID) | `VAPID_*` set |
-| E-mail | `apps/api/src/services/email/` | Azure Communication Services Email | `EMAIL_ENABLED=true` + ACS |
+| E-mail | `apps/api/src/services/email/` | Azure Communication Services Email | `EMAIL_ENABLED=true` + ACS (set by the deploy once `varsel.salnikov.no` is verified; see [INFRA.md](INFRA.md#e-mail-alerts-azure-communication-services)) |
 | App push | `apps/api/src/services/nativePush.ts` | FCM HTTP v1 (Android), APNs (iOS) | `FCM_SERVICE_ACCOUNT_JSON` / `APNS_*` |
 
 The scheduler is `apps/api/src/scheduler/alerts.ts` (`runAlerts`), wired to the real stores and
