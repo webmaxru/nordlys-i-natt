@@ -4,7 +4,7 @@ Aurora go/no-go for Norway. The app answers one question for the user's location
 **"Can I see the northern lights tonight?"** — by combining aurora strength (NOAA),
 cloud cover (MET Norway), and darkness (computed sun elevation).
 
-> Live: **https://nordlys.isainative.dev**, moving to **https://nordlys.salnikov.no** (see [CUSTOM-DOMAIN.md](./CUSTOM-DOMAIN.md)). Azure Container App, scale-to-zero, Azure managed TLS. Repo: `webmaxru/nordlys-i-natt`.
+> Live: **https://nordlys.salnikov.no** (old host nordlys.isainative.dev redirects; see [CUSTOM-DOMAIN.md](./CUSTOM-DOMAIN.md)). iOS + Android apps in `apps/mobile` ([MOBILE-RELEASE.md](./MOBILE-RELEASE.md)). Azure Container App, scale-to-zero, Azure managed TLS. Repo: `webmaxru/nordlys-i-natt`.
 
 ## Documentation index
 
@@ -24,11 +24,16 @@ cloud cover (MET Norway), and darkness (computed sun elevation).
 | [CONTENT.md](./CONTENT.md) | Static guides + info pages: Markdown format, URLs, build, checks, structured data |
 | [ADSENSE-READINESS.md](./ADSENSE-READINESS.md) | Google AdSense gap analysis, consent (CMP) plan, ads.txt, how to switch ads on |
 | [CUSTOM-DOMAIN.md](./CUSTOM-DOMAIN.md) | Moving to nordlys.salnikov.no: Cloudflare records, Azure binding, redirects |
+| [ALERTS.md](./ALERTS.md) | **When alerts are sent**: the day-before rule shared by web push, e-mail and the apps |
+| [INFRA.md](./INFRA.md) | **From an empty Azure subscription to a live site**: every resource, setting, cost; e-mail (ACS) DNS records |
+| [MOBILE-RELEASE.md](./MOBILE-RELEASE.md) | iOS + Android (Capacitor): CI, release flow, one-time store/Firebase/APNs/signing setup |
+| [ADMOB.md](./ADMOB.md) | Ads in the apps: AdMob account, ad units, app-ads.txt, consent message, payments |
+| [STORE-LISTING.md](./STORE-LISTING.md) | Store texts (nb + en), Data safety / App Privacy answers, screenshots |
 | [troubleshooting.md](./troubleshooting.md) | **Top challenges & solutions** (the bugs that cost the most time) |
 
 ## TL;DR
 
-- **Monorepo** (pnpm workspaces): `packages/shared` (verdict engine) · `apps/api` (Fastify) · `apps/web` (React PWA) · `infra` (Bicep).
+- **Monorepo** (pnpm workspaces): `packages/shared` (verdict engine + alert rule) · `apps/api` (Fastify) · `apps/web` (React PWA) · `apps/mobile` (Capacitor iOS/Android) · `infra` (Bicep).
 - **One image, one Container App**: the Fastify server serves both the API **and** the built SPA (single origin → no web↔api CORS).
 - **Scale-to-zero** by default (`minReplicas=0`); a separate **Container Apps cron Job** runs the push-notification evaluator so the app can sleep.
 - **The verdict engine lives in `packages/shared`** and is used identically by the browser and the notification job — one source of truth.
