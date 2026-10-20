@@ -17,6 +17,7 @@ import metRoutes from './routes/met';
 import nightsRoutes from './routes/nights';
 import noaaRoutes from './routes/noaa';
 import subscriptionsRoutes from './routes/subscriptions';
+import wellKnownRoutes from './routes/wellKnown';
 import { initTelemetry, trackEvent } from './telemetry';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -78,6 +79,7 @@ export async function buildServer(opts: { webDist?: string } = {}): Promise<Fast
     emailRoutes,
     emailPagesRoutes,
     devicesRoutes,
+    wellKnownRoutes,
   ]) {
     await app.register(plugin);
   }

@@ -67,6 +67,15 @@ export const config = {
     apnsProduction: process.env.APNS_PRODUCTION !== 'false',
   },
 
+  /** Android App Links / iOS universal links (routes/wellKnown.ts). */
+  appLinks: {
+    appId: process.env.APP_ID || 'no.salnikov.nordlys',
+    androidCertSha256: (process.env.ANDROID_CERT_SHA256 ?? '')
+      .split(',')
+      .map((s) => s.trim().toUpperCase())
+      .filter(Boolean),
+  },
+
   vapid: {
     publicKey: process.env.VAPID_PUBLIC_KEY ?? '',
     privateKey: process.env.VAPID_PRIVATE_KEY ?? '',

@@ -21,7 +21,9 @@
 #   Communication Services Email + the domain; e-mail switches on by itself once the DNS records
 #   are verified (checked on every deploy). See docs/INFRA.md.
 # - EMAIL_REPLY_TO: optional Reply-To address for alert e-mails.
-# - APNS_KEY_ID, APNS_TEAM_ID, APNS_BUNDLE_ID: iOS push (with the APNS_KEY_P8 secret).
+# - APNS_KEY_ID, APNS_TEAM_ID, APNS_BUNDLE_ID: iOS push (with the APNS_KEY_P8 secret); the team +
+#   bundle ID also serve /.well-known/apple-app-site-association (universal links).
+# - ANDROID_CERT_SHA256 (+ APP_ID): serves /.well-known/assetlinks.json (Android App Links).
 # Optional GitHub secrets (native push in the mobile apps; see docs/MOBILE-RELEASE.md):
 # - FCM_SERVICE_ACCOUNT_JSON: Firebase service account JSON (Android push via FCM HTTP v1).
 # - APNS_KEY_P8: APNs auth key, the .p8 file contents (iOS push).
@@ -147,6 +149,8 @@ jobs:
           APNS_KEY_ID: ${{ vars.APNS_KEY_ID }}
           APNS_TEAM_ID: ${{ vars.APNS_TEAM_ID }}
           APNS_BUNDLE_ID: ${{ vars.APNS_BUNDLE_ID }}
+          ANDROID_CERT_SHA256: ${{ vars.ANDROID_CERT_SHA256 }}
+          APP_ID: ${{ vars.APP_ID }}
         run: |
           deployment_name="nordlys-${GITHUB_RUN_ID}"
           # Optional host-redirect settings are only passed when set (empty = Bicep default '').
@@ -160,6 +164,8 @@ jobs:
           if [ -n "$APNS_KEY_ID" ]; then extra_params+=("apnsKeyId=$APNS_KEY_ID"); fi
           if [ -n "$APNS_TEAM_ID" ]; then extra_params+=("apnsTeamId=$APNS_TEAM_ID"); fi
           if [ -n "$APNS_BUNDLE_ID" ]; then extra_params+=("apnsBundleId=$APNS_BUNDLE_ID"); fi
+          if [ -n "$ANDROID_CERT_SHA256" ]; then extra_params+=("androidCertSha256=$ANDROID_CERT_SHA256"); fi
+          if [ -n "$APP_ID" ]; then extra_params+=("androidAppId=$APP_ID"); fi
           # Multi-line secrets (JSON, PEM) go through a parameters file so the CLI does not parse them.
           jq -n --arg fcm "$FCM_SERVICE_ACCOUNT_JSON" --arg apns "$APNS_KEY_P8" \
             '{"$schema":"https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#","contentVersion":"1.0.0.0","parameters":{"fcmServiceAccountJson":{"value":$fcm},"apnsKeyP8":{"value":$apns}}}' \

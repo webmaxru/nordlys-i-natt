@@ -98,6 +98,12 @@ param apnsBundleId string = 'no.salnikov.nordlys'
 @description('Use the APNs production endpoint (false = sandbox, for debug builds).')
 param apnsProduction bool = true
 
+@description('Android app ID (applicationId) for App Links. Permanent once published.')
+param androidAppId string = 'no.salnikov.nordlys'
+
+@description('Comma-separated SHA-256 fingerprints of the Android app signing certificate (App Links). Empty = no assetlinks.json.')
+param androidCertSha256 string = ''
+
 var suffix = uniqueString(resourceGroup().id)
 var safePrefix = toLower(replace(namePrefix, '-', ''))
 var workspaceName = '${namePrefix}-law-${suffix}'
@@ -177,9 +183,21 @@ var featureEnv = concat(
     : [
         { name: 'APNS_KEY_P8', secretRef: 'apns-key-p8' }
         { name: 'APNS_KEY_ID', value: apnsKeyId }
+        { name: 'APNS_PRODUCTION', value: string(apnsProduction) }
+      ],
+  // Team + bundle ID: APNs topic, and /.well-known/apple-app-site-association (universal links).
+  empty(apnsTeamId)
+    ? []
+    : [
         { name: 'APNS_TEAM_ID', value: apnsTeamId }
         { name: 'APNS_BUNDLE_ID', value: apnsBundleId }
-        { name: 'APNS_PRODUCTION', value: string(apnsProduction) }
+      ],
+  // /.well-known/assetlinks.json (Android App Links).
+  empty(androidCertSha256)
+    ? []
+    : [
+        { name: 'APP_ID', value: androidAppId }
+        { name: 'ANDROID_CERT_SHA256', value: androidCertSha256 }
       ]
 )
 
