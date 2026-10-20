@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Nordlys i natt</string>
+    <string name="title_activity_main">Nordlys i natt</string>
+    <string name="package_name">no.salnikov.nordlys</string>
+    <string name="custom_url_scheme">no.salnikov.nordlys</string>
+</resources>

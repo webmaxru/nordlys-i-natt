@@ -1,0 +1,78 @@
+apply plugin: 'com.android.application'
+
+// Release settings come from the environment (GitHub Actions secrets/variables), never the repo.
+// See docs/MOBILE-RELEASE.md.
+def env = { String name, String fallback = null -> System.getenv(name) ?: fallback }
+// Store identity. PERMANENT once published on Google Play.
+def appId = env('APP_ID', 'no.salnikov.nordlys')
+// Google's test AdMob app ID unless a real one is set (the Ads SDK needs an ID to start).
+def admobAppId = env('ADMOB_APP_ID_ANDROID', 'ca-app-pub-3940256099942544~3347511713')
+def keystorePath = env('ANDROID_KEYSTORE_PATH')
+
+android {
+    namespace = "no.salnikov.nordlys"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId appId
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        // CI passes -PversionCode=<run number> -PversionName=<apps/mobile/package.json version>.
+        versionCode((project.findProperty('versionCode') ?: '1') as int)
+        versionName((project.findProperty('versionName') ?: '1.0.0') as String)
+        manifestPlaceholders = [admobAppId: admobAppId, appHost: 'nordlys.salnikov.no']
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    signingConfigs {
+        release {
+            if (keystorePath) {
+                storeFile file(keystorePath)
+                storePassword env('ANDROID_KEYSTORE_PASSWORD')
+                keyAlias env('ANDROID_KEY_ALIAS', 'nordlys')
+                keyPassword env('ANDROID_KEY_PASSWORD', env('ANDROID_KEYSTORE_PASSWORD'))
+            }
+        }
+    }
+    buildTypes {
+        release {
+            if (keystorePath) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}
