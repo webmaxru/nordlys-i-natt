@@ -47,6 +47,11 @@ permissions:
   contents: read
   packages: write
 
+# One deploy at a time: two Bicep deployments into the same resource group race each other.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP || 'rg-nordlys' }}
   LOCATION: ${{ vars.LOCATION || 'norwayeast' }}
