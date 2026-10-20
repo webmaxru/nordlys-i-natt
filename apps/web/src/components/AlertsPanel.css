@@ -217,3 +217,18 @@
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+
+/* Inside the iOS/Android app */
+.alerts-panel__native p {
+  margin: 0 0 0.75rem;
+}
+
+.alerts-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.alerts-panel__feedback {
+  margin-top: 0.75rem;
+}

@@ -49,8 +49,15 @@ function contentPagesPlugin(): Plugin {
 // from the service worker, and don't precache them.
 const CONTENT_DIRS = ['artikler', 'en', 'om', 'kontakt', 'personvern', 'vilkar'];
 
+// VITE_TARGET=native: the bundle inside the iOS/Android app (apps/mobile). No service worker
+// (the app ships its files), output to dist-native so it never mixes with the website build.
+const isNative = process.env.VITE_TARGET === 'native';
+
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    outDir: isNative ? 'dist-native' : 'dist',
+  },
   resolve: {
     alias: {
       'workbox-window': workboxWindowPath,
@@ -61,6 +68,7 @@ export default defineConfig({
     contentHtmlPlugin(),
     contentPagesPlugin(),
     VitePWA({
+      disable: isNative,
       registerType: 'prompt',
       manifest: {
         name: 'Nordlys i natt?',

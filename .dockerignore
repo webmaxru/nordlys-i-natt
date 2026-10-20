@@ -7,6 +7,10 @@ node_modules
 
 dist
 **/dist
+**/dist-native
+# Native app projects (built on CI runners, not in the image)
+apps/mobile/android
+apps/mobile/ios
 dev-dist
 **/dev-dist
 

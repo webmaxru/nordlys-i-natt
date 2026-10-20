@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { AdPrivacyLink } from './AdPrivacyLink';
 
 export function AttributionFooter() {
   const { t } = useTranslation();
@@ -11,6 +12,7 @@ export function AttributionFooter() {
         <a href={t('nav.contactHref')}>{t('footer.contact')}</a>
         <a href={t('nav.privacyHref')}>{t('footer.privacy')}</a>
         <a href={t('nav.termsHref')}>{t('footer.terms')}</a>
+        <AdPrivacyLink />
       </nav>
       <span>{t('footer.attribution')}</span>
       <span className="attribution-footer__credit">

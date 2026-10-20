@@ -70,7 +70,8 @@
     "about": "About",
     "contact": "Contact",
     "terms": "Terms",
-    "privacyPage": "Privacy"
+    "privacyPage": "Privacy",
+    "adPrivacy": "Ad privacy settings"
   },
   "pwa": {
     "updateAvailable": "A new version is available",
@@ -202,6 +203,11 @@
     "body": "The iPhone and Android app sends the day-before alert straight to your phone, no browser needed.",
     "soon": "The apps are coming soon to the App Store and Google Play.",
     "appStore": "Download on the App Store",
-    "playStore": "Get it on Google Play"
+    "playStore": "Get it on Google Play",
+    "unavailable": "Alerts in the app aren't switched on in this version yet.",
+    "denied": "Notifications are turned off for Nordlys i natt. Turn them on in your phone's Settings, then try again.",
+    "explain": "Get the day-before heads-up as a notification on this phone. No account needed.",
+    "enable": "Turn on alerts",
+    "switchPlace": "Alert me for this place instead"
   }
 }

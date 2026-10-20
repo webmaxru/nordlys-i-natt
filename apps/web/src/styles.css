@@ -680,3 +680,18 @@ button:active:not(:disabled) {
     transform: none;
   }
 }
+
+/* Native app: room for the AdMob banner (adaptive banners are at most ~60 px on phones). */
+.has-native-banner body {
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
+.link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}

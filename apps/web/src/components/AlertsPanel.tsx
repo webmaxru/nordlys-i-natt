@@ -9,6 +9,7 @@ import {
   type NightSummary,
 } from '../api/alerts';
 import { isNativeApp } from '../lib/platform';
+import { suppressAds } from '../native/ads';
 import { useAppState } from '../state/AppStateContext';
 import { NotifyButton } from './NotifyButton';
 import { NativeAlerts } from './NativeAlerts';
@@ -44,8 +45,27 @@ export function AlertsPanel() {
   };
   const channels: Channel[] = native ? ['app'] : ['browser', 'email', 'app'];
 
+  // In the app: no ad banner while the alert set-up is on screen.
+  const panelRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!native || !panelRef.current || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(([entry]) =>
+      suppressAds('alerts-panel', entry.isIntersecting),
+    );
+    io.observe(panelRef.current);
+    return () => {
+      io.disconnect();
+      suppressAds('alerts-panel', false);
+    };
+  }, [native]);
+
   return (
-    <section className="alerts-panel panel" id="varsel" aria-labelledby="alerts-title">
+    <section
+      ref={panelRef}
+      className="alerts-panel panel"
+      id="varsel"
+      aria-labelledby="alerts-title"
+    >
       <div className="alerts-panel__head">
         <h2 id="alerts-title">{t('alerts.title')}</h2>
         {selectedLocation ? (

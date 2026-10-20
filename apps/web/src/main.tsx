@@ -6,6 +6,7 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 import './i18n';
 import './styles.css';
 import App from './App';
+import { isNativeApp } from './lib/platform';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,8 +40,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         buster: 'nordlys-forecast-v1',
         dehydrateOptions: {
           shouldDehydrateQuery: (query) =>
-            query.state.status === 'success' &&
-            query.queryKey[0] === 'forecast',
+            query.state.status === 'success' && query.queryKey[0] === 'forecast',
         },
       }}
     >
@@ -48,3 +48,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </PersistQueryClientProvider>
   </React.StrictMode>,
 );
+
+// Inside the iOS/Android app: deep links, push taps, ads (loaded on demand, never on the web).
+if (isNativeApp()) {
+  void import('./native/start').then((m) => m.startNative());
+}

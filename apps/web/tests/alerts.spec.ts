@@ -139,4 +139,29 @@ test.describe('pitch and subscribe flow', () => {
     await page.getByRole('tab', { name: 'App' }).click();
     await expect(page.getByText('Appene kommer snart')).toBeVisible();
   });
+
+  test('inside the iOS/Android app only native alerts are offered, never web push', async ({
+    page,
+  }) => {
+    await mock(page);
+    // The Capacitor bridge as the native shell injects it (Android build without Firebase).
+    await page.addInitScript(() => {
+      (window as unknown as { Capacitor: unknown }).Capacitor = {
+        isNativePlatform: () => true,
+        getPlatform: () => 'android',
+      };
+    });
+    let webPushCalls = 0;
+    await page.route('**/api/push/public-key', (r) => {
+      webPushCalls += 1;
+      return r.fulfill({ json: { publicKey: 'x' } });
+    });
+    await page.goto('/');
+    await expect(page.getByRole('tab', { name: 'Nettleser' })).toHaveCount(0);
+    await expect(page.getByRole('tab', { name: 'E-post' })).toHaveCount(0);
+    await expect(
+      page.getByText('Varsler i appen er ikke slått på i denne versjonen ennå.'),
+    ).toBeVisible();
+    expect(webPushCalls).toBe(0);
+  });
 });

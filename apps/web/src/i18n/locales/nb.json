@@ -70,7 +70,8 @@
     "about": "Om",
     "contact": "Kontakt",
     "terms": "Vilkår",
-    "privacyPage": "Personvern"
+    "privacyPage": "Personvern",
+    "adPrivacy": "Personvern for annonser"
   },
   "pwa": {
     "updateAvailable": "En ny versjon er tilgjengelig",
@@ -202,6 +203,11 @@
     "body": "Appen for iPhone og Android gir varsel dagen før rett på telefonen, uten nettleser.",
     "soon": "Appene kommer snart i App Store og Google Play.",
     "appStore": "Last ned i App Store",
-    "playStore": "Last ned på Google Play"
+    "playStore": "Last ned på Google Play",
+    "unavailable": "Varsler i appen er ikke slått på i denne versjonen ennå.",
+    "denied": "Varsler er slått av for Nordlys i natt. Slå dem på i Innstillinger på telefonen, og prøv igjen.",
+    "explain": "Få varselet dagen før som en melding på denne telefonen. Ingen konto trengs.",
+    "enable": "Slå på varsler",
+    "switchPlace": "Varsle meg for dette stedet i stedet"
   }
 }
